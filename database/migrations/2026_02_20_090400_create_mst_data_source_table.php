@@ -15,8 +15,8 @@ return new class extends Migration
             $table->increments('id');
             $table->string('name', 255);
             $table->enum('month', [
-                'January', 'February', 'March', 'April', 'May', 'June',
-                'July', 'August', 'September', 'October', 'November', 'December'
+                'Januari', 'Febuari', 'Maret', 'April', 'Mei', 'Juni',
+                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
             ])->nullable();
             $table->year('year');
             $table->timestamps();
