@@ -22,12 +22,11 @@ export function useNavigation() {
         const items = [
             {
                 label: 'Program Planning',
-                href: '/dashboard',
+                href: '/dashboard-monitoring',
                 icon: Squares2X2Icon,
                 active: (url) =>
-                    url === '/dashboard'
-                    || url.startsWith('/program-planning')
-                    || url.startsWith('/dashboard-monitoring'),
+                    url.startsWith('/dashboard-monitoring')
+                    || url.startsWith('/program-planning'),
             },
             {
                 label: 'RSTI Sub Holding',
@@ -42,23 +41,24 @@ export function useNavigation() {
                 active: (url) => url.startsWith('/program-planning/program-definition'),
             },
             {
-                label: 'Dashboard Usulan',
-                href: '/dashboard-monitoring',
-                icon: ChartBarIcon,
-                active: (url) => url.startsWith('/dashboard-monitoring'),
-            },
-            {
                 label: 'Matrix Dependency',
                 href: '/program-planning/matrix-dependency',
                 icon: TableCellsIcon,
                 active: (url) => url.startsWith('/program-planning/matrix-dependency'),
             },
             {
+                label: 'Program Evaluation',
+                href: '/program-information',
+                icon: DocumentTextIcon,
+                active: (url) => url.startsWith('/program-information'),
+            },
+            {
                 label: 'Program Implementation',
-                href: '/program-implementation',
+                href: '/dashboard',
                 icon: ChartBarIcon,
                 active: (url) =>
                     url.startsWith('/program-implementation')
+                    || url === '/dashboard'
                     || url.startsWith('/strategic-pillars')
                     || url.startsWith('/digital-initiatives')
                     || url.startsWith('/it-initiatives'),
@@ -111,7 +111,7 @@ export function useNavigation() {
                 icon: DocumentTextIcon,
                 active: (url) => url.startsWith('/policy'),
             },
-            
+
             {
                 label: 'Company Profile',
                 href: '/companies',

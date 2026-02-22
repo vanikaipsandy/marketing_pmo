@@ -5,13 +5,14 @@ use App\Http\Controllers\Admin\AdminRoleController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Auth\SsoController;
 use App\Http\Controllers\CompanyProfile\CompanyController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\DashboardMonitoringController;
+use App\Http\Controllers\ProgramImplementation\DashboardController;
+use App\Http\Controllers\ProgramPlanning\DashboardController as PlanningDashboardController;
 use App\Http\Controllers\DigitalInitiative\DigitalInitiativeController;
 use App\Http\Controllers\ITInitiative\CharterController;
 use App\Http\Controllers\ITInitiative\ITInitiativeController;
 use App\Http\Controllers\ITInitiative\MilestoneController;
 use App\Http\Controllers\ProgramPlanning\ProgramPlanningController;
+use App\Http\Controllers\ProgramImplementation\ProgramImplementationController;
 use App\Http\Controllers\StrategicPillar\StrategicPillarController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -47,12 +48,12 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'approved'])->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
-    Route::get('/dashboard-monitoring', DashboardMonitoringController::class)->name('dashboard-monitoring');
+    Route::get('/dashboard-monitoring', PlanningDashboardController::class)->name('dashboard-monitoring');
     Route::get('/program-planning/rsti-sub-holding', [ProgramPlanningController::class, 'rstiSubHolding'])->name('program-planning.rsti-sub-holding');
     Route::get('/program-planning/program-definition', [ProgramPlanningController::class, 'programDefinition'])->name('program-planning.program-definition');
     Route::get('/program-planning/matrix-dependency', [ProgramPlanningController::class, 'matrixDependency'])->name('program-planning.matrix-dependency');
     Route::redirect('/program-planning/matrix', '/program-planning/matrix-dependency');
-    Route::get('/program-implementation', fn () => Inertia::render('ProgramImplementation/Index'))->name('program-implementation.index');
+    Route::get('/program-implementation', ProgramImplementationController::class)->name('program-implementation.index');
     Route::get('/program-implementation/budgeting', fn () => Inertia::render('Placeholder/Index', [
         'title' => 'Budgeting',
     ]))->name('program-implementation.budgeting');
@@ -60,9 +61,9 @@ Route::middleware(['auth', 'approved'])->group(function () {
     Route::get('/architecture', fn () => Inertia::render('Placeholder/Index', [
         'title' => 'Architecture',
     ]))->name('architecture.index');
-    Route::get('/policy', fn () => Inertia::render('Placeholder/Index', [
-        'title' => 'Policy',
-    ]))->name('policy.index');
+    Route::get('/program-information', fn () => Inertia::render('Placeholder/Index', [
+        'title' => 'Program Information',
+    ]))->name('program-information.index');
     Route::get('/strategic-pillars/{goal?}', [StrategicPillarController::class, 'index'])->name('strategic-pillars.index');
 
     // Digital Initiatives
