@@ -28,7 +28,7 @@
                 <article class="flex flex-col justify-center rounded-2xl border border-slate-200 bg-white px-5 py-3 shadow-[0_4px_16px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-[#171717] lg:col-span-2 space-y-4">
                     <div>
                         <div class="mb-2 flex items-center justify-between gap-2">
-                            <h2 class="text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Scope Charter IT Initiative Status</h2>
+                            <h2 class="text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Scope Charter IT Initiative Timeline</h2>
                         </div>
 
                         <div>
@@ -39,11 +39,15 @@
                                 <div
                                     v-for="(step, index) in scopeSteps"
                                     :key="`scope-step-${step.key}`"
-                                    class="relative flex justify-center"
+                                    class="relative flex justify-center cursor-pointer group"
+                                    @click="toggleFilter(step.statusId)"
                                 >
                                     <span
-                                        class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[10px] font-bold"
-                                        :class="step.circleClass"
+                                        class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[10px] font-bold transition-all group-hover:ring-2 group-hover:ring-offset-1 group-hover:ring-slate-300"
+                                        :class="[
+                                            step.circleClass,
+                                            activeFlowFilter === step.statusId ? 'ring-2 ring-offset-2 ring-blue-500 shadow-md transform scale-110' : ''
+                                        ]"
                                     >
                                         {{ step.count }}
                                     </span>
@@ -68,7 +72,7 @@
 
                     <div class="border-t border-slate-100 pt-4 dark:border-white/5">
                         <div class="mb-2 flex items-center justify-between gap-2">
-                            <h2 class="text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Project Charter IT Initiative Status</h2>
+                            <h2 class="text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Project Charter IT Initiative Timeline</h2>
                         </div>
 
                         <div>
@@ -79,11 +83,15 @@
                                 <div
                                     v-for="(step, index) in digitalSteps"
                                     :key="`step-${step.key}`"
-                                    class="relative flex justify-center"
+                                    class="relative flex justify-center cursor-pointer group"
+                                    @click="toggleFilter(step.statusId)"
                                 >
                                     <span
-                                        class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[10px] font-bold"
-                                        :class="step.circleClass"
+                                        class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[10px] font-bold transition-all group-hover:ring-2 group-hover:ring-offset-1 group-hover:ring-slate-300"
+                                        :class="[
+                                            step.circleClass,
+                                            activeFlowFilter === step.statusId ? 'ring-2 ring-offset-2 ring-blue-500 shadow-md transform scale-110' : ''
+                                        ]"
                                     >
                                         {{ step.count }}
                                     </span>
@@ -162,7 +170,7 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-200 bg-white dark:divide-white/5 dark:bg-[#1a1a1a]">
-                            <tr v-for="(project, index) in itInitiatives" :key="project.id" class="group transition-colors hover:bg-slate-50 dark:hover:bg-white/5">
+                            <tr v-for="(project, index) in filteredItems" :key="project.id" class="group transition-colors hover:bg-slate-50 dark:hover:bg-white/5">
                                 <td class="whitespace-nowrap px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">
                                     {{ project.code }}
                                 </td>
@@ -205,17 +213,31 @@
                                     </div>
                                 </td>
                             </tr>
+                            <tr v-if="filteredItems.length === 0">
+                                <td colspan="5" class="px-6 py-8 text-center text-xs text-slate-500 dark:text-slate-400">
+                                    <span v-if="activeFlowFilter === null">
+                                        Silakan klik salah satu status di atas untuk menampilkan data inisiatif.
+                                    </span>
+                                    <span v-else>
+                                        Tidak ada data yang sesuai dengan filter opsi ini.
+                                    </span>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
             <div
-                v-if="itInitiatives.length === 0"
+                v-if="filteredItems.length === 0"
                 class="mt-6 rounded-xl border border-slate-200 bg-white py-12 text-center dark:border-white/5 dark:bg-[#1a1a1a]"
             >
-                <p class="text-slate-500 dark:text-slate-400">No IT initiatives found.</p>
-                <p class="mt-2 text-sm text-slate-400 dark:text-slate-500">Belum ada IT initiative dengan status {{ completedStatusLabel.toLowerCase() }}.</p>
+                <p class="text-slate-500 dark:text-slate-400">
+                    {{ activeFlowFilter === null ? 'Pilih status di atas untuk melihat data.' : 'Tidak ada IT initiative ditemukan.' }}
+                </p>
+                <p class="mt-2 text-sm text-slate-400 dark:text-slate-500" v-if="activeFlowFilter !== null">
+                    Status yang dipilih belum memiliki data inisiatif.
+                </p>
             </div>
 
 
@@ -228,6 +250,7 @@ import { computed, ref } from 'vue';
 import { Link, router } from '@inertiajs/vue3';
 import UserLayout from '@/Layouts/UserLayout.vue';
 import { statusBadgeClassById, statusLabelFromOptions, statusFlowClassByIndex } from '@/Composables/initiativeStatus';
+import { useFlowFilter } from '@/Composables/useFlowFilter';
 
 const props = defineProps({
     itInitiatives: Object,
@@ -249,6 +272,11 @@ const props = defineProps({
         default: () => ({}),
     }
 });
+
+const { activeFlowFilter, filteredItems, toggleFilter } = useFlowFilter(
+    () => props.itInitiatives,
+    (item) => item.status
+);
 
 const statusOptions = computed(() => {
     if (props.statusOptions.length > 0) {
@@ -320,6 +348,7 @@ const scopeSteps = computed(() => {
 
         return {
             key,
+            statusId: status.id,
             label: status.label,
             count: 0,
             circleClass: flowClass.circleClass,
@@ -336,6 +365,7 @@ const digitalSteps = computed(() => {
 
         return {
             key,
+            statusId: status.id,
             label: status.label,
             count: Number(counts?.[key] ?? 0),
             circleClass: flowClass.circleClass,
@@ -371,16 +401,16 @@ const months = [
 
 const shouldShowCategory = (index) => {
     if (index === 0) return true;
-    const current = props.itInitiatives[index].charter?.category || 'Uncategorized';
-    const previous = props.itInitiatives[index - 1].charter?.category || 'Uncategorized';
+    const current = filteredItems.value[index].charter?.category || 'Uncategorized';
+    const previous = filteredItems.value[index - 1].charter?.category || 'Uncategorized';
     return current !== previous;
 };
 
 const getCategoryRowspan = (index) => {
     let count = 1;
-    const current = props.itInitiatives[index].charter?.category || 'Uncategorized';
-    for (let i = index + 1; i < props.itInitiatives.length; i++) {
-        if ((props.itInitiatives[i].charter?.category || 'Uncategorized') === current) {
+    const current = filteredItems.value[index].charter?.category || 'Uncategorized';
+    for (let i = index + 1; i < filteredItems.value.length; i++) {
+        if ((filteredItems.value[i].charter?.category || 'Uncategorized') === current) {
             count++;
         } else {
             break;

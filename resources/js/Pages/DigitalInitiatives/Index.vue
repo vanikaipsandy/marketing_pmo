@@ -28,7 +28,7 @@
                 <article class="flex flex-col justify-center rounded-2xl border border-slate-200 bg-white px-5 py-3 shadow-[0_4px_16px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-[#171717] lg:col-span-2 space-y-4">
                     <div>
                         <div class="mb-2 flex items-center justify-between gap-2">
-                            <h2 class="text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Scope Charter Digital Initiative Status</h2>
+                            <h2 class="text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Scope Charter Digital Initiative Timeline</h2>
                         </div>
 
                         <div>
@@ -39,11 +39,15 @@
                                 <div
                                     v-for="(step, index) in scopeSteps"
                                     :key="`scope-step-${step.key}`"
-                                    class="relative flex justify-center"
+                                    class="relative flex justify-center cursor-pointer group"
+                                    @click="toggleFilter(step.statusId)"
                                 >
                                     <span
-                                        class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[10px] font-bold"
-                                        :class="step.circleClass"
+                                        class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[10px] font-bold transition-all group-hover:ring-2 group-hover:ring-offset-1 group-hover:ring-slate-300"
+                                        :class="[
+                                            step.circleClass,
+                                            activeFlowFilter === step.statusId ? 'ring-2 ring-offset-2 ring-blue-500 shadow-md transform scale-110' : ''
+                                        ]"
                                     >
                                         {{ step.count }}
                                     </span>
@@ -68,7 +72,7 @@
 
                     <div class="border-t border-slate-100 pt-4 dark:border-white/5">
                         <div class="mb-2 flex items-center justify-between gap-2">
-                            <h2 class="text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Project Charter Digital Initiative Status</h2>
+                            <h2 class="text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Project Charter Digital Initiative Timeline</h2>
                         </div>
 
                         <div>
@@ -79,11 +83,15 @@
                                 <div
                                     v-for="(step, index) in digitalSteps"
                                     :key="`step-${step.key}`"
-                                    class="relative flex justify-center"
+                                    class="relative flex justify-center cursor-pointer group"
+                                    @click="toggleFilter(step.statusId)"
                                 >
                                     <span
-                                        class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[10px] font-bold"
-                                        :class="step.circleClass"
+                                        class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[10px] font-bold transition-all group-hover:ring-2 group-hover:ring-offset-1 group-hover:ring-slate-300"
+                                        :class="[
+                                            step.circleClass,
+                                            activeFlowFilter === step.statusId ? 'ring-2 ring-offset-2 ring-blue-500 shadow-md transform scale-110' : ''
+                                        ]"
                                     >
                                         {{ step.count }}
                                     </span>
@@ -169,7 +177,7 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100 dark:divide-white/5">
-                            <tr v-for="item in initiatives" :key="`digital-${item.id}`" class="transition-colors hover:bg-slate-50 dark:hover:bg-white/[0.02]">
+                            <tr v-for="item in filteredItems" :key="`digital-${item.id}`" class="transition-colors hover:bg-slate-50 dark:hover:bg-white/[0.02]">
                                 <td class="whitespace-nowrap px-4 py-3 font-medium text-slate-900 dark:text-white">{{ cellVal(item, 'no') }}</td>
                                 <td class="whitespace-nowrap px-4 py-3 text-slate-700 dark:text-slate-200">{{ cellVal(item, 'type') }}</td>
                                 <td class="whitespace-nowrap px-4 py-3 text-slate-700 dark:text-slate-200">{{ cellVal(item, 'projectOwner', 'project_owner') }}</td>
@@ -210,9 +218,14 @@
                                 </td>
                             </tr>
 
-                            <tr v-if="initiatives.length === 0">
+                            <tr v-if="filteredItems.length === 0">
                                 <td colspan="11" class="px-4 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
-                                    Semua digital initiatives sudah {{ completedStatusLabel.toLowerCase() }}.
+                                    <span v-if="activeFlowFilter === null">
+                                        Silakan klik salah satu status di atas untuk menampilkan data inisiatif.
+                                    </span>
+                                    <span v-else>
+                                        Tidak ada data yang sesuai dengan filter opsi ini.
+                                    </span>
                                 </td>
                             </tr>
                         </tbody>
@@ -221,11 +234,15 @@
             </div>
 
             <div
-                v-if="initiatives.length === 0"
+                v-if="filteredItems.length === 0"
                 class="mt-6 rounded-xl border border-slate-200 bg-white py-12 text-center dark:border-white/5 dark:bg-[#1a1a1a]"
             >
-                <p class="text-slate-500 dark:text-slate-400">No digital initiatives found.</p>
-                <p class="mt-2 text-sm text-slate-400 dark:text-slate-500">Belum ada digital initiative dengan status {{ completedStatusLabel.toLowerCase() }}.</p>
+                <p class="text-slate-500 dark:text-slate-400">
+                    {{ activeFlowFilter === null ? 'Pilih status di atas untuk melihat data.' : 'Tidak ada inisiatif digital ditemukan.' }}
+                </p>
+                <p class="mt-2 text-sm text-slate-400 dark:text-slate-500" v-if="activeFlowFilter !== null">
+                    Status yang dipilih belum memiliki data inisiatif.
+                </p>
             </div>
 
 
@@ -238,6 +255,7 @@ import { computed, ref } from 'vue';
 import { Link, router } from '@inertiajs/vue3';
 import UserLayout from '@/Layouts/UserLayout.vue';
 import { statusBadgeClassById, statusLabelFromOptions, statusFlowClassByIndex } from '@/Composables/initiativeStatus';
+import { useFlowFilter } from '@/Composables/useFlowFilter';
 
 const props = defineProps({
     initiatives: Object,
@@ -259,6 +277,11 @@ const props = defineProps({
         default: () => ({}),
     }
 });
+
+const { activeFlowFilter, filteredItems, toggleFilter } = useFlowFilter(
+    () => props.initiatives,
+    (item) => item.status
+);
 
 const statusOptions = computed(() => {
     if (props.statusOptions.length > 0) {
@@ -330,6 +353,7 @@ const scopeSteps = computed(() => {
 
         return {
             key,
+            statusId: status.id,
             label: status.label,
             count: Number(counts?.[key] ?? 0),
             circleClass: flowClass.circleClass,
@@ -346,6 +370,7 @@ const digitalSteps = computed(() => {
 
         return {
             key,
+            statusId: status.id,
             label: status.label,
             count: 0,
             circleClass: flowClass.circleClass,
