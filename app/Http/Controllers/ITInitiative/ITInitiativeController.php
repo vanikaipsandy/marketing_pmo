@@ -206,12 +206,13 @@ class ITInitiativeController extends Controller
     {
         $validated = $request->validate([
             'status' => 'required|string|max:255',
+            'month_year' => 'required|date_format:Y-m',
         ]);
 
         \App\Models\PcStatusImplementation::create([
             'project_id' => $project->id,
             'status' => $validated['status'],
-            'date' => now()->toDateString(),
+            'date' => \Carbon\Carbon::createFromFormat('Y-m', $validated['month_year'])->startOfMonth()->toDateString(),
             'time_start' => now()->toTimeString(),
         ]);
 

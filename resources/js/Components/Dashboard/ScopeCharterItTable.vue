@@ -21,6 +21,7 @@
                         <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">IT Arsitektur Building Blok</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Daftar Inisiatif</th>
                         <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">State</th>
+                        <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Bulan / Tahun</th>
                         <th scope="col" class="w-1/3 px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Terbaru</th>
                         <th scope="col" class="whitespace-nowrap px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Action</th>
                     </tr>
@@ -42,6 +43,9 @@
                                 <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-medium capitalize" :class="statusBadgeClassById(item.status)">
                                     {{ statusLabelFromOptions(item.status, statusOptions) }}
                                 </span>
+                            </td>
+                            <td class="whitespace-nowrap px-6 py-4 text-xs font-medium text-slate-700 dark:text-slate-300">
+                                {{ latestItDate(item) || '-' }}
                             </td>
                             <td class="px-6 py-4 text-xs text-slate-700 dark:text-slate-200">
                                 <span
@@ -80,7 +84,7 @@
                     </template>
 
                     <tr v-if="items.length === 0">
-                        <td colspan="7" class="px-6 py-8 text-center text-xs text-slate-500 dark:text-slate-400">
+                        <td colspan="8" class="px-6 py-8 text-center text-xs text-slate-500 dark:text-slate-400">
                             Semua IT initiatives sudah {{ lowerCompletedStatusLabel }}.
                         </td>
                     </tr>
@@ -132,5 +136,22 @@ const latestItStatus = (item) => {
     const normalizedStatus = String(rawStatus ?? '').trim();
 
     return normalizedStatus.length > 0 ? normalizedStatus : null;
+};
+
+const latestItDate = (item) => {
+    const rawDate = item?.latest_implementation_status?.date
+        ?? item?.latestImplementationStatus?.date
+        ?? item?.latest_pc_status_implementation?.date
+        ?? item?.latestPcStatusImplementation?.date
+        ?? item?.pc_status_implementations?.[0]?.date
+        ?? item?.pcStatusImplementations?.[0]?.date
+        ?? null;
+
+    if (!rawDate) return null;
+    
+    const date = new Date(rawDate);
+    if (isNaN(date.getTime())) return null;
+
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
 };
 </script>

@@ -159,6 +159,7 @@
                                 <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">IT Arsitektur Building Blok</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Daftar Inisiatif</th>
                                 <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">State</th>
+                                <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Bulan / Tahun</th>
                                 <th scope="col" class="w-1/3 px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Terbaru</th>
                                 <th scope="col" class="whitespace-nowrap p-0 text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
                                     <div class="w-[180px] border-l border-slate-200 dark:border-white/10 float-right">
@@ -199,6 +200,9 @@
                                         {{ statusLabelFromOptions(project.status, statusOptions) }}
                                     </span>
                                 </td>
+                                <td class="whitespace-nowrap px-6 py-4 text-xs font-medium text-slate-700 dark:text-slate-300">
+                                    {{ latestItDate(project) || '-' }}
+                                </td>
                                 <td class="px-6 py-4 text-xs text-slate-700 dark:text-slate-200">
                                     <span
                                         v-if="latestItStatus(project)"
@@ -211,27 +215,29 @@
                                 </td>
                                 <td class="p-0 text-sm font-medium">
                                     <div class="grid w-[180px] h-full grid-cols-2 divide-x divide-slate-200 border-l border-slate-200 dark:divide-white/10 dark:border-white/10 float-right">
-                                        <Link
-                                            :href="`/it-initiatives/${project.id}`"
-                                            :class="actionCellClass(hasScopeCharter(project))"
-                                            title="View Scope Charter"
-                                            class="flex items-center justify-center"
-                                        >
-                                            View
-                                        </Link>
-                                        <Link
-                                            :href="`/it-initiatives/${project.id}`"
-                                            :class="actionCellClass(hasProjectCharter(project))"
-                                            title="View Project Charter"
-                                            class="flex items-center justify-center"
-                                        >
-                                            View
-                                        </Link>
+                                        <div class="flex items-center justify-center p-2">
+                                            <Link
+                                                :href="`/it-initiatives/${project.id}`"
+                                                :class="actionCellClass(hasScopeCharter(project))"
+                                                title="View Scope Charter"
+                                            >
+                                                View
+                                            </Link>
+                                        </div>
+                                        <div class="flex items-center justify-center p-2">
+                                            <Link
+                                                :href="`/it-initiatives/${project.id}`"
+                                                :class="actionCellClass(hasProjectCharter(project))"
+                                                title="View Project Charter"
+                                            >
+                                                View
+                                            </Link>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>
                             <tr v-if="filteredItems.length === 0">
-                                <td colspan="7" class="px-6 py-8 text-center text-xs text-slate-500 dark:text-slate-400">
+                                <td colspan="8" class="px-6 py-8 text-center text-xs text-slate-500 dark:text-slate-400">
                                     <span v-if="activeFlowFilter === null">
                                         Silakan klik salah satu status di atas untuk menampilkan data inisiatif.
                                     </span>
@@ -473,10 +479,10 @@ function hasProjectCharter(project) {
 
 function actionCellClass(isReady) {
     if (isReady) {
-        return 'block bg-emerald-500 px-2 py-1.5 text-center text-xs font-semibold text-white transition-colors hover:bg-emerald-600';
+        return 'inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold bg-emerald-100 text-emerald-800 hover:bg-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-300 dark:hover:bg-emerald-500/30 transition-colors cursor-pointer';
     }
 
-    return 'block bg-rose-500 px-2 py-1.5 text-center text-xs font-semibold text-white transition-colors hover:bg-rose-600';
+    return 'inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold bg-rose-100 text-rose-800 hover:bg-rose-200 dark:bg-rose-500/20 dark:text-rose-300 dark:hover:bg-rose-500/30 transition-colors cursor-pointer';
 }
 
 const latestItStatus = (item) => {
@@ -491,5 +497,22 @@ const latestItStatus = (item) => {
     const normalizedStatus = String(rawStatus ?? '').trim();
 
     return normalizedStatus.length > 0 ? normalizedStatus : null;
+};
+
+const latestItDate = (item) => {
+    const rawDate = item?.latest_implementation_status?.date
+        ?? item?.latestImplementationStatus?.date
+        ?? item?.latest_pc_status_implementation?.date
+        ?? item?.latestPcStatusImplementation?.date
+        ?? item?.pc_status_implementations?.[0]?.date
+        ?? item?.pcStatusImplementations?.[0]?.date
+        ?? null;
+
+    if (!rawDate) return null;
+    
+    const date = new Date(rawDate);
+    if (isNaN(date.getTime())) return null;
+
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
 };
 </script>
