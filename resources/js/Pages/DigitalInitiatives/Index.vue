@@ -150,22 +150,22 @@
             </div> -->
 
             <!-- Table -->
-            <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717]">
-                <div class="overflow-x-auto overflow-y-visible">
-                    <table class="min-w-max w-full divide-y divide-slate-200 text-sm dark:divide-white/10">
+            <div class="overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-white/5 dark:bg-[#1a1a1a]">
+                <div class="overflow-x-auto">
+                    <table class="w-full min-w-[920px] divide-y divide-slate-200 dark:divide-white/5">
                         <thead class="bg-slate-50 dark:bg-white/5">
                             <tr>
-                                <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">No</th>
-                                <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Type</th>
-                                <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Project Owner</th>
-                                <th class="min-w-[180px] px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Use Case</th>
-                                <th class="min-w-[280px] px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Desc</th>
-                                <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Value</th>
-                                <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Urgency</th>
-                                <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Rjjp</th>
-                                <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Coe</th>
-                                <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status</th>
-                                <th class="sticky right-0 z-10 bg-slate-50 p-0 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:bg-white/5 dark:text-slate-400">
+                                <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">No</th>
+                                <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Type</th>
+                                <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Project Owner</th>
+                                <th scope="col" class="min-w-[180px] px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Use Case</th>
+                                <th scope="col" class="min-w-[280px] px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Desc</th>
+                                <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Value</th>
+                                <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Urgency</th>
+                                <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Rjjp</th>
+                                <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Coe</th>
+                                <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Status</th>
+                                <th scope="col" class="sticky right-0 z-10 bg-slate-50 p-0 text-xs font-medium uppercase tracking-wider text-slate-500 dark:bg-white/5 dark:text-slate-400">
                                     <div class="w-[180px] border-l border-slate-200 dark:border-white/10">
                                         <div class="border-b border-slate-200 px-2 py-1.5 text-center dark:border-white/10">Action</div>
                                         <div class="grid grid-cols-2 divide-x divide-slate-200 text-[10px] font-semibold normal-case dark:divide-white/10">
@@ -176,34 +176,37 @@
                                 </th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-100 dark:divide-white/5">
-                            <tr v-for="item in filteredItems" :key="`digital-${item.id}`" class="transition-colors hover:bg-slate-50 dark:hover:bg-white/[0.02]">
-                                <td class="whitespace-nowrap px-4 py-3 font-medium text-slate-900 dark:text-white">{{ cellVal(item, 'no') }}</td>
-                                <td class="whitespace-nowrap px-4 py-3 text-slate-700 dark:text-slate-200">{{ cellVal(item, 'type') }}</td>
-                                <td class="whitespace-nowrap px-4 py-3 text-slate-700 dark:text-slate-200">{{ cellVal(item, 'projectOwner', 'project_owner') }}</td>
-                                <td class="min-w-[180px] max-w-[320px] px-4 py-3 text-slate-700 dark:text-slate-200">
+                        <tbody class="divide-y divide-slate-200 bg-white dark:divide-white/5 dark:bg-[#1a1a1a]">
+                            <tr v-for="item in filteredItems" :key="`digital-${item.id}`" class="group transition-colors hover:bg-slate-50 dark:hover:bg-white/5">
+                                <td class="whitespace-nowrap px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">{{ cellVal(item, 'no') }}</td>
+                                <td class="whitespace-nowrap px-6 py-4 text-xs text-slate-700 dark:text-slate-200">
+                                    <span class="font-medium text-slate-700 dark:text-slate-200">{{ cellVal(item, 'type') }}</span>
+                                </td>
+                                <td class="whitespace-nowrap px-6 py-4 text-xs text-slate-700 dark:text-slate-200">{{ cellVal(item, 'projectOwner', 'project_owner') }}</td>
+                                <td class="min-w-[180px] max-w-[320px] px-6 py-4 text-xs text-slate-700 dark:text-slate-200">
                                     <span class="whitespace-normal break-words">{{ cellVal(item, 'useCase', 'use_case') }}</span>
                                 </td>
-                                <td class="min-w-[280px] max-w-[400px] px-4 py-3 text-slate-700 dark:text-slate-200">
+                                <td class="min-w-[280px] max-w-[400px] px-6 py-4 text-xs text-slate-700 dark:text-slate-200">
                                     <span class="whitespace-normal break-words" :title="cellVal(item, 'desc', 'description')">{{ cellVal(item, 'desc', 'description') }}</span>
                                 </td>
-                                <td class="max-w-[150px] px-4 py-3 text-slate-700 dark:text-slate-200">
+                                <td class="max-w-[150px] px-6 py-4 text-xs text-slate-700 dark:text-slate-200">
                                     <span class="line-clamp-2" :title="cellVal(item, 'value')">{{ cellVal(item, 'value') }}</span>
                                 </td>
-                                <td class="whitespace-nowrap px-4 py-3 text-slate-700 dark:text-slate-200">{{ cellVal(item, 'urgency') }}</td>
-                                <td class="whitespace-nowrap px-4 py-3 text-slate-700 dark:text-slate-200">{{ cellVal(item, 'rjjp') }}</td>
-                                <td class="whitespace-nowrap px-4 py-3 text-slate-700 dark:text-slate-200">{{ cellVal(item, 'coe') }}</td>
-                                <td class="whitespace-nowrap px-4 py-3">
-                                    <span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize" :class="statusBadgeClassById(item.status)">
+                                <td class="whitespace-nowrap px-6 py-4 text-xs text-slate-700 dark:text-slate-200">{{ cellVal(item, 'urgency') }}</td>
+                                <td class="whitespace-nowrap px-6 py-4 text-xs text-slate-700 dark:text-slate-200">{{ cellVal(item, 'rjjp') }}</td>
+                                <td class="whitespace-nowrap px-6 py-4 text-xs text-slate-700 dark:text-slate-200">{{ cellVal(item, 'coe') }}</td>
+                                <td class="whitespace-nowrap px-6 py-4">
+                                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-medium capitalize" :class="statusBadgeClassById(item.status)">
                                         {{ statusLabelFromOptions(item.status, statusOptions) }}
                                     </span>
                                 </td>
-                                <td class="sticky right-0 z-10 bg-white p-0 shadow-[-4px_0_8px_rgba(0,0,0,0.05)] dark:bg-[#171717] dark:shadow-[-4px_0_8px_rgba(0,0,0,0.2)]">
-                                    <div class="grid w-[180px] grid-cols-2 divide-x divide-slate-200 border-l border-slate-200 dark:divide-white/10 dark:border-white/10">
+                                <td class="sticky right-0 z-10 bg-white p-0 shadow-[-4px_0_8px_rgba(0,0,0,0.05)] dark:bg-[#1a1a1a] dark:shadow-[-4px_0_8px_rgba(0,0,0,0.2)]">
+                                    <div class="grid w-[180px] grid-cols-2 divide-x divide-slate-200 border-l border-slate-200 dark:divide-white/10 dark:border-white/10 h-full">
                                         <Link
                                             :href="`/digital-initiatives/${item.id}`"
                                             :class="actionCellClass(hasScopeCharter(item))"
                                             title="View Scope Charter"
+                                            class="flex items-center justify-center"
                                         >
                                             View
                                         </Link>
@@ -211,15 +214,15 @@
                                             :href="`/digital-initiatives/${item.id}`"
                                             :class="actionCellClass(hasProjectCharter(item))"
                                             title="View Project Charter"
+                                            class="flex items-center justify-center"
                                         >
                                             View
                                         </Link>
                                     </div>
                                 </td>
                             </tr>
-
                             <tr v-if="filteredItems.length === 0">
-                                <td colspan="11" class="px-4 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
+                                <td colspan="11" class="px-6 py-8 text-center text-xs text-slate-500 dark:text-slate-400">
                                     <span v-if="activeFlowFilter === null">
                                         Silakan klik salah satu status di atas untuk menampilkan data inisiatif.
                                     </span>
