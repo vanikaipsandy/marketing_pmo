@@ -21,18 +21,43 @@ class ProgramImplementationController extends Controller
         }
 
         $statusOptions         = $this->statusOptions();
-        $digitalStatusCountsRaw = collect();
+        $baselineStatusId      = $this->baselineStatusId($statusOptions);
+        
+        $digitalStatusCountsRaw = \App\Models\DigitalInitiative::query()
+            ->selectRaw('status, COUNT(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
         $itStatusCountsRaw     = Project::query()
             ->selectRaw('status, COUNT(*) as total')
             ->groupBy('status')
             ->pluck('total', 'status');
 
-        return Inertia::render('ProgramImplementation/Index', [
-            'projectCharterOverview' => [
+        return Inertia::render('ProgramImplementation/Dashboard', [
+            'overview' => [
                 'status_options'        => $statusOptions,
                 'digital_status_counts' => $this->mapCountsByStatus($statusOptions, $digitalStatusCountsRaw),
-                'it_status_counts'      => $this->mapCountsByStatus($statusOptions, $itStatusCountsRaw),
+                'status_counts'      => $this->mapCountsByStatus($statusOptions, $itStatusCountsRaw),
             ],
+            'completedStatusId'      => $baselineStatusId,
+            'openDigitalInitiatives' => $this->openDigitalInitiatives($baselineStatusId),
+            'openItInitiatives'      => $this->openItInitiatives($baselineStatusId),
         ]);
+    }
+
+    private function openDigitalInitiatives(int $baselineStatusId)
+    {
+        return \App\Models\DigitalInitiative::query()
+            ->with(['statusRef:id,name'])
+            ->latest()
+            ->get();
+    }
+
+    private function openItInitiatives(int $baselineStatusId)
+    {
+        return Project::query()
+            ->with(['statusRef:id,name'])
+            ->latest()
+            ->get();
     }
 }
