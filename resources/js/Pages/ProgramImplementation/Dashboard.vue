@@ -292,9 +292,34 @@ const filteredDigitalInitiatives = computed(() => {
     );
 });
 
+const normalizedItInitiatives = computed(() => {
+    return (Array.isArray(props.openItInitiatives) ? props.openItInitiatives : []).map((item) => {
+        const implementationHistory = Array.isArray(item?.pcStatusImplementations)
+            ? item.pcStatusImplementations
+            : Array.isArray(item?.pc_status_implementations)
+                ? item.pc_status_implementations
+                : [];
+
+        const latestStatusRaw = item?.latestPcStatusImplementation?.status
+            ?? item?.latest_pc_status_implementation?.status
+            ?? implementationHistory?.[0]?.status
+            ?? null;
+
+        const latestStatus = String(latestStatusRaw ?? '').trim() || null;
+
+        return {
+            ...item,
+            pcStatusImplementations: implementationHistory,
+            pc_status_implementations: implementationHistory,
+            latestImplementationStatus: latestStatus,
+            latest_implementation_status: latestStatus,
+        };
+    });
+});
+
 const filteredItInitiatives = computed(() => {
-    if (!selectedStatusFilter.value) return props.openItInitiatives;
-    return props.openItInitiatives.filter(
+    if (!selectedStatusFilter.value) return normalizedItInitiatives.value;
+    return normalizedItInitiatives.value.filter(
         item => String(item.status) === String(selectedStatusFilter.value)
     );
 });
@@ -342,7 +367,7 @@ const showApprovedItInitiatives = () => {
 const metricCards = computed(() => [
     {
         key: 'digital-approved',
-        label: 'Total Digital Inisiatif Disetujui',
+        label: 'Total Project Charter Digital Inisiatif Disetujui',
         value: totalDigitalDisetujui.value,
         actionLabel: 'Show',
         actionMethod: showApprovedDigitalInitiatives,
@@ -353,7 +378,7 @@ const metricCards = computed(() => [
     },
     {
         key: 'it-approved',
-        label: 'Total IT Inisiatif Disetujui',
+        label: 'Total Project Charter IT Inisiatif Disetujui',
         value: totalItDisetujui.value,
         actionLabel: 'Show',
         actionMethod: showApprovedItInitiatives,

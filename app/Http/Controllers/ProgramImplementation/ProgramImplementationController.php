@@ -48,7 +48,7 @@ class ProgramImplementationController extends Controller
     private function openDigitalInitiatives(int $baselineStatusId)
     {
         return \App\Models\DigitalInitiative::query()
-            ->with(['statusRef:id,name'])
+            ->with(['statusRef:id,name', 'ucStatusImplementations'])
             ->latest()
             ->get();
     }
@@ -56,7 +56,12 @@ class ProgramImplementationController extends Controller
     private function openItInitiatives(int $baselineStatusId)
     {
         return Project::query()
-            ->with(['statusRef:id,name'])
+            ->with([
+                'charter',
+                'statusRef:id,name',
+                'latestPcStatusImplementation',
+                'pcStatusImplementations',
+            ])
             ->latest()
             ->get();
     }

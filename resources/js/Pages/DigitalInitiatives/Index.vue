@@ -7,6 +7,25 @@
                 </div>
             </div>
 
+            <section class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <article
+                    class="relative flex flex-col rounded-2xl border p-5 shadow-[0_4px_16px_rgba(28,117,188,0.3)] bg-[#1C75BC] border-[#1C75BC]"
+                >
+                    <p
+                        class="text-xs font-semibold uppercase tracking-[0.08em] text-white"
+                        style="text-shadow: 0 1px 3px rgba(0,0,0,0.3);"
+                    >
+                        Total Project Charter Digital Inisiatif Disetujui
+                    </p>
+                    <p
+                        class="mt-2 flex items-center justify-between text-3xl font-bold text-white"
+                        style="text-shadow: 0 2px 6px rgba(0,0,0,0.35);"
+                    >
+                        <span>{{ totalApproved }}</span>
+                    </p>
+                </article>
+            </section>
+
             <!-- Filters -->
             <div class="mb-6 flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 dark:border-white/5 dark:bg-[#1a1a1a] sm:flex-row">
                 <div class="relative flex-1">
@@ -149,6 +168,10 @@ const props = defineProps({
         type: Number,
         default: 5,
     },
+    totalApproved: {
+        type: Number,
+        default: 0,
+    }
 });
 
 const statusOptions = computed(() => {

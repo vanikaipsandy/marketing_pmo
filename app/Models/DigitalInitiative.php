@@ -37,4 +37,9 @@ class DigitalInitiative extends Model
     {
         return $this->belongsTo(InitiativeStatus::class, 'status');
     }
+
+    public function ucStatusImplementations()
+    {
+        return $this->hasMany(UcStatusImplementation::class, 'digital_initiative_id')->orderBy('date', 'desc')->orderBy('time_start', 'desc');
+    }
 }

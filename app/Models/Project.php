@@ -58,6 +58,16 @@ class Project extends Model
         return $this->belongsToMany(Program::class, 'trs_program_project');
     }
 
+    public function pcStatusImplementations(): HasMany
+    {
+        return $this->hasMany(PcStatusImplementation::class, 'project_id')->orderBy('date', 'desc')->orderBy('time_start', 'desc');
+    }
+
+    public function latestPcStatusImplementation(): HasOne
+    {
+        return $this->hasOne(PcStatusImplementation::class, 'project_id')->latestOfMany('id');
+    }
+
     public function goals(): BelongsToMany
     {
         return $this->belongsToMany(Goal::class, 'trs_goal_project');

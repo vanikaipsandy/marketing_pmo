@@ -18,7 +18,7 @@
                     <tr>
                         <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">No</th>
                         <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Code</th>
-                        <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Type</th>
+                        <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Holding/Sub Holding</th>
                         <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Project Owner</th>
                         <th class="min-w-[180px] px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Use Case</th>
                         <th class="min-w-[280px] px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Desc</th>
@@ -26,7 +26,8 @@
                         <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Urgency</th>
                         <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Rjjp</th>
                         <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Coe</th>
-                        <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status</th>
+                        <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">State</th>
+                        <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Terbaru</th>
                         <th class="sticky right-0 z-10 whitespace-nowrap bg-slate-50 px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500 dark:bg-white/5 dark:text-slate-400">Action</th>
                     </tr>
                 </thead>
@@ -52,6 +53,16 @@
                             <span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize" :class="statusBadgeClassById(item.status)">
                                 {{ statusLabelFromOptions(item.status, statusOptions) }}
                             </span>
+                        </td>
+                        <td class="whitespace-nowrap px-4 py-3">
+                            <span 
+                                v-if="item.uc_status_implementations && item.uc_status_implementations.length > 0" 
+                                class="inline-flex rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700 dark:bg-white/10 dark:text-slate-300 capitalize" 
+                                :title="item.uc_status_implementations[0].status"
+                            >
+                                {{ item.uc_status_implementations[0].status }}
+                            </span>
+                            <span v-else class="text-slate-400 dark:text-slate-500 italic text-xs">-</span>
                         </td>
                         <td class="sticky right-0 z-10 whitespace-nowrap bg-white px-4 py-3 text-right shadow-[-4px_0_8px_rgba(0,0,0,0.05)] dark:bg-[#171717] dark:shadow-[-4px_0_8px_rgba(0,0,0,0.2)]">
                             <div class="flex items-center justify-end gap-1">
@@ -79,7 +90,7 @@
                     </tr>
 
                     <tr v-if="items.length === 0">
-                        <td colspan="11" class="px-4 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
+                        <td colspan="12" class="px-4 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
                             Semua digital initiatives sudah {{ lowerCompletedStatusLabel }}.
                         </td>
                     </tr>

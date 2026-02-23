@@ -43,10 +43,15 @@ class DigitalInitiativeController extends Controller
             ->latest()
             ->get();
 
+        $approveStatus = $statusOptions->firstWhere('name', 'approve') ?? $statusOptions->firstWhere('name', 'baseline');
+        $approveStatusId = $approveStatus ? $approveStatus['id'] : InitiativeStatus::baselineId();
+        $totalApproved = DigitalInitiative::where('status', $approveStatusId)->count();
+
         return Inertia::render('DigitalInitiatives/Index', [
             'initiatives' => $initiatives,
             'statusOptions' => $statusOptions,
             'completedStatusId' => $baselineStatusId,
+            'totalApproved' => $totalApproved,
             'filters' => [
                 'search' => $search,
                 'type' => $type,
@@ -85,7 +90,19 @@ class DigitalInitiativeController extends Controller
             'status' => ['required', 'integer', Rule::exists('trs_status_initiative', 'id')],
         ]);
 
-        DigitalInitiative::create($validated);
+        $digitalInitiative = DigitalInitiative::create($validated);
+
+        if ($digitalInitiative->status) {
+            $statusModel = InitiativeStatus::find($digitalInitiative->status);
+            $statusName = $statusModel ? $statusModel->name : (string)$digitalInitiative->status;
+            
+            \App\Models\UcStatusImplementation::create([
+                'digital_initiative_id' => $digitalInitiative->id,
+                'status' => $statusName,
+                'date' => now()->toDateString(),
+                'time_start' => now()->toTimeString(),
+            ]);
+        }
 
         return redirect()->route('digital-initiatives.index')->with('success', 'Digital Initiative created successfully.');
     }
@@ -130,7 +147,20 @@ class DigitalInitiativeController extends Controller
             'status' => ['required', 'integer', Rule::exists('trs_status_initiative', 'id')],
         ]);
 
+        $oldStatus = $digitalInitiative->status;
         $digitalInitiative->update($validated);
+
+        if ((string)$digitalInitiative->status !== (string)$oldStatus || !$digitalInitiative->wasRecentlyCreated) {
+            $statusModel = InitiativeStatus::find($digitalInitiative->status);
+            $statusName = $statusModel ? $statusModel->name : (string)$digitalInitiative->status;
+            
+            \App\Models\UcStatusImplementation::create([
+                'digital_initiative_id' => $digitalInitiative->id,
+                'status' => $statusName,
+                'date' => now()->toDateString(),
+                'time_start' => now()->toTimeString(),
+            ]);
+        }
 
         return redirect()->route('digital-initiatives.index')->with('success', 'Digital Initiative updated successfully.');
     }

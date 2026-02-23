@@ -74,7 +74,7 @@ class ITInitiativeController extends Controller
         $filterStatus = $filters['status'] ?? null;
 
         $projects = Project::query()
-            ->with(['owner', 'charter', 'statusRef:id,name'])
+            ->with(['owner', 'charter', 'statusRef:id,name', 'pcStatusImplementations'])
             ->when($filterStatus, fn ($q, $status) => $q->where('status', $status))
             ->when($filters['search'] ?? null, fn ($q, $search) => $q->where(function ($inner) use ($search): void {
                 $inner->where('name', 'like', "%{$search}%")
@@ -85,10 +85,15 @@ class ITInitiativeController extends Controller
             ->orderBy('id', 'asc')
             ->get();
 
+        $approveStatus = $statusOptions->firstWhere('name', 'approve') ?? $statusOptions->firstWhere('name', 'baseline');
+        $approveStatusId = $approveStatus ? $approveStatus['id'] : InitiativeStatus::baselineId();
+        $totalApproved = Project::where('status', $approveStatusId)->count();
+
         return Inertia::render('ITInitiative/Index', [
             'itInitiatives' => $projects,
             'statusOptions' => $statusOptions,
             'completedStatusId' => $baselineStatusId,
+            'totalApproved' => $totalApproved,
             'filters'  => [
                 'search' => $filters['search'] ?? null,
                 'status' => $filterStatus,
@@ -113,7 +118,19 @@ class ITInitiativeController extends Controller
 
     public function store(ITInitiativeStoreRequest $request): RedirectResponse
     {
-        Project::create($request->validated());
+        $project = Project::create($request->validated());
+
+        if ($project->status) {
+            $statusModel = InitiativeStatus::find($project->status);
+            $statusName = $statusModel ? $statusModel->name : (string)$project->status;
+            
+            \App\Models\PcStatusImplementation::create([
+                'project_id' => $project->id,
+                'status' => $statusName,
+                'date' => now()->toDateString(),
+                'time_start' => now()->toTimeString(),
+            ]);
+        }
 
         return redirect()->route('it-initiatives.index')->with('success', 'Project created successfully.');
     }
@@ -137,6 +154,8 @@ class ITInitiativeController extends Controller
 
     public function edit(Project $project): Response
     {
+        $project->load(['pcStatusImplementations']);
+        
         return Inertia::render('ITInitiative/Edit', [
             'itInitiative' => $project,
             'statusOptions' => InitiativeStatus::ordered()
@@ -152,7 +171,20 @@ class ITInitiativeController extends Controller
 
     public function update(ITInitiativeUpdateRequest $request, Project $project): RedirectResponse
     {
+        $oldStatus = $project->status;
         $project->update($request->validated());
+
+        if ((string)$project->status !== (string)$oldStatus || !$project->wasRecentlyCreated) {
+            $statusModel = InitiativeStatus::find($project->status);
+            $statusName = $statusModel ? $statusModel->name : (string)$project->status;
+            
+            \App\Models\PcStatusImplementation::create([
+                'project_id' => $project->id,
+                'status' => $statusName,
+                'date' => now()->toDateString(),
+                'time_start' => now()->toTimeString(),
+            ]);
+        }
 
         return redirect()->route('it-initiatives.index')->with('success', 'Project updated successfully.');
     }
@@ -162,5 +194,29 @@ class ITInitiativeController extends Controller
         $project->delete();
 
         return redirect()->route('it-initiatives.index')->with('success', 'Project deleted successfully.');
+    }
+
+    public function storeImplementationStatus(Request $request, Project $project): RedirectResponse
+    {
+        $validated = $request->validate([
+            'status' => 'required|string|max:255',
+        ]);
+
+        \App\Models\PcStatusImplementation::create([
+            'project_id' => $project->id,
+            'status' => $validated['status'],
+            'date' => now()->toDateString(),
+            'time_start' => now()->toTimeString(),
+        ]);
+
+        return redirect()->back()->with('success', 'Status added successfully.');
+    }
+
+    public function destroyImplementationStatus($id): RedirectResponse
+    {
+        $status = \App\Models\PcStatusImplementation::findOrFail($id);
+        $status->delete();
+
+        return redirect()->back()->with('success', 'Status deleted successfully.');
     }
 }
