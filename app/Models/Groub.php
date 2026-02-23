@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Company;
+use App\Models\Organization;
 use Illuminate\Database\Eloquent\Model;
 
 class Groub extends Model

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\StatusDigital;
 use Illuminate\Database\Eloquent\Model;
 
 class PhaseDigital extends Model
@@ -12,7 +13,7 @@ class PhaseDigital extends Model
         'name',
     ];
 
-    public function statuses(): HasMany
+    public function statuses()
     {
         return $this->hasMany(StatusDigital::class, 'phase_id');
     }

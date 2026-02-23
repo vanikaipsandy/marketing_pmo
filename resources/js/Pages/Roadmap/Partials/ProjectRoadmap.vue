@@ -42,8 +42,7 @@ const parseDateMeta = (value) => {
     };
 };
 
-const validMilestones = computed(() => (props.project?.milestones || [])
-    .filter((item) => item?.start_date || item?.end_date)
+const allMilestones = computed(() => (props.project?.milestones || [])
     .sort((a, b) => {
         const aOrder = Number(a.order ?? 0);
         const bOrder = Number(b.order ?? 0);
@@ -55,8 +54,11 @@ const validMilestones = computed(() => (props.project?.milestones || [])
         return String(a.start_date || '').localeCompare(String(b.start_date || ''));
     }));
 
+const datedMilestones = computed(() => allMilestones.value
+    .filter((item) => item?.start_date || item?.end_date));
+
 const timelineBounds = computed(() => {
-    const yearsFromMilestones = validMilestones.value.flatMap((item) => {
+    const yearsFromMilestones = datedMilestones.value.flatMap((item) => {
         const start = parseDateMeta(item.start_date)?.year ?? null;
         const end = parseDateMeta(item.end_date)?.year ?? null;
 
@@ -148,13 +150,14 @@ const buildRowsFromMilestones = () => {
     let objectiveIndex = 0;
     let usedObjectiveFallback = false;
 
-    for (const milestone of validMilestones.value) {
+    for (const milestone of allMilestones.value) {
         const startIndex = quarterIndexByDate(milestone.start_date ?? milestone.end_date);
         const endIndex = quarterIndexByDate(milestone.end_date ?? milestone.start_date);
+        const hasTimeline = startIndex !== null || endIndex !== null;
         const rangedStart = startIndex ?? 0;
         const rangedEnd = endIndex ?? rangedStart;
-        const normalizedStart = Math.max(0, Math.min(rangedStart, rangedEnd));
-        const normalizedEnd = Math.min(totalQuarterCells.value - 1, Math.max(rangedStart, rangedEnd));
+        const normalizedStart = hasTimeline ? Math.max(0, Math.min(rangedStart, rangedEnd)) : null;
+        const normalizedEnd = hasTimeline ? Math.min(totalQuarterCells.value - 1, Math.max(rangedStart, rangedEnd)) : null;
         let output = toLineItems(milestone.output);
 
         if (output.length === 0 && objectives.value[objectiveIndex]) {
@@ -166,6 +169,7 @@ const buildRowsFromMilestones = () => {
         rows.push({
             section: sectionLabelForType(milestone.type),
             activity: milestone.title || `Milestone ${rows.length + 1}`,
+            hasTimeline,
             start: normalizedStart,
             end: normalizedEnd,
             output,
@@ -200,7 +204,7 @@ const buildRowsFromObjectives = () => {
 };
 
 const roadmapSections = computed(() => {
-    const rows = validMilestones.value.length > 0
+    const rows = allMilestones.value.length > 0
         ? buildRowsFromMilestones()
         : buildRowsFromObjectives();
 
@@ -216,7 +220,13 @@ const roadmapSections = computed(() => {
     }];
 });
 
-const isQuarterActive = (row, quarterIndex) => quarterIndex >= row.start && quarterIndex <= row.end;
+const isQuarterActive = (row, quarterIndex) => {
+    if (!row?.hasTimeline) {
+        return false;
+    }
+
+    return quarterIndex >= row.start && quarterIndex <= row.end;
+};
 </script>
 
 <template>

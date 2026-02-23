@@ -11,19 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('trs_digital_group', function (Blueprint $table) {
-            $table->increments('id');
+        Schema::create('trs_digital_groub', function (Blueprint $table) {
             $table->unsignedInteger('digital_id');
-            $table->unsignedInteger('groub_id');
+            $table->unsignedInteger('organization_id');
             $table->timestamps();
             
+            $table->primary(['digital_id', 'organization_id']);
+
             $table->foreign('digital_id')
                 ->references('id')
                 ->on('trs_digital_initiative')
                 ->cascadeOnUpdate()
                 ->restrictOnDelete();
 
-            $table->foreign('groub_id')
+            $table->foreign('organization_id')
                 ->references('id')
                 ->on('trs_organization')
                 ->cascadeOnUpdate()

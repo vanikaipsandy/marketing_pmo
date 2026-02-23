@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             PhaseDigitalSeeder::class,
             StatusDigitalSeeder::class,
             CoeSeeder::class,
+            DataSourceSeeder::class,
         ]);
         $this->seedRoles();
         $this->seedAdminUser();

@@ -12,12 +12,21 @@ class DataSourceSeeder extends Seeder
      */
     public function run(): void
     {
-        DataSource::updateOrCreate(
+        $data = [
             [
                 'name' => 'Pertamina Digital Transformation DT Workstream Compendium',
                 'month' => 'May',
                 'year' => 2024,
             ],
-        );
+            [
+                'name' => 'Appendix 7 - List of Scope Charter for all digital initiatives identified v2',
+                'month' => 'June',
+                'year' => 2024,
+            ],
+        ];
+
+        foreach ($data as $item) {
+            DataSource::updateOrCreate($item);
+        }
     }
 }

@@ -18,8 +18,8 @@ class MilestoneStoreRequest extends FormRequest
             'title' => ['required', 'string', 'max:255'],
             'output' => ['nullable', 'string'],
             'type' => ['required', Rule::in(['assessment_design', 'rollout'])],
-            'start_date' => ['required', 'date'],
-            'end_date' => ['required', 'date', 'after_or_equal:start_date'],
+            'start_date' => ['nullable', 'date', 'required_with:end_date'],
+            'end_date' => ['nullable', 'date', 'required_with:start_date', 'after_or_equal:start_date'],
         ];
     }
 }

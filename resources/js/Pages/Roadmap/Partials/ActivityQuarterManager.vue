@@ -30,45 +30,62 @@
                 <p v-if="milestoneForm.errors.type" class="mt-1 text-xs text-red-500">{{ milestoneForm.errors.type }}</p>
             </div>
 
-            <div class="lg:col-span-2">
-                <label class="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Start Year</label>
-                <select
-                    v-model="milestoneRange.startYear"
-                    class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-white/10 dark:bg-[#101826] dark:text-slate-100"
-                >
-                    <option v-for="year in yearOptions" :key="`start-${year}`" :value="String(year)">{{ year }}</option>
-                </select>
+            <div class="lg:col-span-12">
+                <label class="inline-flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+                    <input
+                        v-model="useQuarterRange"
+                        type="checkbox"
+                        class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 dark:border-white/20"
+                    />
+                    Set quarter range (optional)
+                </label>
             </div>
 
-            <div class="lg:col-span-1">
-                <label class="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Start Q</label>
-                <select
-                    v-model="milestoneRange.startQuarter"
-                    class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-white/10 dark:bg-[#101826] dark:text-slate-100"
-                >
-                    <option v-for="quarter in quarterOptions" :key="`start-q-${quarter}`" :value="String(quarter)">Q{{ quarter }}</option>
-                </select>
-            </div>
+            <template v-if="useQuarterRange">
+                <div class="lg:col-span-2">
+                    <label class="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Start Year</label>
+                    <select
+                        v-model="milestoneRange.startYear"
+                        class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-white/10 dark:bg-[#101826] dark:text-slate-100"
+                    >
+                        <option value="">Select year</option>
+                        <option v-for="year in yearOptions" :key="`start-${year}`" :value="String(year)">{{ year }}</option>
+                    </select>
+                </div>
 
-            <div class="lg:col-span-2">
-                <label class="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">End Year</label>
-                <select
-                    v-model="milestoneRange.endYear"
-                    class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-white/10 dark:bg-[#101826] dark:text-slate-100"
-                >
-                    <option v-for="year in yearOptions" :key="`end-${year}`" :value="String(year)">{{ year }}</option>
-                </select>
-            </div>
+                <div class="lg:col-span-1">
+                    <label class="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Start Q</label>
+                    <select
+                        v-model="milestoneRange.startQuarter"
+                        class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-white/10 dark:bg-[#101826] dark:text-slate-100"
+                    >
+                        <option value="">Q</option>
+                        <option v-for="quarter in quarterOptions" :key="`start-q-${quarter}`" :value="String(quarter)">Q{{ quarter }}</option>
+                    </select>
+                </div>
 
-            <div class="lg:col-span-1">
-                <label class="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">End Q</label>
-                <select
-                    v-model="milestoneRange.endQuarter"
-                    class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-white/10 dark:bg-[#101826] dark:text-slate-100"
-                >
-                    <option v-for="quarter in quarterOptions" :key="`end-q-${quarter}`" :value="String(quarter)">Q{{ quarter }}</option>
-                </select>
-            </div>
+                <div class="lg:col-span-2">
+                    <label class="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">End Year</label>
+                    <select
+                        v-model="milestoneRange.endYear"
+                        class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-white/10 dark:bg-[#101826] dark:text-slate-100"
+                    >
+                        <option value="">Select year</option>
+                        <option v-for="year in yearOptions" :key="`end-${year}`" :value="String(year)">{{ year }}</option>
+                    </select>
+                </div>
+
+                <div class="lg:col-span-1">
+                    <label class="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">End Q</label>
+                    <select
+                        v-model="milestoneRange.endQuarter"
+                        class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-white/10 dark:bg-[#101826] dark:text-slate-100"
+                    >
+                        <option value="">Q</option>
+                        <option v-for="quarter in quarterOptions" :key="`end-q-${quarter}`" :value="String(quarter)">Q{{ quarter }}</option>
+                    </select>
+                </div>
+            </template>
 
             <div class="lg:col-span-12">
                 <label class="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Output</label>
@@ -169,11 +186,13 @@ const milestoneForm = useForm({
     end_date: '',
 });
 
+const useQuarterRange = ref(false);
+
 const milestoneRange = ref({
-    startYear: String(currentYear),
-    startQuarter: '1',
-    endYear: String(currentYear),
-    endQuarter: '1',
+    startYear: '',
+    startQuarter: '',
+    endYear: '',
+    endQuarter: '',
 });
 
 const parseDate = (value) => {
@@ -237,9 +256,9 @@ const resetMilestoneRange = () => {
 
     milestoneRange.value = {
         startYear: baseYear,
-        startQuarter: '1',
+        startQuarter: '',
         endYear: baseYear,
-        endQuarter: '1',
+        endQuarter: '',
     };
 };
 
@@ -249,6 +268,7 @@ watch(
         milestoneForm.reset();
         milestoneForm.clearErrors();
         milestoneForm.type = 'assessment_design';
+        useQuarterRange.value = false;
         resetMilestoneRange();
     },
     { immediate: true }
@@ -303,17 +323,27 @@ const addMilestone = () => {
 
     milestoneForm.clearErrors();
 
-    const startYear = Number(milestoneRange.value.startYear);
-    const startQuarter = Number(milestoneRange.value.startQuarter);
-    const endYear = Number(milestoneRange.value.endYear);
-    const endQuarter = Number(milestoneRange.value.endQuarter);
+    if (useQuarterRange.value) {
+        const startYear = Number(milestoneRange.value.startYear);
+        const startQuarter = Number(milestoneRange.value.startQuarter);
+        const endYear = Number(milestoneRange.value.endYear);
+        const endQuarter = Number(milestoneRange.value.endQuarter);
 
-    milestoneForm.start_date = quarterStartDate(startYear, startQuarter);
-    milestoneForm.end_date = quarterEndDate(endYear, endQuarter);
+        if (!startYear || !startQuarter || !endYear || !endQuarter) {
+            milestoneForm.setError('start_date', 'Pilih start year/quarter dan end year/quarter atau matikan opsi quarter range.');
+            return;
+        }
 
-    if (new Date(milestoneForm.end_date).getTime() < new Date(milestoneForm.start_date).getTime()) {
-        milestoneForm.setError('end_date', 'End quarter harus lebih besar atau sama dengan start quarter.');
-        return;
+        milestoneForm.start_date = quarterStartDate(startYear, startQuarter);
+        milestoneForm.end_date = quarterEndDate(endYear, endQuarter);
+
+        if (new Date(milestoneForm.end_date).getTime() < new Date(milestoneForm.start_date).getTime()) {
+            milestoneForm.setError('end_date', 'End quarter harus lebih besar atau sama dengan start quarter.');
+            return;
+        }
+    } else {
+        milestoneForm.start_date = null;
+        milestoneForm.end_date = null;
     }
 
     milestoneForm.post(`/it-initiatives/${props.project.id}/milestones`, {
@@ -322,6 +352,7 @@ const addMilestone = () => {
         onSuccess: () => {
             milestoneForm.reset();
             milestoneForm.type = 'assessment_design';
+            useQuarterRange.value = false;
             resetMilestoneRange();
         },
     });

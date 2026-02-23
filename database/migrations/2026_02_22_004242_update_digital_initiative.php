@@ -13,6 +13,15 @@ return new class extends Migration
     {
         Schema::table('trs_digital_initiative', function (Blueprint $table) {
             $table->string('useCase_description')->after('useCase_id');
+            $table->unsignedInteger('category_fase')->after('id')
+            ->comment('1: planning / scope charter, 2: implementation / project charter');
+            $table->unsignedInteger('ref_id')->nullable()->after('category_fase');      
+            
+            $table->foreign('ref_id')
+                ->references('id')
+                ->on('trs_digital_initiative')
+                ->cascadeOnUpdate()
+                ->restrictOnDelete();
         });
     }
 

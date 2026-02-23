@@ -12,10 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('trs_rjpp', function (Blueprint $table) {
-            $table->increments('id');
             $table->unsignedInteger('digital_id');
             $table->unsignedBigInteger('theme_id');
             $table->timestamps();
+
+            $table->primary(['digital_id', 'theme_id']);
 
             $table->foreign('digital_id')
                 ->references('id')

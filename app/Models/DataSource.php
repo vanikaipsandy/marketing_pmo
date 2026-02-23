@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\TrsDigitalInitiative;
 use Illuminate\Database\Eloquent\Model;
 
 class DataSource extends Model
@@ -13,5 +14,9 @@ class DataSource extends Model
         'month',
         'year',
     ];
-}
 
+    public function DigitalInitiatives()
+    {
+        return $this->hasMany(TrsDigitalInitiative::class, 'source_id');
+    }
+}

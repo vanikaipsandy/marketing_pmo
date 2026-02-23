@@ -19,8 +19,8 @@ class MilestoneController extends Controller
             'title' => $payload['title'],
             'output' => $payload['output'] ?? null,
             'type' => $payload['type'],
-            'start_date' => $payload['start_date'],
-            'end_date' => $payload['end_date'],
+            'start_date' => $payload['start_date'] ?? null,
+            'end_date' => $payload['end_date'] ?? null,
             'order' => $nextOrder,
         ]);
 

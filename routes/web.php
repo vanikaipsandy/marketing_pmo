@@ -5,14 +5,15 @@ use App\Http\Controllers\Admin\AdminRoleController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Auth\SsoController;
 use App\Http\Controllers\CompanyProfile\CompanyController;
-use App\Http\Controllers\ProgramImplementation\DashboardController;
-use App\Http\Controllers\ProgramPlanning\DashboardController as PlanningDashboardController;
 use App\Http\Controllers\DigitalInitiative\DigitalInitiativeController;
+use App\Http\Controllers\DigitalInitiative\TrsDigitalInitiativeController;
 use App\Http\Controllers\ITInitiative\CharterController;
 use App\Http\Controllers\ITInitiative\ITInitiativeController;
 use App\Http\Controllers\ITInitiative\MilestoneController;
-use App\Http\Controllers\ProgramPlanning\ProgramPlanningController;
+use App\Http\Controllers\ProgramImplementation\DashboardController;
 use App\Http\Controllers\ProgramImplementation\ProgramImplementationController;
+use App\Http\Controllers\ProgramPlanning\DashboardController as PlanningDashboardController;
+use App\Http\Controllers\ProgramPlanning\ProgramPlanningController;
 use App\Http\Controllers\StrategicPillar\StrategicPillarController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -67,7 +68,7 @@ Route::middleware(['auth', 'approved'])->group(function () {
     Route::get('/strategic-pillars/{goal?}', [StrategicPillarController::class, 'index'])->name('strategic-pillars.index');
 
     // Digital Initiatives
-    Route::resource('digital-initiatives', DigitalInitiativeController::class);
+    Route::resource('digital-initiatives', TrsDigitalInitiativeController::class);
 
     // IT Initiatives & Charters
     Route::get('/roadmap', [ITInitiativeController::class, 'roadmapIndex'])->name('roadmap.index');
