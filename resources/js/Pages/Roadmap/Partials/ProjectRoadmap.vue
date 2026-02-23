@@ -230,9 +230,9 @@ const isQuarterActive = (row, quarterIndex) => {
 </script>
 
 <template>
-    <section class="roadmap-sheet mt-6 border border-slate-300 bg-[#e9e9e9] p-6 text-slate-900 shadow-sm print:mt-0 print:break-before-page">
+    <section class="roadmap-sheet mt-6 border border-slate-300 bg-[#e9e9e9] p-4 text-slate-900 text-sm shadow-sm print:mt-0 print:break-before-page">
         <header class="border-b-2 border-[#2e6ea2] pb-2">
-            <h2 class="text-4xl font-extrabold leading-tight tracking-tight">
+            <h2 class="text-xl font-extrabold leading-tight tracking-tight">
                 Project Roadmap: {{ project.name || '-' }}
             </h2>
         </header>
@@ -240,7 +240,7 @@ const isQuarterActive = (row, quarterIndex) => {
         <div class="mt-4 overflow-x-auto">
             <table class="roadmap-table w-full border-collapse border border-[#2e6ea2] bg-transparent">
                 <thead>
-                    <tr class="h-10">
+                    <tr class="h-8">
                         <th rowspan="2" class="th-main w-[24%] min-w-[280px] text-left">ACTIVITY</th>
                         <th
                             v-for="year in years"
@@ -319,8 +319,8 @@ const isQuarterActive = (row, quarterIndex) => {
     background: #0f63b5;
     color: #fff;
     border: 1px solid #2e6ea2;
-    padding: 10px 14px;
-    font-size: 14px;
+    padding: 8px 12px;
+    font-size: 11px;
     font-weight: 800;
     letter-spacing: 0.02em;
 }
@@ -329,8 +329,8 @@ const isQuarterActive = (row, quarterIndex) => {
     background: #0f63b5;
     color: #fff;
     border: 1px solid #2e6ea2;
-    padding: 6px 0;
-    font-size: 14px;
+    padding: 4px 0;
+    font-size: 11px;
     font-weight: 800;
     text-align: center;
 }
@@ -339,11 +339,11 @@ const isQuarterActive = (row, quarterIndex) => {
     background: #f6f7fa;
     border: 1px solid #b8b8b8;
     border-right: 2px dotted #6b7280;
-    padding: 6px 0;
+    padding: 4px 0;
     width: 52px;
     min-width: 52px;
     text-align: center;
-    font-size: 12px;
+    font-size: 10px;
     font-weight: 800;
     color: #111827;
 }
@@ -353,16 +353,16 @@ const isQuarterActive = (row, quarterIndex) => {
 }
 
 .section-row td {
-    height: 28px;
+    height: 24px;
     border: 1px solid #2e6ea2;
     background: #0f63b5;
 }
 
 .section-title {
     color: #fff;
-    font-size: 15px;
+    font-size: 12px;
     font-weight: 800;
-    padding: 0 14px;
+    padding: 0 12px;
 }
 
 .section-gap {
@@ -371,8 +371,8 @@ const isQuarterActive = (row, quarterIndex) => {
 
 .activity-cell {
     border: 1px solid #b8b8b8;
-    padding: 10px 14px;
-    font-size: 16px;
+    padding: 8px 12px;
+    font-size: 12px;
     line-height: 1.25;
     vertical-align: top;
     background: #e9e9e9;
@@ -383,7 +383,7 @@ const isQuarterActive = (row, quarterIndex) => {
     border-right: 2px dotted #6b7280;
     width: 52px;
     min-width: 52px;
-    height: 44px;
+    height: 36px;
     background: #e9e9e9;
 }
 
@@ -397,16 +397,16 @@ const isQuarterActive = (row, quarterIndex) => {
 
 .output-cell {
     border: 1px solid #b8b8b8;
-    padding: 8px 14px;
+    padding: 6px 12px;
     vertical-align: top;
-    font-size: 16px;
+    font-size: 12px;
     line-height: 1.3;
     background: #e9e9e9;
 }
 
 .output-list {
     margin: 0;
-    padding-left: 18px;
+    padding-left: 14px;
 }
 
 .output-list li + li {
