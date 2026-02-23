@@ -16,6 +16,7 @@
             <table class="min-w-full divide-y divide-slate-200 text-sm dark:divide-white/10">
                 <thead class="bg-slate-50 dark:bg-white/5">
                     <tr>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">No</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Code</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Initiative</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status</th>
@@ -23,7 +24,8 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-white/5">
-                    <tr v-for="item in items" :key="`it-open-${item.id}`">
+                    <tr v-for="(item, index) in items" :key="`it-open-${item.id}`">
+                        <td class="whitespace-nowrap px-4 py-3 font-medium text-slate-900 dark:text-white">{{ index + 1 }}</td>
                         <td class="whitespace-nowrap px-4 py-3 font-medium text-slate-900 dark:text-white">{{ item.code || '-' }}</td>
                         <td class="px-4 py-3">
                             <div class="max-w-xs">
