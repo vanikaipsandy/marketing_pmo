@@ -2,7 +2,7 @@
     <UserLayout title="Digital Initiatives">
         <div class="animate-fade-in">
             <div class="mb-6 rounded-xl border border-slate-200 bg-white p-4 dark:border-white/5 dark:bg-[#1a1a1a]">
-                <div class="grid grid-cols-1 gap-3 md:grid-cols-3 xl:grid-cols-7">
+                <div class="grid grid-cols-1 gap-3 md:grid-cols-3 xl:grid-cols-8">
                     <div class="md:col-span-3 xl:col-span-2">
                         <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Search</label>
                         <div class="relative">
@@ -34,15 +34,29 @@
                     </div>
 
                     <div>
-                        <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Source</label>
+                        <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Data Source</label>
                         <select
                             v-model="form.source_id"
                             class="w-full rounded-lg border-slate-300 bg-white text-slate-700 focus:border-indigo-500 focus:ring-indigo-500 dark:border-white/10 dark:bg-[#131313] dark:text-slate-200"
                             @change="applyFilters"
                         >
-                            <option value="">All Sources</option>
+                            <option value="">All Data Sources</option>
                             <option v-for="source in options.sources" :key="source.id" :value="String(source.id)">
                                 {{ source.name }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Groub</label>
+                        <select
+                            v-model="form.groub_id"
+                            class="w-full rounded-lg border-slate-300 bg-white text-slate-700 focus:border-indigo-500 focus:ring-indigo-500 dark:border-white/10 dark:bg-[#131313] dark:text-slate-200"
+                            @change="applyFilters"
+                        >
+                            <option value="">All Groub</option>
+                            <option v-for="groub in options.groubs || []" :key="groub.id" :value="String(groub.id)">
+                                {{ groub.name }}
                             </option>
                         </select>
                     </div>
@@ -223,6 +237,7 @@ const props = defineProps({
         type: Object,
         default: () => ({
             sources: [],
+            groubs: [],
             statuses: [],
             phases: [],
             organizations: [],
@@ -239,6 +254,7 @@ const form = ref({
     search: props.filters.search || '',
     category_fase: props.filters.category_fase ? String(props.filters.category_fase) : '',
     source_id: props.filters.source_id ? String(props.filters.source_id) : '',
+    groub_id: props.filters.groub_id ? String(props.filters.groub_id) : '',
     phase_id: props.filters.phase_id ? String(props.filters.phase_id) : '',
     organization_id: props.filters.organization_id ? String(props.filters.organization_id) : '',
     coe_id: props.filters.coe_id ? String(props.filters.coe_id) : '',

@@ -4,51 +4,41 @@
             <section class="rounded-2xl border border-[#E42313] bg-[#E42313] p-6 shadow-sm">
                 <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                     <div>
-                        <h1 class="text-2xl font-bold text-white">Program <span class="text-yellow-400">Planning</span> Summary</h1>
+                        <h1 class="text-2xl font-bold text-white">Program <span class="text-yellow-400">Planning</span>
+                            Summary</h1>
                     </div>
                 </div>
             </section>
 
             <section class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <article
-                    v-for="item in metricCards"
-                    :key="item.key"
+                <article v-for="item in metricCards" :key="item.key"
                     class="relative flex flex-col rounded-2xl border p-5 shadow-sm"
-                    :class="item.cardClass || 'bg-white border-slate-200 dark:border-white/10 dark:bg-[#171717]'"
-                >
-                    <p
-                        class="text-xs font-semibold uppercase tracking-[0.08em]"
+                    :class="item.cardClass || 'bg-white border-slate-200 dark:border-white/10 dark:bg-[#171717]'">
+                    <p class="text-xs font-semibold uppercase tracking-[0.08em]"
                         :class="item.labelClass || 'text-slate-500 dark:text-slate-400'"
-                        :style="item.textShadow ? { textShadow: '0 1px 3px rgba(0,0,0,0.3)' } : {}"
-                    >
+                        :style="item.textShadow ? { textShadow: '0 1px 3px rgba(0,0,0,0.3)' } : {}">
                         {{ item.label }}
                     </p>
-                    <p
-                        class="mt-2 flex items-center justify-between text-3xl font-bold"
+                    <p class="mt-2 flex items-center justify-between text-3xl font-bold"
                         :class="item.textClass || 'text-slate-900 dark:text-white'"
-                        :style="item.textShadow ? { textShadow: '0 2px 6px rgba(0,0,0,0.35)' } : {}"
-                    >
+                        :style="item.textShadow ? { textShadow: '0 2px 6px rgba(0,0,0,0.35)' } : {}">
                         <span>{{ item.value }}</span>
-                        <button
-                            v-if="item.actionMethod"
+                        <button v-if="item.actionMethod"
                             class="text-sm font-semibold opacity-80 transition-colors hover:opacity-100"
-                            :class="item.labelClass"
-                            @click="item.actionMethod"
-                        >
+                            :class="item.labelClass" @click="item.actionMethod">
                             {{ item.actionLabel }}
                         </button>
                     </p>
-                    <p v-if="item.note" class="mt-2 flex-1 text-xs" :class="item.labelClass || 'text-slate-500 dark:text-slate-400'">{{ item.note }}</p>
+                    <p v-if="item.note" class="mt-2 flex-1 text-xs"
+                        :class="item.labelClass || 'text-slate-500 dark:text-slate-400'">{{ item.note }}</p>
                 </article>
             </section>
 
-            <ScopeCharterFlowSection
-                :digital-steps="digitalStatusFlow"
-                :it-steps="itStatusFlow"
-            />
+            <ScopeCharterFlowSection :digital-steps="digitalStatusFlow" :it-steps="itStatusFlow" />
 
             <!-- Scope Charter Status Summary -->
-            <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717]">
+            <section
+                class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717]">
                 <div class="border-b border-slate-200 px-5 py-4 dark:border-white/10">
                     <h2 class="text-base font-semibold text-slate-900 dark:text-white">Scope Charter Status Summary</h2>
                 </div>
@@ -57,61 +47,51 @@
                     <table class="w-full min-w-[640px] divide-y divide-slate-200 text-sm dark:divide-white/10">
                         <thead class="bg-slate-50 dark:bg-white/5">
                             <tr>
-                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Initiative</th>
                                 <th
-                                    v-for="column in statusSummaryColumns"
-                                    :key="`status-summary-head-${column.key}`"
-                                    class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400"
-                                >
+                                    class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                    Initiative</th>
+                                <th v-for="column in statusSummaryColumns" :key="`status-summary-head-${column.key}`"
+                                    class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                                     {{ column.label }}
                                 </th>
-                                <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Total</th>
+                                <th
+                                    class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                    Total</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100 dark:divide-white/5">
-                            <tr
-                                v-for="row in statusSummaryRows"
-                                :key="row.key"
-                                class="transition-colors hover:bg-slate-50 dark:hover:bg-white/5"
-                            >
-                                <td
-                                    role="button"
-                                    tabindex="0"
+                            <tr v-for="row in statusSummaryRows" :key="row.key"
+                                class="transition-colors hover:bg-slate-50 dark:hover:bg-white/5">
+                                <td role="button" tabindex="0"
                                     class="cursor-pointer px-4 py-3 font-semibold text-slate-900 dark:text-white"
                                     :class="selectedInitiative === row.key && selectedStatusFilter === null ? 'bg-blue-50/70 dark:bg-blue-500/10' : ''"
                                     @click="toggleInitiativeTable(row.key, null)"
                                     @keydown.enter.prevent="toggleInitiativeTable(row.key, null)"
-                                    @keydown.space.prevent="toggleInitiativeTable(row.key, null)"
-                                >
+                                    @keydown.space.prevent="toggleInitiativeTable(row.key, null)">
                                     <div class="flex items-center gap-2">
                                         <span>{{ row.label }}</span>
-                                        <span class="text-[10px] uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                                            {{ selectedInitiative === row.key && selectedStatusFilter === null ? 'Hide' : 'Show All' }}
+                                        <span
+                                            class="text-[10px] uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                                            {{ selectedInitiative === row.key && selectedStatusFilter === null ? 'Hide'
+                                            : 'Show All' }}
                                         </span>
                                     </div>
                                 </td>
-                                <td
-                                    v-for="column in statusSummaryColumns"
-                                    :key="`status-summary-cell-${row.key}-${column.key}`"
-                                    role="button"
-                                    tabindex="0"
+                                <td v-for="column in statusSummaryColumns"
+                                    :key="`status-summary-cell-${row.key}-${column.key}`" role="button" tabindex="0"
                                     class="cursor-pointer px-4 py-3 text-right font-semibold text-slate-800 transition-colors hover:bg-slate-100 dark:text-slate-100 dark:hover:bg-white/10"
                                     :class="selectedInitiative === row.key && String(selectedStatusFilter) === String(column.key) ? 'bg-blue-50/70 dark:bg-blue-500/10' : ''"
                                     @click="toggleInitiativeTable(row.key, column.key)"
                                     @keydown.enter.prevent="toggleInitiativeTable(row.key, column.key)"
-                                    @keydown.space.prevent="toggleInitiativeTable(row.key, column.key)"
-                                >
+                                    @keydown.space.prevent="toggleInitiativeTable(row.key, column.key)">
                                     {{ row.counts[column.key] }}
                                 </td>
-                                <td
-                                    role="button"
-                                    tabindex="0"
+                                <td role="button" tabindex="0"
                                     class="cursor-pointer px-4 py-3 text-right font-bold text-slate-900 transition-colors hover:bg-slate-100 dark:text-white dark:hover:bg-white/10"
                                     :class="selectedInitiative === row.key && selectedStatusFilter === null ? 'bg-blue-50/70 dark:bg-blue-500/10' : ''"
                                     @click="toggleInitiativeTable(row.key, null)"
                                     @keydown.enter.prevent="toggleInitiativeTable(row.key, null)"
-                                    @keydown.space.prevent="toggleInitiativeTable(row.key, null)"
-                                >
+                                    @keydown.space.prevent="toggleInitiativeTable(row.key, null)">
                                     {{ row.total }}
                                 </td>
                             </tr>
@@ -122,37 +102,102 @@
 
             <!-- Scope Charter Tables -->
             <section class="grid grid-cols-1 gap-5">
-                <article
-                    v-if="selectedInitiative === null"
-                    class="rounded-2xl border border-dashed border-slate-300 bg-white p-6 text-center shadow-sm dark:border-white/15 dark:bg-[#171717]"
-                >
+                <article v-if="selectedInitiative === null"
+                    class="rounded-2xl border border-dashed border-slate-300 bg-white p-6 text-center shadow-sm dark:border-white/15 dark:bg-[#171717]">
                     <p class="text-sm font-medium text-slate-700 dark:text-slate-200">
-                        Klik baris <span class="font-semibold">Digital initiative</span> atau <span class="font-semibold">IT Initiative</span> untuk menampilkan tabel detail.
+                        Klik baris <span class="font-semibold">Digital initiative</span> atau <span
+                            class="font-semibold">IT Initiative</span> untuk menampilkan tabel detail.
                     </p>
                 </article>
 
-                <ScopeCharterDigitalTable
-                    v-else-if="selectedInitiative === 'digital'"
-                    :items="filteredDigitalInitiatives"
-                    :completed-status-id="completedStatusId"
-                    :completed-status-label="completedStatusLabel"
-                    :status-options="statusOptions"
-                />
+                <ScopeCharterDigitalTable v-else-if="selectedInitiative === 'digital'"
+                    :items="filteredDigitalInitiatives" :completed-status-id="completedStatusId"
+                    :completed-status-label="completedStatusLabel" :status-options="statusOptions"
+                    :category-options="categoryOptions">
+                    <template #header-filters>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <div v-for="definition in filterDefinitions" :key="`digital-filter-${definition.key}`"
+                                class="relative">
+                                <button type="button"
+                                    class="inline-flex min-w-[150px] items-center justify-between gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-left transition hover:border-slate-400 dark:border-white/10 dark:bg-[#131313] dark:hover:border-white/20"
+                                    @click.stop="toggleFilterDropdown(definition.key)">
+                                    <span class="flex flex-col leading-tight">
+                                        <span
+                                            class="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">{{
+                                            definition.label }}</span>
+                                        <span class="text-xs font-semibold text-slate-700 dark:text-slate-200">{{
+                                            selectedFilterLabel(definition.key) }}</span>
+                                    </span>
+                                    <svg class="h-4 w-4 shrink-0 text-slate-400" viewBox="0 0 20 20" fill="currentColor"
+                                        aria-hidden="true">
+                                        <path fill-rule="evenodd"
+                                            d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.512a.75.75 0 0 1-1.08 0L5.21 8.27a.75.75 0 0 1 .02-1.06z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </button>
 
-                <ScopeCharterItTable
-                    v-else-if="selectedInitiative === 'it'"
-                    :items="filteredItInitiatives"
-                    :completed-status-id="completedStatusId"
-                    :completed-status-label="completedStatusLabel"
-                    :status-options="statusOptions"
-                />
+                                <div v-if="activeFilterDropdown === definition.key"
+                                    class="absolute left-0 z-20 mt-2 max-h-64 min-w-[220px] overflow-auto rounded-xl border border-slate-200 bg-white p-1 shadow-xl dark:border-white/10 dark:bg-[#111111]">
+                                    <button v-for="option in definition.options"
+                                        :key="`${definition.key}-${option.value}`" type="button"
+                                        class="block w-full rounded-lg px-3 py-2 text-left text-xs transition hover:bg-slate-100 dark:hover:bg-white/10"
+                                        :class="String(filterForm[definition.key]) === String(option.value) ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300' : 'text-slate-700 dark:text-slate-200'"
+                                        @click.stop="setFilterValue(definition.key, option.value)">
+                                        {{ option.label }}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </ScopeCharterDigitalTable>
+
+                <ScopeCharterItTable v-else-if="selectedInitiative === 'it'" :items="filteredItInitiatives"
+                    :completed-status-id="completedStatusId" :completed-status-label="completedStatusLabel"
+                    :status-options="statusOptions">
+                    <template #header-filters>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <div v-for="definition in filterDefinitions" :key="`it-filter-${definition.key}`"
+                                class="relative">
+                                <button type="button"
+                                    class="inline-flex min-w-[150px] items-center justify-between gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-left transition hover:border-slate-400 dark:border-white/10 dark:bg-[#131313] dark:hover:border-white/20"
+                                    @click.stop="toggleFilterDropdown(definition.key)">
+                                    <span class="flex flex-col leading-tight">
+                                        <span
+                                            class="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">{{
+                                            definition.label }}</span>
+                                        <span class="text-xs font-semibold text-slate-700 dark:text-slate-200">{{
+                                            selectedFilterLabel(definition.key) }}</span>
+                                    </span>
+                                    <svg class="h-4 w-4 shrink-0 text-slate-400" viewBox="0 0 20 20" fill="currentColor"
+                                        aria-hidden="true">
+                                        <path fill-rule="evenodd"
+                                            d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.512a.75.75 0 0 1-1.08 0L5.21 8.27a.75.75 0 0 1 .02-1.06z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+
+                                <div v-if="activeFilterDropdown === definition.key"
+                                    class="absolute left-0 z-20 mt-2 max-h-64 min-w-[220px] overflow-auto rounded-xl border border-slate-200 bg-white p-1 shadow-xl dark:border-white/10 dark:bg-[#111111]">
+                                    <button v-for="option in definition.options"
+                                        :key="`${definition.key}-${option.value}`" type="button"
+                                        class="block w-full rounded-lg px-3 py-2 text-left text-xs transition hover:bg-slate-100 dark:hover:bg-white/10"
+                                        :class="String(filterForm[definition.key]) === String(option.value) ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300' : 'text-slate-700 dark:text-slate-200'"
+                                        @click.stop="setFilterValue(definition.key, option.value)">
+                                        {{ option.label }}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </ScopeCharterItTable>
             </section>
         </div>
     </UserLayout>
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { router } from '@inertiajs/vue3';
 import UserLayout from '@/Layouts/UserLayout.vue';
 import ScopeCharterFlowSection from '@/Components/Dashboard/ScopeCharterFlowSection.vue';
 import ScopeCharterDigitalTable from '@/Components/Dashboard/ScopeCharterDigitalTable.vue';
@@ -183,6 +228,24 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
+    filters: {
+        type: Object,
+        default: () => ({}),
+    },
+    options: {
+        type: Object,
+        default: () => ({
+            sources: [],
+            groubs: [],
+            phases: [],
+            organizations: [],
+            coes: [],
+        }),
+    },
+    categoryOptions: {
+        type: Array,
+        default: () => [],
+    },
 });
 
 const fallbackStatusOptions = [
@@ -190,6 +253,7 @@ const fallbackStatusOptions = [
     { id: 2, name: 'propose', label: 'Propose' },
     { id: 3, name: 'review', label: 'Review' },
     { id: 4, name: 'approve', label: 'Approve' },
+    { id: 5, name: 'finish', label: 'Finish' },
 ];
 
 const statusOptions = computed(() => {
@@ -198,7 +262,7 @@ const statusOptions = computed(() => {
         : fallbackStatusOptions;
 });
 
-const scopeStatusOrder = ['drafting', 'propose', 'review', 'approve'];
+const scopeStatusOrder = ['drafting', 'propose', 'review', 'approve', 'finish'];
 
 const normalizeStatusName = (value) => String(value ?? '').trim().toLowerCase();
 
@@ -222,12 +286,15 @@ const scopeStatusOptions = computed(() => {
 
     return scopeStatusOrder.map((statusName, index) => {
         const matchedStatus = mappedStatusByName.get(statusName);
-        const fallbackStatus = fallbackStatusOptions[index];
+        const fallbackStatus = fallbackStatusOptions[index] ?? {
+            id: index + 1,
+            label: statusName.charAt(0).toUpperCase() + statusName.slice(1),
+        };
 
         return {
             id: Number(matchedStatus?.id ?? fallbackStatus.id),
             name: statusName,
-            label: fallbackStatus.label,
+            label: String(fallbackStatus.label ?? statusName),
         };
     });
 });
@@ -275,6 +342,108 @@ const statusSummaryRows = computed(() => {
 const selectedInitiative = ref(null);
 const selectedStatusFilter = ref(null);
 
+const filterForm = ref({
+    search: props.filters?.search || '',
+    category_fase: props.filters?.category_fase ? String(props.filters.category_fase) : '',
+    source_id: props.filters?.source_id ? String(props.filters.source_id) : '',
+    groub_id: props.filters?.groub_id ? String(props.filters.groub_id) : '',
+    phase_id: props.filters?.phase_id ? String(props.filters.phase_id) : '',
+    organization_id: props.filters?.organization_id ? String(props.filters.organization_id) : '',
+    coe_id: props.filters?.coe_id ? String(props.filters.coe_id) : '',
+});
+
+const activeFilterDropdown = ref(null);
+
+const applyFilters = () => {
+    router.get('/dashboard-monitoring', filterForm.value, {
+        preserveState: true,
+        replace: true,
+    });
+};
+
+const filterDefinitions = computed(() => [
+    {
+        key: 'category_fase',
+        label: 'Type',
+        options: [
+            { value: '', label: 'All Type' },
+            ...(props.categoryOptions || []).map((item) => ({ value: String(item.id), label: item.label })),
+        ],
+    },
+    {
+        key: 'source_id',
+        label: 'Data Source',
+        options: [
+            { value: '', label: 'All Data Sources' },
+            ...((props.options?.sources || []).map((item) => ({ value: String(item.id), label: item.name }))),
+        ],
+    },
+    {
+        key: 'groub_id',
+        label: 'Groub',
+        options: [
+            { value: '', label: 'All Groub' },
+            ...((props.options?.groubs || []).map((item) => ({ value: String(item.id), label: item.name }))),
+        ],
+    },
+    {
+        key: 'phase_id',
+        label: 'Phase',
+        options: [
+            { value: '', label: 'All Phase' },
+            ...((props.options?.phases || []).map((item) => ({ value: String(item.id), label: item.name }))),
+        ],
+    },
+    {
+        key: 'organization_id',
+        label: 'Organization',
+        options: [
+            { value: '', label: 'All Organization' },
+            ...((props.options?.organizations || []).map((item) => ({ value: String(item.id), label: item.name }))),
+        ],
+    },
+    {
+        key: 'coe_id',
+        label: 'COE',
+        options: [
+            { value: '', label: 'All COE' },
+            ...((props.options?.coes || []).map((item) => ({ value: String(item.id), label: item.name }))),
+        ],
+    },
+]);
+
+const toggleFilterDropdown = (key) => {
+    activeFilterDropdown.value = activeFilterDropdown.value === key ? null : key;
+};
+
+const setFilterValue = (key, value) => {
+    filterForm.value[key] = String(value ?? '');
+    activeFilterDropdown.value = null;
+    applyFilters();
+};
+
+const selectedFilterLabel = (key) => {
+    const definition = filterDefinitions.value.find((item) => item.key === key);
+    if (!definition) return '-';
+
+    const selectedValue = String(filterForm.value[key] ?? '');
+    const selectedOption = definition.options.find((option) => String(option.value) === selectedValue);
+
+    return selectedOption?.label ?? definition.options[0]?.label ?? '-';
+};
+
+const closeFilterDropdown = () => {
+    activeFilterDropdown.value = null;
+};
+
+onMounted(() => {
+    window.addEventListener('click', closeFilterDropdown);
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener('click', closeFilterDropdown);
+});
+
 const toggleInitiativeTable = (initiativeKey, statusId = null) => {
     if (selectedInitiative.value === initiativeKey && selectedStatusFilter.value === statusId) {
         selectedInitiative.value = null;
@@ -287,9 +456,14 @@ const toggleInitiativeTable = (initiativeKey, statusId = null) => {
 
 const filteredDigitalInitiatives = computed(() => {
     if (!selectedStatusFilter.value) return props.openDigitalInitiatives;
-    return props.openDigitalInitiatives.filter(
-        item => String(item.status) === String(selectedStatusFilter.value)
-    );
+    return props.openDigitalInitiatives.filter((item) => {
+        if (item.statuses?.length) {
+            return item.statuses.some(
+                (s) => String(s.id) === String(selectedStatusFilter.value) || String(s.phase_id) === String(selectedStatusFilter.value)
+            );
+        }
+        return String(item.status) === String(selectedStatusFilter.value);
+    });
 });
 
 const filteredItInitiatives = computed(() => {
@@ -300,8 +474,8 @@ const filteredItInitiatives = computed(() => {
 });
 
 const approveStatusId = computed(() => {
-    const approveStatus = statusOptions.value.find(s => 
-        String(s.name).trim().toLowerCase() === 'approve' || 
+    const approveStatus = statusOptions.value.find(s =>
+        String(s.name).trim().toLowerCase() === 'approve' ||
         String(s.label).trim().toLowerCase() === 'approve' ||
         String(s.name).trim().toLowerCase() === 'baseline' ||
         String(s.label).trim().toLowerCase() === 'baseline'

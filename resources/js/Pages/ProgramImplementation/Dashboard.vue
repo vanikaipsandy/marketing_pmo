@@ -287,41 +287,47 @@ const toggleInitiativeTable = (initiativeKey, statusId = null) => {
 
 const filteredDigitalInitiatives = computed(() => {
     if (!selectedStatusFilter.value) return props.openDigitalInitiatives;
-    return props.openDigitalInitiatives.filter(
-        item => String(item.status) === String(selectedStatusFilter.value)
-    );
+    return props.openDigitalInitiatives.filter((item) => {
+        if (item.statuses?.length) {
+            return item.statuses.some(
+                (statusItem) =>
+                    String(statusItem.id) === String(selectedStatusFilter.value) ||
+                    String(statusItem.phase_id) === String(selectedStatusFilter.value)
+            );
+        }
+
+        return (
+            String(item.status) === String(selectedStatusFilter.value) ||
+            String(item.status_id) === String(selectedStatusFilter.value) ||
+            String(item.statusRef?.id) === String(selectedStatusFilter.value)
+        );
+    });
 });
 
 const filteredItInitiatives = computed(() => {
     if (!selectedStatusFilter.value) return props.openItInitiatives;
-    return props.openItInitiatives.filter(
-        item => String(item.status) === String(selectedStatusFilter.value)
-    );
+    return props.openItInitiatives.filter((item) => {
+        return (
+            String(item.status) === String(selectedStatusFilter.value) ||
+            String(item.status_id) === String(selectedStatusFilter.value) ||
+            String(item.statusRef?.id) === String(selectedStatusFilter.value)
+        );
+    });
 });
 
-const approveStatusId = computed(() => {
-    const approveStatus = statusOptions.value.find(s => 
-        String(s.name).trim().toLowerCase() === 'approve' || 
-        String(s.label).trim().toLowerCase() === 'approve' ||
-        String(s.name).trim().toLowerCase() === 'baseline' ||
-        String(s.label).trim().toLowerCase() === 'baseline'
-    );
-    return approveStatus ? String(approveStatus.id) : null;
-});
+const completedStatusKey = computed(() => String(completedStatusId.value));
 
 const totalDigitalDisetujui = computed(() => {
-    if (!approveStatusId.value) return 0;
-    return Number(props.overview?.digital_status_counts?.[approveStatusId.value] ?? 0);
+    return Number(props.overview?.digital_status_counts?.[completedStatusKey.value] ?? 0);
 });
 
 const totalItDisetujui = computed(() => {
-    if (!approveStatusId.value) return 0;
-    return Number(props.overview?.status_counts?.[approveStatusId.value] ?? 0);
+    return Number(props.overview?.status_counts?.[completedStatusKey.value] ?? 0);
 });
 
 const showApprovedDigitalInitiatives = () => {
     selectedInitiative.value = 'digital';
-    selectedStatusFilter.value = approveStatusId.value;
+    selectedStatusFilter.value = String(completedStatusId.value);
 
     window.scrollTo({
         top: document.body.scrollHeight,
@@ -331,7 +337,7 @@ const showApprovedDigitalInitiatives = () => {
 
 const showApprovedItInitiatives = () => {
     selectedInitiative.value = 'it';
-    selectedStatusFilter.value = approveStatusId.value;
+    selectedStatusFilter.value = String(completedStatusId.value);
 
     window.scrollTo({
         top: document.body.scrollHeight,
