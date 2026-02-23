@@ -309,19 +309,17 @@ const approveStatusId = computed(() => {
     return approveStatus ? String(approveStatus.id) : null;
 });
 
-const totalDigitalDisetujui = computed(() => {
-    if (!approveStatusId.value) return 0;
-    return Number(props.summary?.digital_status_counts?.[approveStatusId.value] ?? 0);
+const totalDigitalOverall = computed(() => {
+    return Object.values(props.summary?.digital_status_counts || {}).reduce((sum, val) => sum + Number(val), 0);
 });
 
-const totalItDisetujui = computed(() => {
-    if (!approveStatusId.value) return 0;
-    return Number(props.summary?.it_status_counts?.[approveStatusId.value] ?? 0);
+const totalItOverall = computed(() => {
+    return Object.values(props.summary?.it_status_counts || {}).reduce((sum, val) => sum + Number(val), 0);
 });
 
-const showApprovedDigitalInitiatives = () => {
+const showAllDigitalInitiatives = () => {
     selectedInitiative.value = 'digital';
-    selectedStatusFilter.value = approveStatusId.value;
+    selectedStatusFilter.value = null;
 
     window.scrollTo({
         top: document.body.scrollHeight,
@@ -329,9 +327,9 @@ const showApprovedDigitalInitiatives = () => {
     });
 };
 
-const showApprovedItInitiatives = () => {
+const showAllItInitiatives = () => {
     selectedInitiative.value = 'it';
-    selectedStatusFilter.value = approveStatusId.value;
+    selectedStatusFilter.value = null;
 
     window.scrollTo({
         top: document.body.scrollHeight,
@@ -341,22 +339,22 @@ const showApprovedItInitiatives = () => {
 
 const metricCards = computed(() => [
     {
-        key: 'digital-approved',
-        label: 'Total Digital Inisiatif Disetujui',
-        value: totalDigitalDisetujui.value,
+        key: 'digital-total',
+        label: 'Total Usulan Digital Inisiatif',
+        value: totalDigitalOverall.value,
         actionLabel: 'Show',
-        actionMethod: showApprovedDigitalInitiatives,
+        actionMethod: showAllDigitalInitiatives,
         cardClass: 'bg-[#1C75BC] border-[#1C75BC] shadow-[0_4px_16px_rgba(28,117,188,0.3)]',
         textClass: 'text-white',
         labelClass: 'text-white',
         textShadow: true,
     },
     {
-        key: 'it-approved',
-        label: 'Total IT Inisiatif Disetujui',
-        value: totalItDisetujui.value,
+        key: 'it-total',
+        label: 'Total Usulan IT Inisiatif',
+        value: totalItOverall.value,
         actionLabel: 'Show',
-        actionMethod: showApprovedItInitiatives,
+        actionMethod: showAllItInitiatives,
         cardClass: 'bg-[#A7C942] border-[#A7C942] shadow-[0_4px_16px_rgba(167,201,66,0.3)]',
         textClass: 'text-white',
         labelClass: 'text-white',
