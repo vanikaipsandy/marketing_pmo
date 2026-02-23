@@ -27,7 +27,7 @@
             </section>
 
             <!-- Filters -->
-            <div class="mb-6 flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 dark:border-white/5 dark:bg-[#1a1a1a] sm:flex-row">
+            <!-- <div class="mb-6 flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 dark:border-white/5 dark:bg-[#1a1a1a] sm:flex-row">
                 <div class="relative flex-1">
                     <input
                         v-model="filters.search"
@@ -57,7 +57,7 @@
                 >
                     <option :value="completedStatusId">{{ completedStatusLabel }}</option>
                 </select>
-            </div>
+            </div> -->
 
             <!-- Table -->
             <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717]">

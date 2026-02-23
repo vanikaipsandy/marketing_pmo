@@ -25,7 +25,8 @@
                     </p>
                 </article>
             </section>
-
+            <!-- FILTER -->
+<!-- 
             <div class="mb-6 flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 dark:border-white/5 dark:bg-[#1a1a1a] sm:flex-row">
                 <div class="relative flex-1">
                     <input
@@ -56,7 +57,7 @@
                         {{ month.label }}
                     </option>
                 </select>
-            </div>
+            </div> -->
 
             <div class="overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-white/5 dark:bg-[#1a1a1a]">
                 <div class="overflow-x-auto">

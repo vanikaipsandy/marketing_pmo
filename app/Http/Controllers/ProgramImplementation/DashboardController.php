@@ -54,7 +54,12 @@ class DashboardController extends Controller
     private function openItInitiatives(int $baselineStatusId): Collection
     {
         return Project::query()
-            ->with(['statusRef:id,name'])
+            ->with([
+                'charter',
+                'statusRef:id,name',
+                'latestPcStatusImplementation',
+                'pcStatusImplementations',
+            ])
             ->where(static function ($query) use ($baselineStatusId): void {
                 $query
                     ->whereNull('status')
