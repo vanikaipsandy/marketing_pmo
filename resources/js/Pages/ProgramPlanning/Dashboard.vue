@@ -73,7 +73,7 @@
                                         <span
                                             class="text-[10px] uppercase tracking-wider text-slate-400 dark:text-slate-500">
                                             {{ selectedInitiative === row.key && selectedStatusFilter === null ? 'Hide'
-                                            : 'Show All' }}
+                                                : 'Show All' }}
                                         </span>
                                     </div>
                                 </td>
@@ -113,91 +113,18 @@
                 <ScopeCharterDigitalTable v-else-if="selectedInitiative === 'digital'"
                     :items="filteredDigitalInitiatives" :completed-status-id="completedStatusId"
                     :completed-status-label="completedStatusLabel" :status-options="statusOptions"
-                    :category-options="categoryOptions">
-                    <template #header-filters>
-                        <div class="flex flex-wrap items-center gap-2">
-                            <div v-for="definition in filterDefinitions" :key="`digital-filter-${definition.key}`"
-                                class="relative">
-                                <button type="button"
-                                    class="inline-flex min-w-[150px] items-center justify-between gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-left transition hover:border-slate-400 dark:border-white/10 dark:bg-[#131313] dark:hover:border-white/20"
-                                    @click.stop="toggleFilterDropdown(definition.key)">
-                                    <span class="flex flex-col leading-tight">
-                                        <span
-                                            class="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">{{
-                                            definition.label }}</span>
-                                        <span class="text-xs font-semibold text-slate-700 dark:text-slate-200">{{
-                                            selectedFilterLabel(definition.key) }}</span>
-                                    </span>
-                                    <svg class="h-4 w-4 shrink-0 text-slate-400" viewBox="0 0 20 20" fill="currentColor"
-                                        aria-hidden="true">
-                                        <path fill-rule="evenodd"
-                                            d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.512a.75.75 0 0 1-1.08 0L5.21 8.27a.75.75 0 0 1 .02-1.06z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-
-                                <div v-if="activeFilterDropdown === definition.key"
-                                    class="absolute left-0 z-20 mt-2 max-h-64 min-w-[220px] overflow-auto rounded-xl border border-slate-200 bg-white p-1 shadow-xl dark:border-white/10 dark:bg-[#111111]">
-                                    <button v-for="option in definition.options"
-                                        :key="`${definition.key}-${option.value}`" type="button"
-                                        class="block w-full rounded-lg px-3 py-2 text-left text-xs transition hover:bg-slate-100 dark:hover:bg-white/10"
-                                        :class="String(filterForm[definition.key]) === String(option.value) ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300' : 'text-slate-700 dark:text-slate-200'"
-                                        @click.stop="setFilterValue(definition.key, option.value)">
-                                        {{ option.label }}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </template>
-                </ScopeCharterDigitalTable>
+                    :category-options="categoryOptions" />
 
                 <ScopeCharterItTable v-else-if="selectedInitiative === 'it'" :items="filteredItInitiatives"
                     :completed-status-id="completedStatusId" :completed-status-label="completedStatusLabel"
-                    :status-options="statusOptions">
-                    <template #header-filters>
-                        <div class="flex flex-wrap items-center gap-2">
-                            <div v-for="definition in filterDefinitions" :key="`it-filter-${definition.key}`"
-                                class="relative">
-                                <button type="button"
-                                    class="inline-flex min-w-[150px] items-center justify-between gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-left transition hover:border-slate-400 dark:border-white/10 dark:bg-[#131313] dark:hover:border-white/20"
-                                    @click.stop="toggleFilterDropdown(definition.key)">
-                                    <span class="flex flex-col leading-tight">
-                                        <span
-                                            class="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">{{
-                                            definition.label }}</span>
-                                        <span class="text-xs font-semibold text-slate-700 dark:text-slate-200">{{
-                                            selectedFilterLabel(definition.key) }}</span>
-                                    </span>
-                                    <svg class="h-4 w-4 shrink-0 text-slate-400" viewBox="0 0 20 20" fill="currentColor"
-                                        aria-hidden="true">
-                                        <path fill-rule="evenodd"
-                                            d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.512a.75.75 0 0 1-1.08 0L5.21 8.27a.75.75 0 0 1 .02-1.06z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-
-                                <div v-if="activeFilterDropdown === definition.key"
-                                    class="absolute left-0 z-20 mt-2 max-h-64 min-w-[220px] overflow-auto rounded-xl border border-slate-200 bg-white p-1 shadow-xl dark:border-white/10 dark:bg-[#111111]">
-                                    <button v-for="option in definition.options"
-                                        :key="`${definition.key}-${option.value}`" type="button"
-                                        class="block w-full rounded-lg px-3 py-2 text-left text-xs transition hover:bg-slate-100 dark:hover:bg-white/10"
-                                        :class="String(filterForm[definition.key]) === String(option.value) ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300' : 'text-slate-700 dark:text-slate-200'"
-                                        @click.stop="setFilterValue(definition.key, option.value)">
-                                        {{ option.label }}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </template>
-                </ScopeCharterItTable>
+                    :status-options="statusOptions" />
             </section>
         </div>
     </UserLayout>
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
-import { router } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
 import UserLayout from '@/Layouts/UserLayout.vue';
 import ScopeCharterFlowSection from '@/Components/Dashboard/ScopeCharterFlowSection.vue';
 import ScopeCharterDigitalTable from '@/Components/Dashboard/ScopeCharterDigitalTable.vue';
@@ -228,20 +155,7 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
-    filters: {
-        type: Object,
-        default: () => ({}),
-    },
-    options: {
-        type: Object,
-        default: () => ({
-            sources: [],
-            groubs: [],
-            phases: [],
-            organizations: [],
-            coes: [],
-        }),
-    },
+
     categoryOptions: {
         type: Array,
         default: () => [],
@@ -342,107 +256,6 @@ const statusSummaryRows = computed(() => {
 const selectedInitiative = ref(null);
 const selectedStatusFilter = ref(null);
 
-const filterForm = ref({
-    search: props.filters?.search || '',
-    category_fase: props.filters?.category_fase ? String(props.filters.category_fase) : '',
-    source_id: props.filters?.source_id ? String(props.filters.source_id) : '',
-    groub_id: props.filters?.groub_id ? String(props.filters.groub_id) : '',
-    phase_id: props.filters?.phase_id ? String(props.filters.phase_id) : '',
-    organization_id: props.filters?.organization_id ? String(props.filters.organization_id) : '',
-    coe_id: props.filters?.coe_id ? String(props.filters.coe_id) : '',
-});
-
-const activeFilterDropdown = ref(null);
-
-const applyFilters = () => {
-    router.get('/dashboard-monitoring', filterForm.value, {
-        preserveState: true,
-        replace: true,
-    });
-};
-
-const filterDefinitions = computed(() => [
-    {
-        key: 'category_fase',
-        label: 'Type',
-        options: [
-            { value: '', label: 'All Type' },
-            ...(props.categoryOptions || []).map((item) => ({ value: String(item.id), label: item.label })),
-        ],
-    },
-    {
-        key: 'source_id',
-        label: 'Data Source',
-        options: [
-            { value: '', label: 'All Data Sources' },
-            ...((props.options?.sources || []).map((item) => ({ value: String(item.id), label: item.name }))),
-        ],
-    },
-    {
-        key: 'groub_id',
-        label: 'Groub',
-        options: [
-            { value: '', label: 'All Groub' },
-            ...((props.options?.groubs || []).map((item) => ({ value: String(item.id), label: item.name }))),
-        ],
-    },
-    {
-        key: 'phase_id',
-        label: 'Phase',
-        options: [
-            { value: '', label: 'All Phase' },
-            ...((props.options?.phases || []).map((item) => ({ value: String(item.id), label: item.name }))),
-        ],
-    },
-    {
-        key: 'organization_id',
-        label: 'Organization',
-        options: [
-            { value: '', label: 'All Organization' },
-            ...((props.options?.organizations || []).map((item) => ({ value: String(item.id), label: item.name }))),
-        ],
-    },
-    {
-        key: 'coe_id',
-        label: 'COE',
-        options: [
-            { value: '', label: 'All COE' },
-            ...((props.options?.coes || []).map((item) => ({ value: String(item.id), label: item.name }))),
-        ],
-    },
-]);
-
-const toggleFilterDropdown = (key) => {
-    activeFilterDropdown.value = activeFilterDropdown.value === key ? null : key;
-};
-
-const setFilterValue = (key, value) => {
-    filterForm.value[key] = String(value ?? '');
-    activeFilterDropdown.value = null;
-    applyFilters();
-};
-
-const selectedFilterLabel = (key) => {
-    const definition = filterDefinitions.value.find((item) => item.key === key);
-    if (!definition) return '-';
-
-    const selectedValue = String(filterForm.value[key] ?? '');
-    const selectedOption = definition.options.find((option) => String(option.value) === selectedValue);
-
-    return selectedOption?.label ?? definition.options[0]?.label ?? '-';
-};
-
-const closeFilterDropdown = () => {
-    activeFilterDropdown.value = null;
-};
-
-onMounted(() => {
-    window.addEventListener('click', closeFilterDropdown);
-});
-
-onBeforeUnmount(() => {
-    window.removeEventListener('click', closeFilterDropdown);
-});
 
 const toggleInitiativeTable = (initiativeKey, statusId = null) => {
     if (selectedInitiative.value === initiativeKey && selectedStatusFilter.value === statusId) {
