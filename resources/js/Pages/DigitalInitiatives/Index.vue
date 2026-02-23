@@ -15,7 +15,7 @@
                         class="text-xs font-semibold uppercase tracking-[0.08em] text-white"
                         style="text-shadow: 0 1px 3px rgba(0,0,0,0.3);"
                     >
-                        Total Project Charter Digital Inisiatif Disetujui
+                        Total Digital Inisiatif 
                     </p>
                     <p
                         class="mt-2 flex items-center justify-between text-3xl font-bold text-white"
