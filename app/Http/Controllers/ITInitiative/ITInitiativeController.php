@@ -89,11 +89,17 @@ class ITInitiativeController extends Controller
         $approveStatusId = $approveStatus ? $approveStatus['id'] : InitiativeStatus::baselineId();
         $totalApproved = Project::where('status', $approveStatusId)->count();
 
+        $statusCountsRaw = Project::query()
+            ->selectRaw('status, COUNT(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
         return Inertia::render('ITInitiative/Index', [
             'itInitiatives' => $projects,
             'statusOptions' => $statusOptions,
             'completedStatusId' => $baselineStatusId,
             'totalApproved' => $totalApproved,
+            'statusCounts' => $statusCountsRaw,
             'filters'  => [
                 'search' => $filters['search'] ?? null,
                 'status' => $filterStatus,

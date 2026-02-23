@@ -47,11 +47,17 @@ class DigitalInitiativeController extends Controller
         $approveStatusId = $approveStatus ? $approveStatus['id'] : InitiativeStatus::baselineId();
         $totalApproved = DigitalInitiative::where('status', $approveStatusId)->count();
 
+        $statusCountsRaw = DigitalInitiative::query()
+            ->selectRaw('status, COUNT(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
         return Inertia::render('DigitalInitiatives/Index', [
             'initiatives' => $initiatives,
             'statusOptions' => $statusOptions,
             'completedStatusId' => $baselineStatusId,
             'totalApproved' => $totalApproved,
+            'statusCounts' => $statusCountsRaw,
             'filters' => [
                 'search' => $search,
                 'type' => $type,
