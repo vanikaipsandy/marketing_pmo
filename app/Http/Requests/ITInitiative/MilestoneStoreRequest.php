@@ -3,8 +3,6 @@
 namespace App\Http\Requests\ITInitiative;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
-
 class MilestoneStoreRequest extends FormRequest
 {
     public function authorize(): bool
@@ -17,7 +15,7 @@ class MilestoneStoreRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'output' => ['nullable', 'string'],
-            'type' => ['required', Rule::in(['assessment_design', 'rollout'])],
+            'type' => ['required', 'string', 'max:255'],
             'start_date' => ['nullable', 'date', 'required_with:end_date'],
             'end_date' => ['nullable', 'date', 'required_with:start_date', 'after_or_equal:start_date'],
         ];
