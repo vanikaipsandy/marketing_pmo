@@ -13,44 +13,47 @@
         </div>
 
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-slate-200 text-sm dark:divide-white/10">
+            <table class="w-full min-w-[920px] divide-y divide-slate-200 dark:divide-white/5">
                 <thead class="bg-slate-50 dark:bg-white/5">
                     <tr>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">No</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Code</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Initiative</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">State</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Terbaru</th>
-                        <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Action</th>
+                        <th scope="col" class="w-10 whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">No</th>
+                        <th scope="col" class="w-16 whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Code</th>
+                        <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">IT Arsitektur Building Blok</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Daftar Inisiatif</th>
+                        <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">State</th>
+                        <th scope="col" class="w-1/3 px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Terbaru</th>
+                        <th scope="col" class="whitespace-nowrap px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Action</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100 dark:divide-white/5">
+                <tbody class="divide-y divide-slate-200 bg-white dark:divide-white/5 dark:bg-[#1a1a1a]">
                     <template v-for="(item, index) in items" :key="`it-open-${item.id}`">
-                        <tr>
-                            <td class="whitespace-nowrap px-4 py-3 font-medium text-slate-900 dark:text-white">{{ index + 1 }}</td>
-                            <td class="whitespace-nowrap px-4 py-3 font-medium text-slate-900 dark:text-white">{{ item.code || '-' }}</td>
-                            <td class="px-4 py-3">
-                                <div class="max-w-xs">
-                                    <p class="truncate font-medium text-slate-800 dark:text-slate-100">{{ item.name || '-' }}</p>
-                                    <p class="truncate text-xs text-slate-500 dark:text-slate-400">{{ item.charter?.category || 'Uncategorized' }}</p>
-                                </div>
+                        <tr class="group transition-colors hover:bg-slate-50 dark:hover:bg-white/5">
+                            <td class="whitespace-nowrap px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">{{ index + 1 }}</td>
+                            <td class="whitespace-nowrap px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">{{ item.code || '-' }}</td>
+                            <td class="whitespace-nowrap px-6 py-4 text-xs text-slate-700 dark:text-slate-200">
+                                <span class="inline-flex rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-semibold text-blue-800 dark:bg-blue-500/20 dark:text-blue-300">
+                                    {{ item.charter?.category || 'Uncategorized' }}
+                                </span>
                             </td>
-                            <td class="whitespace-nowrap px-4 py-3">
-                                <span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize" :class="statusBadgeClassById(item.status)">
+                            <td class="px-6 py-4 text-xs text-slate-700 dark:text-slate-200">
+                                <span class="font-medium text-slate-700 dark:text-slate-200">{{ item.name || '-' }}</span>
+                            </td>
+                            <td class="whitespace-nowrap px-6 py-4">
+                                <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-medium capitalize" :class="statusBadgeClassById(item.status)">
                                     {{ statusLabelFromOptions(item.status, statusOptions) }}
                                 </span>
                             </td>
-                            <td class="whitespace-nowrap px-4 py-3">
+                            <td class="px-6 py-4 text-xs text-slate-700 dark:text-slate-200">
                                 <span
                                     v-if="latestItStatus(item)"
-                                    class="inline-flex rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700 capitalize dark:bg-white/10 dark:text-slate-300"
+                                    class="inline-flex items-center rounded-md bg-slate-100 px-2 py-1 text-[11px] font-medium text-slate-700 capitalize dark:bg-white/10 dark:text-slate-300 break-words whitespace-normal leading-relaxed"
                                     :title="latestItStatus(item)"
                                 >
                                     {{ latestItStatus(item) }}
                                 </span>
                                 <span v-else class="text-slate-400 dark:text-slate-500 italic text-xs">-</span>
                             </td>
-                            <td class="whitespace-nowrap px-4 py-3 text-right">
+                            <td class="whitespace-nowrap px-6 py-4 text-right">
                                 <div class="flex items-center justify-end gap-1">
                                     <Link
                                         :href="`/it-initiatives/${item.id}`"
@@ -77,7 +80,7 @@
                     </template>
 
                     <tr v-if="items.length === 0">
-                        <td colspan="6" class="px-4 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
+                        <td colspan="7" class="px-6 py-8 text-center text-xs text-slate-500 dark:text-slate-400">
                             Semua IT initiatives sudah {{ lowerCompletedStatusLabel }}.
                         </td>
                     </tr>

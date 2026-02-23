@@ -154,12 +154,14 @@
                     <table class="w-full min-w-[920px] divide-y divide-slate-200 dark:divide-white/5">
                         <thead class="bg-slate-50 dark:bg-white/5">
                             <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Code</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">IT Arsitektur Building Blok</th>
+                                <th scope="col" class="w-10 whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">No</th>
+                                <th scope="col" class="w-16 whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Code</th>
+                                <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">IT Arsitektur Building Blok</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Daftar Inisiatif</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Status</th>
-                                <th scope="col" class="p-0 text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                                    <div class="w-[180px] border-l border-slate-200 dark:border-white/10">
+                                <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">State</th>
+                                <th scope="col" class="w-1/3 px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Terbaru</th>
+                                <th scope="col" class="whitespace-nowrap p-0 text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                    <div class="w-[180px] border-l border-slate-200 dark:border-white/10 float-right">
                                         <div class="border-b border-slate-200 px-2 py-1.5 text-center dark:border-white/10">Action</div>
                                         <div class="grid grid-cols-2 divide-x divide-slate-200 text-[10px] font-semibold normal-case dark:divide-white/10">
                                             <span class="px-2 py-1 text-center">Scope Charter</span>
@@ -172,7 +174,10 @@
                         <tbody class="divide-y divide-slate-200 bg-white dark:divide-white/5 dark:bg-[#1a1a1a]">
                             <tr v-for="(project, index) in filteredItems" :key="project.id" class="group transition-colors hover:bg-slate-50 dark:hover:bg-white/5">
                                 <td class="whitespace-nowrap px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">
-                                    {{ project.code }}
+                                    {{ index + 1 }}
+                                </td>
+                                <td class="whitespace-nowrap px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">
+                                    {{ project.code || '-' }}
                                 </td>
                                 <td 
                                     v-if="shouldShowCategory(index)"
@@ -183,8 +188,8 @@
                                         {{ project.charter?.category || 'Uncategorized' }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 text-xs">
-                                    <span class="font-medium text-slate-700 dark:text-slate-200">{{ project.name }}</span>
+                                <td class="px-6 py-4 text-xs text-slate-700 dark:text-slate-200">
+                                    <span class="font-medium text-slate-700 dark:text-slate-200">{{ project.name || '-' }}</span>
                                 </td>
                                 <td class="whitespace-nowrap px-6 py-4">
                                     <span
@@ -194,12 +199,23 @@
                                         {{ statusLabelFromOptions(project.status, statusOptions) }}
                                     </span>
                                 </td>
+                                <td class="px-6 py-4 text-xs text-slate-700 dark:text-slate-200">
+                                    <span
+                                        v-if="latestItStatus(project)"
+                                        class="inline-flex items-center rounded-md bg-slate-100 px-2 py-1 text-[11px] font-medium text-slate-700 capitalize dark:bg-white/10 dark:text-slate-300 break-words whitespace-normal leading-relaxed"
+                                        :title="latestItStatus(project)"
+                                    >
+                                        {{ latestItStatus(project) }}
+                                    </span>
+                                    <span v-else class="text-slate-400 dark:text-slate-500 italic text-xs">-</span>
+                                </td>
                                 <td class="p-0 text-sm font-medium">
-                                    <div class="grid w-[180px] grid-cols-2 divide-x divide-slate-200 border-l border-slate-200 dark:divide-white/10 dark:border-white/10">
+                                    <div class="grid w-[180px] h-full grid-cols-2 divide-x divide-slate-200 border-l border-slate-200 dark:divide-white/10 dark:border-white/10 float-right">
                                         <Link
                                             :href="`/it-initiatives/${project.id}`"
                                             :class="actionCellClass(hasScopeCharter(project))"
                                             title="View Scope Charter"
+                                            class="flex items-center justify-center"
                                         >
                                             View
                                         </Link>
@@ -207,6 +223,7 @@
                                             :href="`/it-initiatives/${project.id}`"
                                             :class="actionCellClass(hasProjectCharter(project))"
                                             title="View Project Charter"
+                                            class="flex items-center justify-center"
                                         >
                                             View
                                         </Link>
@@ -214,7 +231,7 @@
                                 </td>
                             </tr>
                             <tr v-if="filteredItems.length === 0">
-                                <td colspan="5" class="px-6 py-8 text-center text-xs text-slate-500 dark:text-slate-400">
+                                <td colspan="7" class="px-6 py-8 text-center text-xs text-slate-500 dark:text-slate-400">
                                     <span v-if="activeFlowFilter === null">
                                         Silakan klik salah satu status di atas untuk menampilkan data inisiatif.
                                     </span>
@@ -461,4 +478,18 @@ function actionCellClass(isReady) {
 
     return 'block bg-rose-500 px-2 py-1.5 text-center text-xs font-semibold text-white transition-colors hover:bg-rose-600';
 }
+
+const latestItStatus = (item) => {
+    const rawStatus = item?.latest_implementation_status
+        ?? item?.latestImplementationStatus
+        ?? item?.latest_pc_status_implementation?.status
+        ?? item?.latestPcStatusImplementation?.status
+        ?? item?.pc_status_implementations?.[0]?.status
+        ?? item?.pcStatusImplementations?.[0]?.status
+        ?? null;
+
+    const normalizedStatus = String(rawStatus ?? '').trim();
+
+    return normalizedStatus.length > 0 ? normalizedStatus : null;
+};
 </script>

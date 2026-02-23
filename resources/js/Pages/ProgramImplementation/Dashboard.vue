@@ -54,30 +54,31 @@
                 </div>
 
                 <div class="overflow-x-auto">
-                    <table class="w-full min-w-[640px] divide-y divide-slate-200 text-sm dark:divide-white/10">
+                    <table class="w-full min-w-[640px] divide-y divide-slate-200 dark:divide-white/5">
                         <thead class="bg-slate-50 dark:bg-white/5">
                             <tr>
-                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Initiative</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Initiative</th>
                                 <th
                                     v-for="column in statusSummaryColumns"
                                     :key="`status-summary-head-${column.key}`"
-                                    class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400"
+                                    scope="col"
+                                    class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400"
                                 >
                                     {{ column.label }}
                                 </th>
-                                <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Total</th>
+                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Total</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-100 dark:divide-white/5">
+                        <tbody class="divide-y divide-slate-200 bg-white dark:divide-white/5 dark:bg-[#1a1a1a]">
                             <tr
                                 v-for="row in statusSummaryRows"
                                 :key="row.key"
-                                class="transition-colors hover:bg-slate-50 dark:hover:bg-white/5"
+                                class="group transition-colors hover:bg-slate-50 dark:hover:bg-white/5"
                             >
                                 <td
                                     role="button"
                                     tabindex="0"
-                                    class="cursor-pointer px-4 py-3 font-semibold text-slate-900 dark:text-white"
+                                    class="cursor-pointer px-6 py-4 text-xs font-medium text-slate-900 dark:text-white outline-none"
                                     :class="selectedInitiative === row.key && selectedStatusFilter === null ? 'bg-blue-50/70 dark:bg-blue-500/10' : ''"
                                     @click="toggleInitiativeTable(row.key, null)"
                                     @keydown.enter.prevent="toggleInitiativeTable(row.key, null)"
@@ -95,7 +96,7 @@
                                     :key="`status-summary-cell-${row.key}-${column.key}`"
                                     role="button"
                                     tabindex="0"
-                                    class="cursor-pointer px-4 py-3 text-right font-semibold text-slate-800 transition-colors hover:bg-slate-100 dark:text-slate-100 dark:hover:bg-white/10"
+                                    class="cursor-pointer px-6 py-4 text-xs text-right text-slate-800 transition-colors hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-white/10 outline-none"
                                     :class="selectedInitiative === row.key && String(selectedStatusFilter) === String(column.key) ? 'bg-blue-50/70 dark:bg-blue-500/10' : ''"
                                     @click="toggleInitiativeTable(row.key, column.key)"
                                     @keydown.enter.prevent="toggleInitiativeTable(row.key, column.key)"
@@ -106,7 +107,7 @@
                                 <td
                                     role="button"
                                     tabindex="0"
-                                    class="cursor-pointer px-4 py-3 text-right font-bold text-slate-900 transition-colors hover:bg-slate-100 dark:text-white dark:hover:bg-white/10"
+                                    class="cursor-pointer px-6 py-4 text-xs text-right font-medium text-slate-900 transition-colors hover:bg-slate-100 dark:text-white dark:hover:bg-white/10 outline-none"
                                     :class="selectedInitiative === row.key && selectedStatusFilter === null ? 'bg-blue-50/70 dark:bg-blue-500/10' : ''"
                                     @click="toggleInitiativeTable(row.key, null)"
                                     @keydown.enter.prevent="toggleInitiativeTable(row.key, null)"
