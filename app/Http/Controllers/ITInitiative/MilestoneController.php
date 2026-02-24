@@ -27,6 +27,25 @@ class MilestoneController extends Controller
         return back()->with('success', 'Roadmap activity added.');
     }
 
+    public function update(MilestoneStoreRequest $request, Project $project, Milestone $milestone): RedirectResponse
+    {
+        if ((int) $milestone->project_id !== (int) $project->id) {
+            abort(404);
+        }
+
+        $payload = $request->validated();
+
+        $milestone->update([
+            'title' => $payload['title'],
+            'output' => $payload['output'] ?? null,
+            'type' => $payload['type'],
+            'start_date' => $payload['start_date'] ?? null,
+            'end_date' => $payload['end_date'] ?? null,
+        ]);
+
+        return back()->with('success', 'Roadmap activity updated.');
+    }
+
     public function destroy(Project $project, Milestone $milestone): RedirectResponse
     {
         if ((int) $milestone->project_id !== (int) $project->id) {

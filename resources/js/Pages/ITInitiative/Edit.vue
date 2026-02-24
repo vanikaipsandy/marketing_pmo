@@ -9,9 +9,6 @@
                     Back to IT Initiatives
                 </Link>
                 <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Edit IT Initiative</h2>
-                <p class="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
-                    Update IT initiative master data. Charter and roadmap are managed separately.
-                </p>
             </div>
 
             <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-white/5 dark:bg-[#1a1a1a]">
@@ -79,12 +76,67 @@
                     </div>
                 </form>
             </div>
+
+            <div class="mt-8 rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-white/5 dark:bg-[#1a1a1a]">
+                <div class="mb-4 flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Status Implementation History</h3>
+                </div>
+                
+                <form @submit.prevent="submitHistory" class="mb-6 flex gap-3">
+                    <input
+                        v-model="historyForm.status"
+                        type="text"
+                        class="flex-1 rounded-lg border-slate-300 bg-white text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-white/10 dark:bg-[#131313] dark:text-slate-100"
+                        placeholder="Enter new status (e.g. In Progress, Completed)"
+                        required
+                    />
+                    <input
+                        v-model="historyForm.month_year"
+                        type="month"
+                        class="w-48 rounded-lg border-slate-300 bg-white text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-white/10 dark:bg-[#131313] dark:text-slate-100"
+                        required
+                    />
+                    <button
+                        type="submit"
+                        :disabled="historyForm.processing"
+                        class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+                    >
+                        Add Status
+                    </button>
+                </form>
+
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-slate-200 text-sm dark:divide-white/10">
+                        <thead class="bg-slate-50 dark:bg-white/5">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Month / Year</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status</th>
+                                <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 dark:divide-white/5">
+                            <tr v-for="log in itInitiative.pc_status_implementations" :key="log.id">
+                                <td class="whitespace-nowrap px-4 py-3 font-medium text-slate-700 dark:text-slate-300">{{ formatMonthYear(log.date) }}</td>
+                                <td class="whitespace-nowrap px-4 py-3 font-medium text-slate-900 dark:text-white capitalize">{{ log.status }}</td>
+                                <td class="whitespace-nowrap px-4 py-3 text-right">
+                                    <button @click="deleteHistory(log.id)" class="text-red-500 hover:text-red-700 text-sm font-medium">Delete</button>
+                                </td>
+                            </tr>
+                            <tr v-if="!itInitiative.pc_status_implementations || itInitiative.pc_status_implementations.length === 0">
+                                <td colspan="3" class="px-4 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
+                                    No status history found.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </UserLayout>
 </template>
 
 <script setup>
-import { Link, useForm } from '@inertiajs/vue3';
+import { Link, useForm, router } from '@inertiajs/vue3';
 import UserLayout from '@/Layouts/UserLayout.vue';
 
 const props = defineProps({
@@ -119,5 +171,35 @@ const form = useForm({
 
 const submit = () => {
     form.put(`/it-initiatives/${props.itInitiative.id}`);
+};
+
+const historyForm = useForm({
+    status: '',
+    month_year: new Date().toISOString().slice(0, 7),
+});
+
+const submitHistory = () => {
+    historyForm.post(`/it-initiatives/${props.itInitiative.id}/implementation-status`, {
+        preserveScroll: true,
+        onSuccess: () => {
+            historyForm.reset('status');
+            historyForm.month_year = new Date().toISOString().slice(0, 7);
+        },
+    });
+};
+
+const deleteHistory = (id) => {
+    if (confirm('Are you sure you want to delete this status entry?')) {
+        router.delete(`/implementation-status/${id}`, {
+            preserveScroll: true,
+        });
+    }
+};
+
+const formatMonthYear = (dateStr) => {
+    if (!dateStr) return '-';
+    // dateStr format is "YYYY-MM-DD"
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
 };
 </script>

@@ -7,8 +7,117 @@
                 </div>
             </div>
 
+            <section class="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
+                <article
+                    class="relative flex flex-col justify-center rounded-2xl border p-5 shadow-[0_4px_16px_rgba(28,117,188,0.3)] bg-[#1C75BC] border-[#1C75BC]"
+                >
+                    <p
+                        class="text-xs font-semibold uppercase tracking-[0.08em] text-white"
+                        style="text-shadow: 0 1px 3px rgba(0,0,0,0.3);"
+                    >
+                        Total Digital Inisiatif 
+                    </p>
+                    <p
+                        class="mt-2 flex items-center justify-between text-3xl font-bold text-white"
+                        style="text-shadow: 0 2px 6px rgba(0,0,0,0.35);"
+                    >
+                        <span>{{ totalApproved }}</span>
+                    </p>
+                </article>
+
+                <article class="flex flex-col justify-center rounded-2xl border border-slate-200 bg-white px-5 py-3 shadow-[0_4px_16px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-[#171717] lg:col-span-2 space-y-4">
+                    <div>
+                        <div class="mb-2 flex items-center justify-between gap-2">
+                            <h2 class="text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Scope Charter Digital Initiative Timeline</h2>
+                        </div>
+
+                        <div>
+                            <div
+                                class="grid"
+                                :style="gridStyle(scopeSteps)"
+                            >
+                                <div
+                                    v-for="(step, index) in scopeSteps"
+                                    :key="`scope-step-${step.key}`"
+                                    class="relative flex justify-center cursor-pointer group"
+                                    @click="toggleFilter(step.statusId)"
+                                >
+                                    <span
+                                        class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[10px] font-bold transition-all group-hover:ring-2 group-hover:ring-offset-1 group-hover:ring-slate-300"
+                                        :class="[
+                                            step.circleClass,
+                                            activeFlowFilter === step.statusId ? 'ring-2 ring-offset-2 ring-blue-500 shadow-md transform scale-110' : ''
+                                        ]"
+                                    >
+                                        {{ step.count }}
+                                    </span>
+                                    <span
+                                        v-if="index < scopeSteps.length - 1"
+                                        class="absolute left-1/2 top-1/2 ml-[0.75rem] h-0.5 w-[calc(100%_-_1.5rem)] -translate-y-1/2 rounded-full"
+                                        :class="step.lineClass"
+                                    ></span>
+                                </div>
+                            </div>
+
+                            <div
+                                class="mt-2 grid gap-1 text-center"
+                                :style="gridStyle(scopeSteps)"
+                            >
+                                <div v-for="step in scopeSteps" :key="`scope-label-${step.key}`">
+                                    <p class="text-[9px] font-semibold text-slate-700 dark:text-slate-200">{{ step.label }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-100 pt-4 dark:border-white/5">
+                        <div class="mb-2 flex items-center justify-between gap-2">
+                            <h2 class="text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Project Charter Digital Initiative Timeline</h2>
+                        </div>
+
+                        <div>
+                            <div
+                                class="grid"
+                                :style="gridStyle(digitalSteps)"
+                            >
+                                <div
+                                    v-for="(step, index) in digitalSteps"
+                                    :key="`step-${step.key}`"
+                                    class="relative flex justify-center cursor-pointer group"
+                                    @click="toggleFilter(step.statusId)"
+                                >
+                                    <span
+                                        class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[10px] font-bold transition-all group-hover:ring-2 group-hover:ring-offset-1 group-hover:ring-slate-300"
+                                        :class="[
+                                            step.circleClass,
+                                            activeFlowFilter === step.statusId ? 'ring-2 ring-offset-2 ring-blue-500 shadow-md transform scale-110' : ''
+                                        ]"
+                                    >
+                                        {{ step.count }}
+                                    </span>
+                                    <span
+                                        v-if="index < digitalSteps.length - 1"
+                                        class="absolute left-1/2 top-1/2 ml-[0.75rem] h-0.5 w-[calc(100%_-_1.5rem)] -translate-y-1/2 rounded-full"
+                                        :class="step.lineClass"
+                                    ></span>
+                                </div>
+                            </div>
+
+                            <div
+                                class="mt-2 grid gap-1 text-center"
+                                :style="gridStyle(digitalSteps)"
+                            >
+                                <div v-for="step in digitalSteps" :key="`label-${step.key}`">
+                                    <p class="text-[9px] font-semibold text-slate-700 dark:text-slate-200">{{ step.label }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            </section>
+
             <!-- Filters -->
-            <div class="mb-6 flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 dark:border-white/5 dark:bg-[#1a1a1a] sm:flex-row">
+            <!-- <div class="mb-6 flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 dark:border-white/5 dark:bg-[#1a1a1a] sm:flex-row">
                 <div class="relative flex-1">
                     <input
                         v-model="filters.search"
@@ -38,25 +147,25 @@
                 >
                     <option :value="completedStatusId">{{ completedStatusLabel }}</option>
                 </select>
-            </div>
+            </div> -->
 
             <!-- Table -->
-            <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717]">
-                <div class="overflow-x-auto overflow-y-visible">
-                    <table class="min-w-max w-full divide-y divide-slate-200 text-sm dark:divide-white/10">
+            <div class="overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-white/5 dark:bg-[#1a1a1a]">
+                <div class="overflow-x-auto">
+                    <table class="w-full min-w-[920px] divide-y divide-slate-200 dark:divide-white/5">
                         <thead class="bg-slate-50 dark:bg-white/5">
                             <tr>
-                                <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">No</th>
-                                <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Type</th>
-                                <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Project Owner</th>
-                                <th class="min-w-[180px] px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Use Case</th>
-                                <th class="min-w-[280px] px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Desc</th>
-                                <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Value</th>
-                                <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Urgency</th>
-                                <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Rjjp</th>
-                                <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Coe</th>
-                                <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status</th>
-                                <th class="sticky right-0 z-10 bg-slate-50 p-0 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:bg-white/5 dark:text-slate-400">
+                                <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">No</th>
+                                <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Type</th>
+                                <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Project Owner</th>
+                                <th scope="col" class="min-w-[180px] px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Use Case</th>
+                                <th scope="col" class="min-w-[280px] px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Desc</th>
+                                <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Value</th>
+                                <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Urgency</th>
+                                <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Rjjp</th>
+                                <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Coe</th>
+                                <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Status</th>
+                                <th scope="col" class="sticky right-0 z-10 bg-slate-50 p-0 text-xs font-medium uppercase tracking-wider text-slate-500 dark:bg-white/5 dark:text-slate-400">
                                     <div class="w-[180px] border-l border-slate-200 dark:border-white/10">
                                         <div class="border-b border-slate-200 px-2 py-1.5 text-center dark:border-white/10">Action</div>
                                         <div class="grid grid-cols-2 divide-x divide-slate-200 text-[10px] font-semibold normal-case dark:divide-white/10">
@@ -67,34 +176,37 @@
                                 </th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-100 dark:divide-white/5">
-                            <tr v-for="item in initiatives" :key="`digital-${item.id}`" class="transition-colors hover:bg-slate-50 dark:hover:bg-white/[0.02]">
-                                <td class="whitespace-nowrap px-4 py-3 font-medium text-slate-900 dark:text-white">{{ cellVal(item, 'no') }}</td>
-                                <td class="whitespace-nowrap px-4 py-3 text-slate-700 dark:text-slate-200">{{ cellVal(item, 'type') }}</td>
-                                <td class="whitespace-nowrap px-4 py-3 text-slate-700 dark:text-slate-200">{{ cellVal(item, 'projectOwner', 'project_owner') }}</td>
-                                <td class="min-w-[180px] max-w-[320px] px-4 py-3 text-slate-700 dark:text-slate-200">
+                        <tbody class="divide-y divide-slate-200 bg-white dark:divide-white/5 dark:bg-[#1a1a1a]">
+                            <tr v-for="item in filteredItems" :key="`digital-${item.id}`" class="group transition-colors hover:bg-slate-50 dark:hover:bg-white/5">
+                                <td class="whitespace-nowrap px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">{{ cellVal(item, 'no') }}</td>
+                                <td class="whitespace-nowrap px-6 py-4 text-xs text-slate-700 dark:text-slate-200">
+                                    <span class="font-medium text-slate-700 dark:text-slate-200">{{ cellVal(item, 'type') }}</span>
+                                </td>
+                                <td class="whitespace-nowrap px-6 py-4 text-xs text-slate-700 dark:text-slate-200">{{ cellVal(item, 'projectOwner', 'project_owner') }}</td>
+                                <td class="min-w-[180px] max-w-[320px] px-6 py-4 text-xs text-slate-700 dark:text-slate-200">
                                     <span class="whitespace-normal break-words">{{ cellVal(item, 'useCase', 'use_case') }}</span>
                                 </td>
-                                <td class="min-w-[280px] max-w-[400px] px-4 py-3 text-slate-700 dark:text-slate-200">
+                                <td class="min-w-[280px] max-w-[400px] px-6 py-4 text-xs text-slate-700 dark:text-slate-200">
                                     <span class="whitespace-normal break-words" :title="cellVal(item, 'desc', 'description')">{{ cellVal(item, 'desc', 'description') }}</span>
                                 </td>
-                                <td class="max-w-[150px] px-4 py-3 text-slate-700 dark:text-slate-200">
+                                <td class="max-w-[150px] px-6 py-4 text-xs text-slate-700 dark:text-slate-200">
                                     <span class="line-clamp-2" :title="cellVal(item, 'value')">{{ cellVal(item, 'value') }}</span>
                                 </td>
-                                <td class="whitespace-nowrap px-4 py-3 text-slate-700 dark:text-slate-200">{{ cellVal(item, 'urgency') }}</td>
-                                <td class="whitespace-nowrap px-4 py-3 text-slate-700 dark:text-slate-200">{{ cellVal(item, 'rjjp') }}</td>
-                                <td class="whitespace-nowrap px-4 py-3 text-slate-700 dark:text-slate-200">{{ cellVal(item, 'coe') }}</td>
-                                <td class="whitespace-nowrap px-4 py-3">
-                                    <span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize" :class="statusBadgeClassById(item.status)">
+                                <td class="whitespace-nowrap px-6 py-4 text-xs text-slate-700 dark:text-slate-200">{{ cellVal(item, 'urgency') }}</td>
+                                <td class="whitespace-nowrap px-6 py-4 text-xs text-slate-700 dark:text-slate-200">{{ cellVal(item, 'rjjp') }}</td>
+                                <td class="whitespace-nowrap px-6 py-4 text-xs text-slate-700 dark:text-slate-200">{{ cellVal(item, 'coe') }}</td>
+                                <td class="whitespace-nowrap px-6 py-4">
+                                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-medium capitalize" :class="statusBadgeClassById(item.status)">
                                         {{ statusLabelFromOptions(item.status, statusOptions) }}
                                     </span>
                                 </td>
-                                <td class="sticky right-0 z-10 bg-white p-0 shadow-[-4px_0_8px_rgba(0,0,0,0.05)] dark:bg-[#171717] dark:shadow-[-4px_0_8px_rgba(0,0,0,0.2)]">
-                                    <div class="grid w-[180px] grid-cols-2 divide-x divide-slate-200 border-l border-slate-200 dark:divide-white/10 dark:border-white/10">
+                                <td class="sticky right-0 z-10 bg-white p-0 shadow-[-4px_0_8px_rgba(0,0,0,0.05)] dark:bg-[#1a1a1a] dark:shadow-[-4px_0_8px_rgba(0,0,0,0.2)]">
+                                    <div class="grid w-[180px] grid-cols-2 divide-x divide-slate-200 border-l border-slate-200 dark:divide-white/10 dark:border-white/10 h-full">
                                         <Link
                                             :href="`/digital-initiatives/${item.id}`"
                                             :class="actionCellClass(hasScopeCharter(item))"
                                             title="View Scope Charter"
+                                            class="flex items-center justify-center"
                                         >
                                             View
                                         </Link>
@@ -102,16 +214,21 @@
                                             :href="`/digital-initiatives/${item.id}`"
                                             :class="actionCellClass(hasProjectCharter(item))"
                                             title="View Project Charter"
+                                            class="flex items-center justify-center"
                                         >
                                             View
                                         </Link>
                                     </div>
                                 </td>
                             </tr>
-
-                            <tr v-if="initiatives.length === 0">
-                                <td colspan="11" class="px-4 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
-                                    Semua digital initiatives sudah {{ completedStatusLabel.toLowerCase() }}.
+                            <tr v-if="filteredItems.length === 0">
+                                <td colspan="11" class="px-6 py-8 text-center text-xs text-slate-500 dark:text-slate-400">
+                                    <span v-if="activeFlowFilter === null">
+                                        Silakan klik salah satu status di atas untuk menampilkan data inisiatif.
+                                    </span>
+                                    <span v-else>
+                                        Tidak ada data yang sesuai dengan filter opsi ini.
+                                    </span>
                                 </td>
                             </tr>
                         </tbody>
@@ -120,11 +237,15 @@
             </div>
 
             <div
-                v-if="initiatives.length === 0"
+                v-if="filteredItems.length === 0"
                 class="mt-6 rounded-xl border border-slate-200 bg-white py-12 text-center dark:border-white/5 dark:bg-[#1a1a1a]"
             >
-                <p class="text-slate-500 dark:text-slate-400">No digital initiatives found.</p>
-                <p class="mt-2 text-sm text-slate-400 dark:text-slate-500">Belum ada digital initiative dengan status {{ completedStatusLabel.toLowerCase() }}.</p>
+                <p class="text-slate-500 dark:text-slate-400">
+                    {{ activeFlowFilter === null ? 'Pilih status di atas untuk melihat data.' : 'Tidak ada inisiatif digital ditemukan.' }}
+                </p>
+                <p class="mt-2 text-sm text-slate-400 dark:text-slate-500" v-if="activeFlowFilter !== null">
+                    Status yang dipilih belum memiliki data inisiatif.
+                </p>
             </div>
 
 
@@ -136,7 +257,8 @@
 import { computed, ref } from 'vue';
 import { Link, router } from '@inertiajs/vue3';
 import UserLayout from '@/Layouts/UserLayout.vue';
-import { statusBadgeClassById, statusLabelFromOptions } from '@/Composables/initiativeStatus';
+import { statusBadgeClassById, statusLabelFromOptions, statusFlowClassByIndex } from '@/Composables/initiativeStatus';
+import { useFlowFilter } from '@/Composables/useFlowFilter';
 
 const props = defineProps({
     initiatives: Object,
@@ -149,7 +271,20 @@ const props = defineProps({
         type: Number,
         default: 5,
     },
+    totalApproved: {
+        type: Number,
+        default: 0,
+    },
+    statusCounts: {
+        type: Object,
+        default: () => ({}),
+    }
 });
+
+const { activeFlowFilter, filteredItems, toggleFilter } = useFlowFilter(
+    () => props.initiatives,
+    (item) => item.status
+);
 
 const statusOptions = computed(() => {
     if (props.statusOptions.length > 0) {
@@ -171,6 +306,84 @@ const completedStatusId = computed(() => {
 
 const completedStatusLabel = computed(() => {
     return statusLabelFromOptions(completedStatusId.value, statusOptions.value);
+});
+
+const scopeStatusOrder = ['drafting', 'propose', 'review', 'approve'];
+const normalizeStatusName = (value) => String(value ?? '').trim().toLowerCase();
+
+const scopeStatusOptions = computed(() => {
+    const sourceOptions = Array.isArray(statusOptions.value) ? statusOptions.value : [];
+    const mappedStatusByName = new Map();
+
+    sourceOptions.forEach((status) => {
+        const candidateNames = [normalizeStatusName(status?.name), normalizeStatusName(status?.label)];
+
+        if (candidateNames.includes('baseline')) {
+            return;
+        }
+
+        candidateNames.forEach((candidateName) => {
+            if (scopeStatusOrder.includes(candidateName) && !mappedStatusByName.has(candidateName)) {
+                mappedStatusByName.set(candidateName, status);
+            }
+        });
+    });
+
+    const fallbackStatusOptions = [
+        { id: 1, name: 'drafting', label: 'Drafting' },
+        { id: 2, name: 'propose', label: 'Propose' },
+        { id: 3, name: 'review', label: 'Review' },
+        { id: 4, name: 'approve', label: 'Approve' },
+    ];
+
+    return scopeStatusOrder.map((statusName, index) => {
+        const matchedStatus = mappedStatusByName.get(statusName);
+        const fallbackStatus = fallbackStatusOptions[index];
+
+        return {
+            id: Number(matchedStatus?.id ?? fallbackStatus.id),
+            name: statusName,
+            label: fallbackStatus.label,
+        };
+    });
+});
+
+const scopeSteps = computed(() => {
+    const counts = props.statusCounts || {};
+    return scopeStatusOptions.value.map((status, index) => {
+        const flowClass = statusFlowClassByIndex(index);
+        const key = String(status.id);
+
+        return {
+            key,
+            statusId: status.id,
+            label: status.label,
+            count: Number(counts?.[key] ?? 0),
+            circleClass: flowClass.circleClass,
+            lineClass: flowClass.lineClass,
+        };
+    });
+});
+
+const digitalSteps = computed(() => {
+    // Currently defaulting to 0 as Project Charter does not have specific charter status counts
+    return scopeStatusOptions.value.map((status, index) => {
+        const flowClass = statusFlowClassByIndex(index);
+        const key = String(status.id);
+
+        return {
+            key,
+            statusId: status.id,
+            label: status.label,
+            count: 0,
+            circleClass: flowClass.circleClass,
+            lineClass: flowClass.lineClass,
+        };
+    });
+});
+
+const gridStyle = (steps = []) => ({
+    gridTemplateColumns: `repeat(${Math.max(steps.length, 1)}, minmax(0, 1fr))`,
 });
 
 const filters = ref({

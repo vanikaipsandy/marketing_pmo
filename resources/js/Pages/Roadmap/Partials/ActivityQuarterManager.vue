@@ -7,7 +7,7 @@
             </p>
         </div>
 
-        <form v-if="project" class="grid grid-cols-1 gap-3 lg:grid-cols-12" @submit.prevent="addMilestone">
+        <form v-if="project" class="grid grid-cols-1 gap-3 lg:grid-cols-12" @submit.prevent="submitForm">
             <div class="lg:col-span-4">
                 <label class="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Activity</label>
                 <input
@@ -21,12 +21,12 @@
 
             <div class="lg:col-span-2">
                 <label class="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Section</label>
-                <select
+                <input
                     v-model="milestoneForm.type"
+                    type="text"
+                    placeholder="Contoh: Rollout"
                     class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-white/10 dark:bg-[#101826] dark:text-slate-100"
-                >
-                    <option v-for="option in milestoneTypeOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
-                </select>
+                />
                 <p v-if="milestoneForm.errors.type" class="mt-1 text-xs text-red-500">{{ milestoneForm.errors.type }}</p>
             </div>
 
@@ -98,17 +98,30 @@
                 <p v-if="milestoneForm.errors.output" class="mt-1 text-xs text-red-500">{{ milestoneForm.errors.output }}</p>
             </div>
 
-            <div class="lg:col-span-12 flex items-center justify-end">
+            <div class="lg:col-span-12 flex items-center justify-end gap-2">
+                <button
+                    v-if="editingMilestoneId"
+                    type="button"
+                    class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-white/10 dark:bg-transparent dark:text-slate-300 dark:hover:bg-white/5"
+                    @click="cancelEdit"
+                >
+                    Cancel
+                </button>
                 <button
                     type="submit"
                     :disabled="milestoneForm.processing"
-                    class="inline-flex items-center gap-2 rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-teal-700 disabled:opacity-70"
+                    :class="[
+                        'inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold text-white transition disabled:opacity-70',
+                        editingMilestoneId
+                            ? 'bg-indigo-600 hover:bg-indigo-700'
+                            : 'bg-teal-600 hover:bg-teal-700',
+                    ]"
                 >
                     <svg v-if="milestoneForm.processing" class="h-4 w-4 animate-spin text-white" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8V0C5.37 0 0 5.37 0 12h4Zm2 5.29A7.95 7.95 0 0 1 4 12H0c0 3.04 1.14 5.82 3 7.94l3-2.65Z"></path>
                     </svg>
-                    Add Activity
+                    {{ editingMilestoneId ? 'Update Activity' : 'Add Activity' }}
                 </button>
             </div>
         </form>
@@ -133,20 +146,29 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-200 dark:divide-white/10">
-                    <tr v-for="item in roadmapMilestones" :key="item.id">
+                    <tr v-for="item in roadmapMilestones" :key="item.id" :class="{ 'bg-indigo-50/50 dark:bg-indigo-500/5': editingMilestoneId === item.id }">
                         <td class="px-3 py-2 text-slate-800 dark:text-slate-100">{{ item.title }}</td>
-                        <td class="px-3 py-2 text-slate-600 dark:text-slate-300">{{ milestoneTypeLabel(item.type) }}</td>
+                        <td class="px-3 py-2 text-slate-600 dark:text-slate-300">{{ item.type || '-' }}</td>
                         <td class="px-3 py-2 text-slate-600 dark:text-slate-300">{{ quarterLabel(item.start_date) }}</td>
                         <td class="px-3 py-2 text-slate-600 dark:text-slate-300">{{ quarterLabel(item.end_date) }}</td>
                         <td class="px-3 py-2 text-slate-600 dark:text-slate-300">{{ item.output || '-' }}</td>
                         <td class="px-3 py-2 text-right">
-                            <button
-                                type="button"
-                                class="rounded-md px-2.5 py-1.5 text-xs font-semibold text-red-600 transition hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10"
-                                @click="removeMilestone(item.id)"
-                            >
-                                Delete
-                            </button>
+                            <div class="inline-flex items-center gap-1">
+                                <button
+                                    type="button"
+                                    class="rounded-md px-2.5 py-1.5 text-xs font-semibold text-indigo-600 transition hover:bg-indigo-50 dark:text-indigo-400 dark:hover:bg-indigo-500/10"
+                                    @click="startEdit(item)"
+                                >
+                                    Edit
+                                </button>
+                                <button
+                                    type="button"
+                                    class="rounded-md px-2.5 py-1.5 text-xs font-semibold text-red-600 transition hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10"
+                                    @click="removeMilestone(item.id)"
+                                >
+                                    Delete
+                                </button>
+                            </div>
                         </td>
                     </tr>
                     <tr v-if="roadmapMilestones.length === 0">
@@ -172,16 +194,14 @@ const props = defineProps({
 });
 
 const quarterOptions = [1, 2, 3, 4];
-const milestoneTypeOptions = [
-    { value: 'assessment_design', label: 'Assessment & Design' },
-    { value: 'rollout', label: 'Rollout' },
-];
 const currentYear = new Date().getFullYear();
+
+const editingMilestoneId = ref(null);
 
 const milestoneForm = useForm({
     title: '',
     output: '',
-    type: 'assessment_design',
+    type: '',
     start_date: '',
     end_date: '',
 });
@@ -262,15 +282,18 @@ const resetMilestoneRange = () => {
     };
 };
 
+const resetForm = () => {
+    milestoneForm.reset();
+    milestoneForm.clearErrors();
+    milestoneForm.type = '';
+    editingMilestoneId.value = null;
+    useQuarterRange.value = false;
+    resetMilestoneRange();
+};
+
 watch(
     () => props.project?.id,
-    () => {
-        milestoneForm.reset();
-        milestoneForm.clearErrors();
-        milestoneForm.type = 'assessment_design';
-        useQuarterRange.value = false;
-        resetMilestoneRange();
-    },
+    () => resetForm(),
     { immediate: true }
 );
 
@@ -299,10 +322,6 @@ const quarterLabel = (value) => {
     return `Q${quarter} ${date.getUTCFullYear()}`;
 };
 
-const milestoneTypeLabel = (type) => String(type || '').toLowerCase().includes('rollout')
-    ? 'Rollout'
-    : 'Assessment & Design';
-
 const quarterStartDate = (year, quarter) => {
     const month = (quarter * 3) - 2;
 
@@ -316,13 +335,51 @@ const quarterEndDate = (year, quarter) => {
     return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 };
 
-const addMilestone = () => {
-    if (!props.project?.id) {
-        return;
+const extractQuarterFromDate = (value) => {
+    const date = parseDate(value);
+
+    if (!date) {
+        return { year: '', quarter: '' };
     }
 
+    return {
+        year: String(date.getUTCFullYear()),
+        quarter: String(Math.floor(date.getUTCMonth() / 3) + 1),
+    };
+};
+
+const startEdit = (item) => {
+    editingMilestoneId.value = item.id;
     milestoneForm.clearErrors();
 
+    milestoneForm.title = item.title || '';
+    milestoneForm.type = item.type || '';
+    milestoneForm.output = item.output || '';
+    milestoneForm.start_date = item.start_date || '';
+    milestoneForm.end_date = item.end_date || '';
+
+    if (item.start_date && item.end_date) {
+        useQuarterRange.value = true;
+        const start = extractQuarterFromDate(item.start_date);
+        const end = extractQuarterFromDate(item.end_date);
+
+        milestoneRange.value = {
+            startYear: start.year,
+            startQuarter: start.quarter,
+            endYear: end.year,
+            endQuarter: end.quarter,
+        };
+    } else {
+        useQuarterRange.value = false;
+        resetMilestoneRange();
+    }
+};
+
+const cancelEdit = () => {
+    resetForm();
+};
+
+const buildDates = () => {
     if (useQuarterRange.value) {
         const startYear = Number(milestoneRange.value.startYear);
         const startQuarter = Number(milestoneRange.value.startQuarter);
@@ -331,7 +388,7 @@ const addMilestone = () => {
 
         if (!startYear || !startQuarter || !endYear || !endQuarter) {
             milestoneForm.setError('start_date', 'Pilih start year/quarter dan end year/quarter atau matikan opsi quarter range.');
-            return;
+            return false;
         }
 
         milestoneForm.start_date = quarterStartDate(startYear, startQuarter);
@@ -339,23 +396,40 @@ const addMilestone = () => {
 
         if (new Date(milestoneForm.end_date).getTime() < new Date(milestoneForm.start_date).getTime()) {
             milestoneForm.setError('end_date', 'End quarter harus lebih besar atau sama dengan start quarter.');
-            return;
+            return false;
         }
     } else {
         milestoneForm.start_date = null;
         milestoneForm.end_date = null;
     }
 
-    milestoneForm.post(`/it-initiatives/${props.project.id}/milestones`, {
-        preserveScroll: true,
-        preserveState: true,
-        onSuccess: () => {
-            milestoneForm.reset();
-            milestoneForm.type = 'assessment_design';
-            useQuarterRange.value = false;
-            resetMilestoneRange();
-        },
-    });
+    return true;
+};
+
+const submitForm = () => {
+    if (!props.project?.id) {
+        return;
+    }
+
+    milestoneForm.clearErrors();
+
+    if (!buildDates()) {
+        return;
+    }
+
+    if (editingMilestoneId.value) {
+        milestoneForm.put(`/it-initiatives/${props.project.id}/milestones/${editingMilestoneId.value}`, {
+            preserveScroll: true,
+            preserveState: true,
+            onSuccess: () => resetForm(),
+        });
+    } else {
+        milestoneForm.post(`/it-initiatives/${props.project.id}/milestones`, {
+            preserveScroll: true,
+            preserveState: true,
+            onSuccess: () => resetForm(),
+        });
+    }
 };
 
 const removeMilestone = (milestoneId) => {
@@ -365,6 +439,10 @@ const removeMilestone = (milestoneId) => {
 
     if (!window.confirm('Delete this roadmap activity?')) {
         return;
+    }
+
+    if (editingMilestoneId.value === milestoneId) {
+        resetForm();
     }
 
     router.delete(`/it-initiatives/${props.project.id}/milestones/${milestoneId}`, {

@@ -18,56 +18,78 @@
         </div>
 
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-slate-200 text-sm dark:divide-white/10">
+            <table class="w-full min-w-[920px] divide-y divide-slate-200 dark:divide-white/5">
                 <thead class="bg-slate-50 dark:bg-white/5">
                     <tr>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Code</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Initiative</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status</th>
-                        <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Action</th>
+                        <th scope="col" class="w-10 whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">No</th>
+                        <th scope="col" class="w-16 whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Code</th>
+                        <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">IT Arsitektur Building Blok</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Daftar Inisiatif</th>
+                        <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">State</th>
+                        <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Bulan / Tahun</th>
+                        <th scope="col" class="w-1/3 px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Terbaru</th>
+                        <th scope="col" class="whitespace-nowrap px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Action</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100 dark:divide-white/5">
-                    <tr v-for="item in items" :key="`it-open-${item.id}`">
-                        <td class="whitespace-nowrap px-4 py-3 font-medium text-slate-900 dark:text-white">{{ item.code || '-' }}</td>
-                        <td class="px-4 py-3">
-                            <div class="max-w-xs">
-                                <p class="truncate font-medium text-slate-800 dark:text-slate-100">{{ item.name || '-' }}</p>
-                                <p class="truncate text-xs text-slate-500 dark:text-slate-400">{{ item.charter?.category || 'Uncategorized' }}</p>
-                            </div>
-                        </td>
-                        <td class="whitespace-nowrap px-4 py-3">
-                            <span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize" :class="statusBadgeClassById(item.status)">
-                                {{ statusLabelFromOptions(item.status, statusOptions) }}
-                            </span>
-                        </td>
-                        <td class="whitespace-nowrap px-4 py-3 text-right">
-                            <div class="flex items-center justify-end gap-1">
-                                <Link
-                                    :href="`/it-initiatives/${item.id}`"
-                                    class="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-indigo-600 dark:text-slate-500 dark:hover:bg-white/5 dark:hover:text-indigo-400"
-                                    title="View"
+                <tbody class="divide-y divide-slate-200 bg-white dark:divide-white/5 dark:bg-[#1a1a1a]">
+                    <template v-for="(item, index) in items" :key="`it-open-${item.id}`">
+                        <tr class="group transition-colors hover:bg-slate-50 dark:hover:bg-white/5">
+                            <td class="whitespace-nowrap px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">{{ index + 1 }}</td>
+                            <td class="whitespace-nowrap px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">{{ item.code || '-' }}</td>
+                            <td class="whitespace-nowrap px-6 py-4 text-xs text-slate-700 dark:text-slate-200">
+                                <span class="inline-flex rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-semibold text-blue-800 dark:bg-blue-500/20 dark:text-blue-300">
+                                    {{ item.charter?.category || 'Uncategorized' }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-xs text-slate-700 dark:text-slate-200">
+                                <span class="font-medium text-slate-700 dark:text-slate-200">{{ item.name || '-' }}</span>
+                            </td>
+                            <td class="whitespace-nowrap px-6 py-4">
+                                <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-medium capitalize" :class="statusBadgeClassById(item.status)">
+                                    {{ statusLabelFromOptions(item.status, statusOptions) }}
+                                </span>
+                            </td>
+                            <td class="whitespace-nowrap px-6 py-4 text-xs font-medium text-slate-700 dark:text-slate-300">
+                                {{ latestItDate(item) || '-' }}
+                            </td>
+                            <td class="px-6 py-4 text-xs text-slate-700 dark:text-slate-200">
+                                <span
+                                    v-if="latestItStatus(item)"
+                                    class="inline-flex items-center rounded-md bg-slate-100 px-2 py-1 text-[11px] font-medium text-slate-700 capitalize dark:bg-white/10 dark:text-slate-300 break-words whitespace-normal leading-relaxed"
+                                    :title="latestItStatus(item)"
                                 >
-                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                    </svg>
-                                </Link>
-                                <Link
-                                    :href="`/it-initiatives/${item.id}/edit`"
-                                    class="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-amber-600 dark:text-slate-500 dark:hover:bg-white/5 dark:hover:text-amber-400"
-                                    title="Edit"
-                                >
-                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                    </svg>
-                                </Link>
-                            </div>
-                        </td>
-                    </tr>
+                                    {{ latestItStatus(item) }}
+                                </span>
+                                <span v-else class="text-slate-400 dark:text-slate-500 italic text-xs">-</span>
+                            </td>
+                            <td class="whitespace-nowrap px-6 py-4 text-right">
+                                <div class="flex items-center justify-end gap-1">
+                                    <Link
+                                        :href="`/it-initiatives/${item.id}`"
+                                        class="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-indigo-600 dark:text-slate-500 dark:hover:bg-white/5 dark:hover:text-indigo-400"
+                                        title="View"
+                                    >
+                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                    </Link>
+                                    <Link
+                                        :href="`/it-initiatives/${item.id}/edit`"
+                                        class="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-amber-600 dark:text-slate-500 dark:hover:bg-white/5 dark:hover:text-amber-400"
+                                        title="Edit"
+                                    >
+                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                        </svg>
+                                    </Link>
+                                </div>
+                            </td>
+                        </tr>
+                    </template>
 
                     <tr v-if="items.length === 0">
-                        <td colspan="4" class="px-4 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
+                        <td colspan="8" class="px-6 py-8 text-center text-xs text-slate-500 dark:text-slate-400">
                             Semua IT initiatives sudah {{ lowerCompletedStatusLabel }}.
                         </td>
                     </tr>
@@ -106,4 +128,35 @@ const props = defineProps({
 });
 
 const lowerCompletedStatusLabel = computed(() => String(props.completedStatusLabel || '').toLowerCase());
+
+const latestItStatus = (item) => {
+    const rawStatus = item?.latest_implementation_status
+        ?? item?.latestImplementationStatus
+        ?? item?.latest_pc_status_implementation?.status
+        ?? item?.latestPcStatusImplementation?.status
+        ?? item?.pc_status_implementations?.[0]?.status
+        ?? item?.pcStatusImplementations?.[0]?.status
+        ?? null;
+
+    const normalizedStatus = String(rawStatus ?? '').trim();
+
+    return normalizedStatus.length > 0 ? normalizedStatus : null;
+};
+
+const latestItDate = (item) => {
+    const rawDate = item?.latest_implementation_status?.date
+        ?? item?.latestImplementationStatus?.date
+        ?? item?.latest_pc_status_implementation?.date
+        ?? item?.latestPcStatusImplementation?.date
+        ?? item?.pc_status_implementations?.[0]?.date
+        ?? item?.pcStatusImplementations?.[0]?.date
+        ?? null;
+
+    if (!rawDate) return null;
+    
+    const date = new Date(rawDate);
+    if (isNaN(date.getTime())) return null;
+
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+};
 </script>

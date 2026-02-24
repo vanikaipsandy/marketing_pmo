@@ -7,6 +7,116 @@
                 </div>
             </div>
 
+            <section class="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
+                <article
+                    class="relative flex flex-col justify-center rounded-2xl border p-5 shadow-[0_4px_16px_rgba(167,201,66,0.3)] bg-[#A7C942] border-[#A7C942]"
+                >
+                    <p
+                        class="text-xs font-semibold uppercase tracking-[0.08em] text-white"
+                        style="text-shadow: 0 1px 3px rgba(0,0,0,0.3);"
+                    >
+                        Total IT Inisiatif 
+                    </p>
+                    <p
+                        class="mt-2 flex items-center justify-between text-3xl font-bold text-white"
+                        style="text-shadow: 0 2px 6px rgba(0,0,0,0.35);"
+                    >
+                        <span>{{ totalApproved }}</span>
+                    </p>
+                </article>
+
+                <article class="flex flex-col justify-center rounded-2xl border border-slate-200 bg-white px-5 py-3 shadow-[0_4px_16px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-[#171717] lg:col-span-2 space-y-4">
+                    <div>
+                        <div class="mb-2 flex items-center justify-between gap-2">
+                            <h2 class="text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Scope Charter IT Initiative Timeline</h2>
+                        </div>
+
+                        <div>
+                            <div
+                                class="grid"
+                                :style="gridStyle(scopeSteps)"
+                            >
+                                <div
+                                    v-for="(step, index) in scopeSteps"
+                                    :key="`scope-step-${step.key}`"
+                                    class="relative flex justify-center cursor-pointer group"
+                                    @click="toggleFilter(step.statusId)"
+                                >
+                                    <span
+                                        class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[10px] font-bold transition-all group-hover:ring-2 group-hover:ring-offset-1 group-hover:ring-slate-300"
+                                        :class="[
+                                            step.circleClass,
+                                            activeFlowFilter === step.statusId ? 'ring-2 ring-offset-2 ring-blue-500 shadow-md transform scale-110' : ''
+                                        ]"
+                                    >
+                                        {{ step.count }}
+                                    </span>
+                                    <span
+                                        v-if="index < scopeSteps.length - 1"
+                                        class="absolute left-1/2 top-1/2 ml-[0.75rem] h-0.5 w-[calc(100%_-_1.5rem)] -translate-y-1/2 rounded-full"
+                                        :class="step.lineClass"
+                                    ></span>
+                                </div>
+                            </div>
+
+                            <div
+                                class="mt-2 grid gap-1 text-center"
+                                :style="gridStyle(scopeSteps)"
+                            >
+                                <div v-for="step in scopeSteps" :key="`scope-label-${step.key}`">
+                                    <p class="text-[9px] font-semibold text-slate-700 dark:text-slate-200">{{ step.label }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-100 pt-4 dark:border-white/5">
+                        <div class="mb-2 flex items-center justify-between gap-2">
+                            <h2 class="text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Project Charter IT Initiative Timeline</h2>
+                        </div>
+
+                        <div>
+                            <div
+                                class="grid"
+                                :style="gridStyle(digitalSteps)"
+                            >
+                                <div
+                                    v-for="(step, index) in digitalSteps"
+                                    :key="`step-${step.key}`"
+                                    class="relative flex justify-center cursor-pointer group"
+                                    @click="toggleFilter(step.statusId)"
+                                >
+                                    <span
+                                        class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[10px] font-bold transition-all group-hover:ring-2 group-hover:ring-offset-1 group-hover:ring-slate-300"
+                                        :class="[
+                                            step.circleClass,
+                                            activeFlowFilter === step.statusId ? 'ring-2 ring-offset-2 ring-blue-500 shadow-md transform scale-110' : ''
+                                        ]"
+                                    >
+                                        {{ step.count }}
+                                    </span>
+                                    <span
+                                        v-if="index < digitalSteps.length - 1"
+                                        class="absolute left-1/2 top-1/2 ml-[0.75rem] h-0.5 w-[calc(100%_-_1.5rem)] -translate-y-1/2 rounded-full"
+                                        :class="step.lineClass"
+                                    ></span>
+                                </div>
+                            </div>
+
+                            <div
+                                class="mt-2 grid gap-1 text-center"
+                                :style="gridStyle(digitalSteps)"
+                            >
+                                <div v-for="step in digitalSteps" :key="`label-${step.key}`">
+                                    <p class="text-[9px] font-semibold text-slate-700 dark:text-slate-200">{{ step.label }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            </section>
+            <!-- FILTER -->
+<!-- 
             <div class="mb-6 flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 dark:border-white/5 dark:bg-[#1a1a1a] sm:flex-row">
                 <div class="relative flex-1">
                     <input
@@ -37,19 +147,22 @@
                         {{ month.label }}
                     </option>
                 </select>
-            </div>
+            </div> -->
 
             <div class="overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-white/5 dark:bg-[#1a1a1a]">
                 <div class="overflow-x-auto">
                     <table class="w-full min-w-[920px] divide-y divide-slate-200 dark:divide-white/5">
                         <thead class="bg-slate-50 dark:bg-white/5">
                             <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Code</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">IT Arsitektur Building Blok</th>
+                                <th scope="col" class="w-10 whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">No</th>
+                                <th scope="col" class="w-16 whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Code</th>
+                                <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">IT Arsitektur Building Blok</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Daftar Inisiatif</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Status</th>
-                                <th scope="col" class="p-0 text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                                    <div class="w-[180px] border-l border-slate-200 dark:border-white/10">
+                                <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">State</th>
+                                <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Bulan / Tahun</th>
+                                <th scope="col" class="w-1/3 px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Terbaru</th>
+                                <th scope="col" class="whitespace-nowrap p-0 text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                    <div class="w-[180px] border-l border-slate-200 dark:border-white/10 float-right">
                                         <div class="border-b border-slate-200 px-2 py-1.5 text-center dark:border-white/10">Action</div>
                                         <div class="grid grid-cols-2 divide-x divide-slate-200 text-[10px] font-semibold normal-case dark:divide-white/10">
                                             <span class="px-2 py-1 text-center">Scope Charter</span>
@@ -60,9 +173,12 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-200 bg-white dark:divide-white/5 dark:bg-[#1a1a1a]">
-                            <tr v-for="(project, index) in itInitiatives" :key="project.id" class="group transition-colors hover:bg-slate-50 dark:hover:bg-white/5">
+                            <tr v-for="(project, index) in filteredItems" :key="project.id" class="group transition-colors hover:bg-slate-50 dark:hover:bg-white/5">
                                 <td class="whitespace-nowrap px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">
-                                    {{ project.code }}
+                                    {{ index + 1 }}
+                                </td>
+                                <td class="whitespace-nowrap px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">
+                                    {{ project.code || '-' }}
                                 </td>
                                 <td 
                                     v-if="shouldShowCategory(index)"
@@ -73,8 +189,8 @@
                                         {{ project.charter?.category || 'Uncategorized' }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 text-xs">
-                                    <span class="font-medium text-slate-700 dark:text-slate-200">{{ project.name }}</span>
+                                <td class="px-6 py-4 text-xs text-slate-700 dark:text-slate-200">
+                                    <span class="font-medium text-slate-700 dark:text-slate-200">{{ project.name || '-' }}</span>
                                 </td>
                                 <td class="whitespace-nowrap px-6 py-4">
                                     <span
@@ -84,23 +200,50 @@
                                         {{ statusLabelFromOptions(project.status, statusOptions) }}
                                     </span>
                                 </td>
+                                <td class="whitespace-nowrap px-6 py-4 text-xs font-medium text-slate-700 dark:text-slate-300">
+                                    {{ latestItDate(project) || '-' }}
+                                </td>
+                                <td class="px-6 py-4 text-xs text-slate-700 dark:text-slate-200">
+                                    <span
+                                        v-if="latestItStatus(project)"
+                                        class="inline-flex items-center rounded-md bg-slate-100 px-2 py-1 text-[11px] font-medium text-slate-700 capitalize dark:bg-white/10 dark:text-slate-300 break-words whitespace-normal leading-relaxed"
+                                        :title="latestItStatus(project)"
+                                    >
+                                        {{ latestItStatus(project) }}
+                                    </span>
+                                    <span v-else class="text-slate-400 dark:text-slate-500 italic text-xs">-</span>
+                                </td>
                                 <td class="p-0 text-sm font-medium">
-                                    <div class="grid w-[180px] grid-cols-2 divide-x divide-slate-200 border-l border-slate-200 dark:divide-white/10 dark:border-white/10">
-                                        <Link
-                                            :href="`/it-initiatives/${project.id}`"
-                                            :class="actionCellClass(hasScopeCharter(project))"
-                                            title="View Scope Charter"
-                                        >
-                                            View
-                                        </Link>
-                                        <Link
-                                            :href="`/it-initiatives/${project.id}`"
-                                            :class="actionCellClass(hasProjectCharter(project))"
-                                            title="View Project Charter"
-                                        >
-                                            View
-                                        </Link>
+                                    <div class="grid w-[180px] h-full grid-cols-2 divide-x divide-slate-200 border-l border-slate-200 dark:divide-white/10 dark:border-white/10 float-right">
+                                        <div class="flex items-center justify-center p-2">
+                                            <Link
+                                                :href="`/it-initiatives/${project.id}`"
+                                                :class="actionCellClass(hasScopeCharter(project))"
+                                                title="View Scope Charter"
+                                            >
+                                                View
+                                            </Link>
+                                        </div>
+                                        <div class="flex items-center justify-center p-2">
+                                            <Link
+                                                :href="`/it-initiatives/${project.id}`"
+                                                :class="actionCellClass(hasProjectCharter(project))"
+                                                title="View Project Charter"
+                                            >
+                                                View
+                                            </Link>
+                                        </div>
                                     </div>
+                                </td>
+                            </tr>
+                            <tr v-if="filteredItems.length === 0">
+                                <td colspan="8" class="px-6 py-8 text-center text-xs text-slate-500 dark:text-slate-400">
+                                    <span v-if="activeFlowFilter === null">
+                                        Silakan klik salah satu status di atas untuk menampilkan data inisiatif.
+                                    </span>
+                                    <span v-else>
+                                        Tidak ada data yang sesuai dengan filter opsi ini.
+                                    </span>
                                 </td>
                             </tr>
                         </tbody>
@@ -109,11 +252,15 @@
             </div>
 
             <div
-                v-if="itInitiatives.length === 0"
+                v-if="filteredItems.length === 0"
                 class="mt-6 rounded-xl border border-slate-200 bg-white py-12 text-center dark:border-white/5 dark:bg-[#1a1a1a]"
             >
-                <p class="text-slate-500 dark:text-slate-400">No IT initiatives found.</p>
-                <p class="mt-2 text-sm text-slate-400 dark:text-slate-500">Belum ada IT initiative dengan status {{ completedStatusLabel.toLowerCase() }}.</p>
+                <p class="text-slate-500 dark:text-slate-400">
+                    {{ activeFlowFilter === null ? 'Pilih status di atas untuk melihat data.' : 'Tidak ada IT initiative ditemukan.' }}
+                </p>
+                <p class="mt-2 text-sm text-slate-400 dark:text-slate-500" v-if="activeFlowFilter !== null">
+                    Status yang dipilih belum memiliki data inisiatif.
+                </p>
             </div>
 
 
@@ -125,7 +272,8 @@
 import { computed, ref } from 'vue';
 import { Link, router } from '@inertiajs/vue3';
 import UserLayout from '@/Layouts/UserLayout.vue';
-import { statusBadgeClassById, statusLabelFromOptions } from '@/Composables/initiativeStatus';
+import { statusBadgeClassById, statusLabelFromOptions, statusFlowClassByIndex } from '@/Composables/initiativeStatus';
+import { useFlowFilter } from '@/Composables/useFlowFilter';
 
 const props = defineProps({
     itInitiatives: Object,
@@ -138,7 +286,20 @@ const props = defineProps({
         type: Number,
         default: 5,
     },
+    totalApproved: {
+        type: Number,
+        default: 0,
+    },
+    statusCounts: {
+        type: Object,
+        default: () => ({}),
+    }
 });
+
+const { activeFlowFilter, filteredItems, toggleFilter } = useFlowFilter(
+    () => props.itInitiatives,
+    (item) => item.status
+);
 
 const statusOptions = computed(() => {
     if (props.statusOptions.length > 0) {
@@ -160,6 +321,84 @@ const completedStatusId = computed(() => {
 
 const completedStatusLabel = computed(() => {
     return statusLabelFromOptions(completedStatusId.value, statusOptions.value);
+});
+
+const scopeStatusOrder = ['drafting', 'propose', 'review', 'approve'];
+const normalizeStatusName = (value) => String(value ?? '').trim().toLowerCase();
+
+const scopeStatusOptions = computed(() => {
+    const sourceOptions = Array.isArray(statusOptions.value) ? statusOptions.value : [];
+    const mappedStatusByName = new Map();
+
+    sourceOptions.forEach((status) => {
+        const candidateNames = [normalizeStatusName(status?.name), normalizeStatusName(status?.label)];
+
+        if (candidateNames.includes('baseline')) {
+            return;
+        }
+
+        candidateNames.forEach((candidateName) => {
+            if (scopeStatusOrder.includes(candidateName) && !mappedStatusByName.has(candidateName)) {
+                mappedStatusByName.set(candidateName, status);
+            }
+        });
+    });
+
+    const fallbackStatusOptions = [
+        { id: 1, name: 'drafting', label: 'Drafting' },
+        { id: 2, name: 'propose', label: 'Propose' },
+        { id: 3, name: 'review', label: 'Review' },
+        { id: 4, name: 'approve', label: 'Approve' },
+    ];
+
+    return scopeStatusOrder.map((statusName, index) => {
+        const matchedStatus = mappedStatusByName.get(statusName);
+        const fallbackStatus = fallbackStatusOptions[index];
+
+        return {
+            id: Number(matchedStatus?.id ?? fallbackStatus.id),
+            name: statusName,
+            label: fallbackStatus.label,
+        };
+    });
+});
+
+const scopeSteps = computed(() => {
+    // Currently defaulting to 0 as Scope Charter does not have specific charter status counts
+    return scopeStatusOptions.value.map((status, index) => {
+        const flowClass = statusFlowClassByIndex(index);
+        const key = String(status.id);
+
+        return {
+            key,
+            statusId: status.id,
+            label: status.label,
+            count: 0,
+            circleClass: flowClass.circleClass,
+            lineClass: flowClass.lineClass,
+        };
+    });
+});
+
+const digitalSteps = computed(() => {
+    const counts = props.statusCounts || {};
+    return scopeStatusOptions.value.map((status, index) => {
+        const flowClass = statusFlowClassByIndex(index);
+        const key = String(status.id);
+
+        return {
+            key,
+            statusId: status.id,
+            label: status.label,
+            count: Number(counts?.[key] ?? 0),
+            circleClass: flowClass.circleClass,
+            lineClass: flowClass.lineClass,
+        };
+    });
+});
+
+const gridStyle = (steps = []) => ({
+    gridTemplateColumns: `repeat(${Math.max(steps.length, 1)}, minmax(0, 1fr))`,
 });
 
 const filters = ref({
@@ -185,16 +424,16 @@ const months = [
 
 const shouldShowCategory = (index) => {
     if (index === 0) return true;
-    const current = props.itInitiatives[index].charter?.category || 'Uncategorized';
-    const previous = props.itInitiatives[index - 1].charter?.category || 'Uncategorized';
+    const current = filteredItems.value[index].charter?.category || 'Uncategorized';
+    const previous = filteredItems.value[index - 1].charter?.category || 'Uncategorized';
     return current !== previous;
 };
 
 const getCategoryRowspan = (index) => {
     let count = 1;
-    const current = props.itInitiatives[index].charter?.category || 'Uncategorized';
-    for (let i = index + 1; i < props.itInitiatives.length; i++) {
-        if ((props.itInitiatives[i].charter?.category || 'Uncategorized') === current) {
+    const current = filteredItems.value[index].charter?.category || 'Uncategorized';
+    for (let i = index + 1; i < filteredItems.value.length; i++) {
+        if ((filteredItems.value[i].charter?.category || 'Uncategorized') === current) {
             count++;
         } else {
             break;
@@ -240,9 +479,40 @@ function hasProjectCharter(project) {
 
 function actionCellClass(isReady) {
     if (isReady) {
-        return 'block bg-emerald-500 px-2 py-1.5 text-center text-xs font-semibold text-white transition-colors hover:bg-emerald-600';
+        return 'inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold bg-emerald-100 text-emerald-800 hover:bg-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-300 dark:hover:bg-emerald-500/30 transition-colors cursor-pointer';
     }
 
-    return 'block bg-rose-500 px-2 py-1.5 text-center text-xs font-semibold text-white transition-colors hover:bg-rose-600';
+    return 'inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold bg-rose-100 text-rose-800 hover:bg-rose-200 dark:bg-rose-500/20 dark:text-rose-300 dark:hover:bg-rose-500/30 transition-colors cursor-pointer';
 }
+
+const latestItStatus = (item) => {
+    const rawStatus = item?.latest_implementation_status
+        ?? item?.latestImplementationStatus
+        ?? item?.latest_pc_status_implementation?.status
+        ?? item?.latestPcStatusImplementation?.status
+        ?? item?.pc_status_implementations?.[0]?.status
+        ?? item?.pcStatusImplementations?.[0]?.status
+        ?? null;
+
+    const normalizedStatus = String(rawStatus ?? '').trim();
+
+    return normalizedStatus.length > 0 ? normalizedStatus : null;
+};
+
+const latestItDate = (item) => {
+    const rawDate = item?.latest_implementation_status?.date
+        ?? item?.latestImplementationStatus?.date
+        ?? item?.latest_pc_status_implementation?.date
+        ?? item?.latestPcStatusImplementation?.date
+        ?? item?.pc_status_implementations?.[0]?.date
+        ?? item?.pcStatusImplementations?.[0]?.date
+        ?? null;
+
+    if (!rawDate) return null;
+    
+    const date = new Date(rawDate);
+    if (isNaN(date.getTime())) return null;
+
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+};
 </script>

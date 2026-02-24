@@ -132,17 +132,8 @@ const quarterIndexByDate = (dateValue) => {
 };
 
 const sectionLabelForType = (type) => {
-    const normalized = String(type || '').toLowerCase();
-
-    if (normalized.includes('rollout')) {
-        return 'Rollout';
-    }
-
-    if (normalized.includes('assess') || normalized.includes('design') || normalized.includes('analysis')) {
-        return 'Assessment and Design';
-    }
-
-    return 'Assessment and Design';
+    const label = String(type || '').trim();
+    return label ? label : 'Assessment and Design';
 };
 
 const buildRowsFromMilestones = () => {
@@ -208,8 +199,15 @@ const roadmapSections = computed(() => {
         ? buildRowsFromMilestones()
         : buildRowsFromObjectives();
 
-    const orderedSections = ['Assessment and Design', 'Rollout'];
-    const grouped = orderedSections.map((label) => ({
+    // Dynamically get unique sections from rows
+    const uniqueSections = [...new Set(rows.map(row => row.section))];
+    
+    // Default to at least one section if empty
+    if (uniqueSections.length === 0) {
+        uniqueSections.push('Assessment and Design');
+    }
+
+    const grouped = uniqueSections.map((label) => ({
         label,
         rows: rows.filter((row) => row.section === label),
     })).filter((section) => section.rows.length > 0);
