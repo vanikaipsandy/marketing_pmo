@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class MstInitiative extends Model
 {
@@ -26,5 +27,15 @@ class MstInitiative extends Model
             'business_unit' => 'integer',
             'code' => 'integer',
         ];
+    }
+
+    public function coe(): BelongsTo
+    {
+        return $this->belongsTo(TrsCoe::class, 'coe_id');
+    }
+
+    public function organization(): BelongsTo
+    {
+        return $this->belongsTo(TrsOrganization::class, 'business_unit');
     }
 }
