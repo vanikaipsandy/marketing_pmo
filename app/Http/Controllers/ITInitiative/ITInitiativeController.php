@@ -7,6 +7,7 @@ use App\Http\Requests\ITInitiative\ITInitiativeIndexRequest;
 use App\Http\Requests\ITInitiative\ITInitiativeStoreRequest;
 use App\Http\Requests\ITInitiative\ITInitiativeUpdateRequest;
 use App\Models\InitiativeStatus;
+use App\Models\MstInitiative;
 use App\Models\Project;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -85,9 +86,9 @@ class ITInitiativeController extends Controller
             ->orderBy('id', 'asc')
             ->get();
 
-        $approveStatus = $statusOptions->firstWhere('name', 'approve') ?? $statusOptions->firstWhere('name', 'baseline');
-        $approveStatusId = $approveStatus ? $approveStatus['id'] : InitiativeStatus::baselineId();
-        $totalApproved = Project::where('status', $approveStatusId)->count();
+        $totalItInitiatives = MstInitiative::query()
+            ->where('tipe_initiative', 2)
+            ->count();
 
         $statusCountsRaw = Project::query()
             ->selectRaw('status, COUNT(*) as total')
@@ -98,7 +99,7 @@ class ITInitiativeController extends Controller
             'itInitiatives' => $projects,
             'statusOptions' => $statusOptions,
             'completedStatusId' => $baselineStatusId,
-            'totalApproved' => $totalApproved,
+            'totalItInitiatives' => $totalItInitiatives,
             'statusCounts' => $statusCountsRaw,
             'filters'  => [
                 'search' => $filters['search'] ?? null,

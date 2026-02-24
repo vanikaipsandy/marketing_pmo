@@ -54,31 +54,30 @@
                 </div>
 
                 <div class="overflow-x-auto">
-                    <table class="w-full min-w-[640px] divide-y divide-slate-200 dark:divide-white/5">
+                    <table class="w-full min-w-[640px] divide-y divide-slate-200 text-sm dark:divide-white/10">
                         <thead class="bg-slate-50 dark:bg-white/5">
                             <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Initiative</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Initiative</th>
                                 <th
                                     v-for="column in statusSummaryColumns"
                                     :key="`status-summary-head-${column.key}`"
-                                    scope="col"
-                                    class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400"
+                                    class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400"
                                 >
                                     {{ column.label }}
                                 </th>
-                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Total</th>
+                                <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Total</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-200 bg-white dark:divide-white/5 dark:bg-[#1a1a1a]">
+                        <tbody class="divide-y divide-slate-100 dark:divide-white/5">
                             <tr
                                 v-for="row in statusSummaryRows"
                                 :key="row.key"
-                                class="group transition-colors hover:bg-slate-50 dark:hover:bg-white/5"
+                                class="transition-colors hover:bg-slate-50 dark:hover:bg-white/5"
                             >
                                 <td
                                     role="button"
                                     tabindex="0"
-                                    class="cursor-pointer px-6 py-4 text-xs font-medium text-slate-900 dark:text-white outline-none"
+                                    class="cursor-pointer px-4 py-3 font-semibold text-slate-900 dark:text-white"
                                     :class="selectedInitiative === row.key && selectedStatusFilter === null ? 'bg-blue-50/70 dark:bg-blue-500/10' : ''"
                                     @click="toggleInitiativeTable(row.key, null)"
                                     @keydown.enter.prevent="toggleInitiativeTable(row.key, null)"
@@ -96,7 +95,7 @@
                                     :key="`status-summary-cell-${row.key}-${column.key}`"
                                     role="button"
                                     tabindex="0"
-                                    class="cursor-pointer px-6 py-4 text-xs text-right text-slate-800 transition-colors hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-white/10 outline-none"
+                                    class="cursor-pointer px-4 py-3 text-right font-semibold text-slate-800 transition-colors hover:bg-slate-100 dark:text-slate-100 dark:hover:bg-white/10"
                                     :class="selectedInitiative === row.key && String(selectedStatusFilter) === String(column.key) ? 'bg-blue-50/70 dark:bg-blue-500/10' : ''"
                                     @click="toggleInitiativeTable(row.key, column.key)"
                                     @keydown.enter.prevent="toggleInitiativeTable(row.key, column.key)"
@@ -107,7 +106,7 @@
                                 <td
                                     role="button"
                                     tabindex="0"
-                                    class="cursor-pointer px-6 py-4 text-xs text-right font-medium text-slate-900 transition-colors hover:bg-slate-100 dark:text-white dark:hover:bg-white/10 outline-none"
+                                    class="cursor-pointer px-4 py-3 text-right font-bold text-slate-900 transition-colors hover:bg-slate-100 dark:text-white dark:hover:bg-white/10"
                                     :class="selectedInitiative === row.key && selectedStatusFilter === null ? 'bg-blue-50/70 dark:bg-blue-500/10' : ''"
                                     @click="toggleInitiativeTable(row.key, null)"
                                     @keydown.enter.prevent="toggleInitiativeTable(row.key, null)"
@@ -288,66 +287,47 @@ const toggleInitiativeTable = (initiativeKey, statusId = null) => {
 
 const filteredDigitalInitiatives = computed(() => {
     if (!selectedStatusFilter.value) return props.openDigitalInitiatives;
-    return props.openDigitalInitiatives.filter(
-        item => String(item.status) === String(selectedStatusFilter.value)
-    );
-});
+    return props.openDigitalInitiatives.filter((item) => {
+        if (item.statuses?.length) {
+            return item.statuses.some(
+                (statusItem) =>
+                    String(statusItem.id) === String(selectedStatusFilter.value) ||
+                    String(statusItem.phase_id) === String(selectedStatusFilter.value)
+            );
+        }
 
-const normalizedItInitiatives = computed(() => {
-    return (Array.isArray(props.openItInitiatives) ? props.openItInitiatives : []).map((item) => {
-        const implementationHistory = Array.isArray(item?.pcStatusImplementations)
-            ? item.pcStatusImplementations
-            : Array.isArray(item?.pc_status_implementations)
-                ? item.pc_status_implementations
-                : [];
-
-        const latestStatusRaw = item?.latestPcStatusImplementation?.status
-            ?? item?.latest_pc_status_implementation?.status
-            ?? implementationHistory?.[0]?.status
-            ?? null;
-
-        const latestStatus = String(latestStatusRaw ?? '').trim() || null;
-
-        return {
-            ...item,
-            pcStatusImplementations: implementationHistory,
-            pc_status_implementations: implementationHistory,
-            latestImplementationStatus: latestStatus,
-            latest_implementation_status: latestStatus,
-        };
+        return (
+            String(item.status) === String(selectedStatusFilter.value) ||
+            String(item.status_id) === String(selectedStatusFilter.value) ||
+            String(item.statusRef?.id) === String(selectedStatusFilter.value)
+        );
     });
 });
 
 const filteredItInitiatives = computed(() => {
-    if (!selectedStatusFilter.value) return normalizedItInitiatives.value;
-    return normalizedItInitiatives.value.filter(
-        item => String(item.status) === String(selectedStatusFilter.value)
-    );
+    if (!selectedStatusFilter.value) return props.openItInitiatives;
+    return props.openItInitiatives.filter((item) => {
+        return (
+            String(item.status) === String(selectedStatusFilter.value) ||
+            String(item.status_id) === String(selectedStatusFilter.value) ||
+            String(item.statusRef?.id) === String(selectedStatusFilter.value)
+        );
+    });
 });
 
-const approveStatusId = computed(() => {
-    const approveStatus = statusOptions.value.find(s => 
-        String(s.name).trim().toLowerCase() === 'approve' || 
-        String(s.label).trim().toLowerCase() === 'approve' ||
-        String(s.name).trim().toLowerCase() === 'baseline' ||
-        String(s.label).trim().toLowerCase() === 'baseline'
-    );
-    return approveStatus ? String(approveStatus.id) : null;
-});
+const completedStatusKey = computed(() => String(completedStatusId.value));
 
 const totalDigitalDisetujui = computed(() => {
-    if (!approveStatusId.value) return 0;
-    return Number(props.overview?.digital_status_counts?.[approveStatusId.value] ?? 0);
+    return Number(props.overview?.digital_status_counts?.[completedStatusKey.value] ?? 0);
 });
 
 const totalItDisetujui = computed(() => {
-    if (!approveStatusId.value) return 0;
-    return Number(props.overview?.status_counts?.[approveStatusId.value] ?? 0);
+    return Number(props.overview?.status_counts?.[completedStatusKey.value] ?? 0);
 });
 
 const showApprovedDigitalInitiatives = () => {
     selectedInitiative.value = 'digital';
-    selectedStatusFilter.value = approveStatusId.value;
+    selectedStatusFilter.value = String(completedStatusId.value);
 
     window.scrollTo({
         top: document.body.scrollHeight,
@@ -357,7 +337,7 @@ const showApprovedDigitalInitiatives = () => {
 
 const showApprovedItInitiatives = () => {
     selectedInitiative.value = 'it';
-    selectedStatusFilter.value = approveStatusId.value;
+    selectedStatusFilter.value = String(completedStatusId.value);
 
     window.scrollTo({
         top: document.body.scrollHeight,
@@ -368,7 +348,7 @@ const showApprovedItInitiatives = () => {
 const metricCards = computed(() => [
     {
         key: 'digital-approved',
-        label: 'Total Project Charter Digital Inisiatif Disetujui',
+        label: 'Total Digital Inisiatif Disetujui',
         value: totalDigitalDisetujui.value,
         actionLabel: 'Show',
         actionMethod: showApprovedDigitalInitiatives,
@@ -379,7 +359,7 @@ const metricCards = computed(() => [
     },
     {
         key: 'it-approved',
-        label: 'Total Project Charter IT Inisiatif Disetujui',
+        label: 'Total IT Inisiatif Disetujui',
         value: totalItDisetujui.value,
         actionLabel: 'Show',
         actionMethod: showApprovedItInitiatives,
