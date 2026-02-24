@@ -53,8 +53,30 @@ class DigitalInitiativeController extends Controller
             ->groupBy('status')
             ->pluck('total', 'status');
 
+        $masterDigitalInitiatives = MstInitiative::query()
+            ->select([
+                'id',
+                'coe_id',
+                'tipe_initiative',
+                'business_unit',
+                'code',
+                'name',
+                'description',
+                'status',
+            ])
+            ->with([
+                'coe:id,name',
+                'organization:id,name,groub_id',
+                'organization.groub:id,name',
+            ])
+            ->where('tipe_initiative', 1)
+            ->orderBy('code')
+            ->get()
+            ->values();
+
         return Inertia::render('DigitalInitiatives/Index', [
             'initiatives' => $initiatives,
+            'mstDigitalInitiatives' => $masterDigitalInitiatives,
             'statusOptions' => $statusOptions,
             'completedStatusId' => $baselineStatusId,
             'totalDigitalInitiatives' => $totalDigitalInitiatives,
