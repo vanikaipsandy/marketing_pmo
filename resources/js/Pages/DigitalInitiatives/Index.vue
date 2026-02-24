@@ -558,7 +558,7 @@ const organizationWithGroup = (item) => {
         return group;
     }
 
-    return `${org} (${group})`;
+    return `${org} - ${group}`;
 };
 
 const statusName = (item) => normalizeText(item?.status);

@@ -90,16 +90,6 @@
                         placeholder="Enter new status (e.g. In Progress, Completed)"
                         required
                     />
-                    <select
-                        v-model="historyForm.review_status"
-                        class="w-48 rounded-lg border-slate-300 bg-white text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-white/10 dark:bg-[#131313] dark:text-slate-100"
-                        required
-                    >
-                        <option v-for="reviewStatus in reviewStatusOptions" :key="reviewStatus" :value="reviewStatus">
-                            {{ reviewStatus }}
-                        </option>
-                    </select>
-                    <p v-if="historyForm.errors.review_status" class="mt-1 text-xs text-red-500">{{ historyForm.errors.review_status }}</p>
                     <input
                         v-model="historyForm.month_year"
                         type="month"
@@ -121,50 +111,19 @@
                             <tr>
                                 <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Month / Year</th>
                                 <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status</th>
-                                <th class="w-64 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Review Status</th>
                                 <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Action</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100 dark:divide-white/5">
                             <tr v-for="log in itInitiative.pc_status_implementations" :key="log.id">
-                                <td class="px-4 py-3">
-                                    <input
-                                        v-model="implementationDrafts[log.id].month_year"
-                                        type="month"
-                                        class="w-full min-w-[10rem] rounded-lg border-slate-300 bg-white text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-white/10 dark:bg-[#131313] dark:text-slate-100"
-                                    />
-                                </td>
-                                <td class="px-4 py-3">
-                                    <input
-                                        v-model="implementationDrafts[log.id].status"
-                                        type="text"
-                                        class="w-full min-w-[14rem] rounded-lg border-slate-300 bg-white text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-white/10 dark:bg-[#131313] dark:text-slate-100"
-                                    />
-                                </td>
-                                <td class="w-64 px-4 py-3">
-                                    <select
-                                        v-model="implementationDrafts[log.id].review_status"
-                                        class="w-full min-w-[14rem] rounded-lg border-slate-300 bg-white text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-white/10 dark:bg-[#131313] dark:text-slate-100"
-                                    >
-                                        <option v-for="reviewStatus in reviewStatusOptions" :key="reviewStatus" :value="reviewStatus">
-                                            {{ reviewStatus }}
-                                        </option>
-                                    </select>
-                                </td>
+                                <td class="whitespace-nowrap px-4 py-3 font-medium text-slate-700 dark:text-slate-300">{{ formatMonthYear(log.date) }}</td>
+                                <td class="whitespace-nowrap px-4 py-3 font-medium text-slate-900 dark:text-white capitalize">{{ log.status }}</td>
                                 <td class="whitespace-nowrap px-4 py-3 text-right">
-                                    <button
-                                        type="button"
-                                        @click="updateImplementationStatus(log.id)"
-                                        :disabled="activeImplementationId === log.id"
-                                        class="mr-3 text-indigo-600 hover:text-indigo-800 text-sm font-medium disabled:opacity-50"
-                                    >
-                                        Save
-                                    </button>
-                                    <button type="button" @click="deleteHistory(log.id)" class="text-red-500 hover:text-red-700 text-sm font-medium">Delete</button>
+                                    <button @click="deleteHistory(log.id)" class="text-red-500 hover:text-red-700 text-sm font-medium">Delete</button>
                                 </td>
                             </tr>
                             <tr v-if="!itInitiative.pc_status_implementations || itInitiative.pc_status_implementations.length === 0">
-                                <td colspan="4" class="px-4 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
+                                <td colspan="3" class="px-4 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
                                     No status history found.
                                 </td>
                             </tr>
@@ -177,7 +136,6 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
 import { Link, useForm, router } from '@inertiajs/vue3';
 import UserLayout from '@/Layouts/UserLayout.vue';
 
@@ -195,8 +153,6 @@ const props = defineProps({
         default: 1,
     },
 });
-
-const reviewStatusOptions = ['At Risk', 'On Track', 'Not Started', 'Not Signed'];
 
 const statusOptions = props.statusOptions.length > 0
     ? props.statusOptions
@@ -219,29 +175,14 @@ const submit = () => {
 
 const historyForm = useForm({
     status: '',
-    review_status: reviewStatusOptions[2],
     month_year: new Date().toISOString().slice(0, 7),
 });
-
-const implementationDrafts = ref(
-    (props.itInitiative.pc_status_implementations ?? []).reduce((acc, log) => {
-        acc[log.id] = {
-            status: log.status || '',
-            review_status: log.review_status || reviewStatusOptions[2],
-            month_year: log.date ? String(log.date).slice(0, 7) : new Date().toISOString().slice(0, 7),
-        };
-        return acc;
-    }, {})
-);
-
-const activeImplementationId = ref(null);
 
 const submitHistory = () => {
     historyForm.post(`/it-initiatives/${props.itInitiative.id}/implementation-status`, {
         preserveScroll: true,
         onSuccess: () => {
             historyForm.reset('status');
-            historyForm.review_status = reviewStatusOptions[2];
             historyForm.month_year = new Date().toISOString().slice(0, 7);
         },
     });
@@ -255,19 +196,10 @@ const deleteHistory = (id) => {
     }
 };
 
-const updateImplementationStatus = (id) => {
-    activeImplementationId.value = id;
-
-    router.put(`/implementation-status/${id}`, {
-        status: implementationDrafts.value[id].status,
-        review_status: implementationDrafts.value[id].review_status,
-        month_year: implementationDrafts.value[id].month_year,
-    }, {
-        preserveScroll: true,
-        onFinish: () => {
-            activeImplementationId.value = null;
-        },
-    });
+const formatMonthYear = (dateStr) => {
+    if (!dateStr) return '-';
+    // dateStr format is "YYYY-MM-DD"
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
 };
-
 </script>
