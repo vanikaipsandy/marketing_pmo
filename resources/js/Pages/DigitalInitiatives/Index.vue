@@ -125,72 +125,73 @@
 
             <!-- Digital Initiatives Table -->
             <div v-if="tableMode === TABLE_MODE.FLOW" class="overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-white/5 dark:bg-[#1a1a1a]">
-                <div class="overflow-x-auto">
-                    <table class="w-full min-w-[920px] divide-y divide-slate-200 dark:divide-white/5">
+                <div class="overflow-x-hidden">
+                    <table class="w-full table-fixed divide-y divide-slate-200 text-[11px] dark:divide-white/5">
+                        <colgroup>
+                            <col class="w-[4%]">
+                            <col class="w-[7%]">
+                            <col class="w-[9%]">
+                            <col class="w-[12%]">
+                            <col class="w-[17%]">
+                            <col class="w-[10%]">
+                            <col class="w-[7%]">
+                            <col class="w-[7%]">
+                            <col class="w-[9%]">
+                            <col class="w-[8%]">
+                            <col class="w-[10%]">
+                        </colgroup>
                         <thead class="bg-slate-50 dark:bg-white/5">
                             <tr>
-                                <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">No</th>
-                                <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Type</th>
-                                <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Project Owner</th>
-                                <th scope="col" class="min-w-[180px] px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Use Case</th>
-                                <th scope="col" class="min-w-[280px] px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Desc</th>
-                                <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Value</th>
-                                <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Urgency</th>
-                                <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Rjjp</th>
-                                <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Coe</th>
-                                <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Status</th>
-                                <th scope="col" class="sticky right-0 z-10 bg-slate-50 p-0 text-xs font-medium uppercase tracking-wider text-slate-500 dark:bg-white/5 dark:text-slate-400">
-                                    <div class="w-[180px] border-l border-slate-200 dark:border-white/10">
-                                        <div class="border-b border-slate-200 px-2 py-1.5 text-center dark:border-white/10">Action</div>
-                                        <div class="grid grid-cols-2 divide-x divide-slate-200 text-[10px] font-semibold normal-case dark:divide-white/10">
-                                            <span class="px-2 py-1 text-center">Scope Charter</span>
-                                            <span class="px-2 py-1 text-center">Project Charter</span>
-                                        </div>
-                                    </div>
-                                </th>
+                                <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">No</th>
+                                <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Type</th>
+                                <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Project Owner</th>
+                                <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Use Case</th>
+                                <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Desc</th>
+                                <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Value</th>
+                                <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Urgency</th>
+                                <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Rjjp</th>
+                                <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Coe</th>
+                                <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status</th>
+                                <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Action</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-200 bg-white dark:divide-white/5 dark:bg-[#1a1a1a]">
                             <tr v-for="item in filteredItems" :key="`digital-${item.id}`" class="group transition-colors hover:bg-slate-50 dark:hover:bg-white/5">
-                                <td class="whitespace-nowrap px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">{{ cellVal(item, 'no') }}</td>
-                                <td class="whitespace-nowrap px-6 py-4 text-xs text-slate-700 dark:text-slate-200">
-                                    <span class="font-medium text-slate-700 dark:text-slate-200">{{ cellVal(item, 'type') }}</span>
+                                <td class="px-3 py-3 text-[11px] font-medium text-slate-600 dark:text-slate-400">{{ cellVal(item, 'no') }}</td>
+                                <td class="px-3 py-3 text-[11px] font-medium text-slate-700 dark:text-slate-200">{{ cellVal(item, 'type') }}</td>
+                                <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">{{ cellVal(item, 'projectOwner', 'project_owner') }}</td>
+                                <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">
+                                    <span class="break-words">{{ cellVal(item, 'useCase', 'use_case') }}</span>
                                 </td>
-                                <td class="whitespace-nowrap px-6 py-4 text-xs text-slate-700 dark:text-slate-200">{{ cellVal(item, 'projectOwner', 'project_owner') }}</td>
-                                <td class="min-w-[180px] max-w-[320px] px-6 py-4 text-xs text-slate-700 dark:text-slate-200">
-                                    <span class="whitespace-normal break-words">{{ cellVal(item, 'useCase', 'use_case') }}</span>
+                                <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">
+                                    <span class="break-words" :title="cellVal(item, 'desc', 'description')">{{ cellVal(item, 'desc', 'description') }}</span>
                                 </td>
-                                <td class="min-w-[280px] max-w-[400px] px-6 py-4 text-xs text-slate-700 dark:text-slate-200">
-                                    <span class="whitespace-normal break-words" :title="cellVal(item, 'desc', 'description')">{{ cellVal(item, 'desc', 'description') }}</span>
-                                </td>
-                                <td class="max-w-[150px] px-6 py-4 text-xs text-slate-700 dark:text-slate-200">
+                                <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">
                                     <span class="line-clamp-2" :title="cellVal(item, 'value')">{{ cellVal(item, 'value') }}</span>
                                 </td>
-                                <td class="whitespace-nowrap px-6 py-4 text-xs text-slate-700 dark:text-slate-200">{{ cellVal(item, 'urgency') }}</td>
-                                <td class="whitespace-nowrap px-6 py-4 text-xs text-slate-700 dark:text-slate-200">{{ cellVal(item, 'rjjp') }}</td>
-                                <td class="whitespace-nowrap px-6 py-4 text-xs text-slate-700 dark:text-slate-200">{{ cellVal(item, 'coe') }}</td>
-                                <td class="whitespace-nowrap px-6 py-4">
-                                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-medium capitalize" :class="statusBadgeClassById(item.status)">
+                                <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">{{ cellVal(item, 'urgency') }}</td>
+                                <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">{{ cellVal(item, 'rjjp') }}</td>
+                                <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">{{ cellVal(item, 'coe') }}</td>
+                                <td class="px-3 py-3">
+                                    <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium capitalize" :class="statusBadgeClassById(item.status)">
                                         {{ statusLabelFromOptions(item.status, statusOptions) }}
                                     </span>
                                 </td>
-                                <td class="sticky right-0 z-10 bg-white p-0 shadow-[-4px_0_8px_rgba(0,0,0,0.05)] dark:bg-[#1a1a1a] dark:shadow-[-4px_0_8px_rgba(0,0,0,0.2)]">
-                                    <div class="grid w-[180px] grid-cols-2 divide-x divide-slate-200 border-l border-slate-200 dark:divide-white/10 dark:border-white/10 h-full">
+                                <td class="px-3 py-3 text-[10px] font-medium">
+                                    <div class="flex flex-col items-start gap-1">
                                         <Link
                                             :href="`/digital-initiatives/${item.id}`"
                                             :class="actionCellClass(hasScopeCharter(item))"
                                             title="View Scope Charter"
-                                            class="flex items-center justify-center"
                                         >
-                                            View
+                                            Scope Charter
                                         </Link>
                                         <Link
                                             :href="`/digital-initiatives/${item.id}`"
                                             :class="actionCellClass(hasProjectCharter(item))"
                                             title="View Project Charter"
-                                            class="flex items-center justify-center"
                                         >
-                                            View
+                                            Project Charter
                                         </Link>
                                     </div>
                                 </td>
@@ -518,10 +519,10 @@ function hasProjectCharter(item) {
 
 function actionCellClass(isReady) {
     if (isReady) {
-        return 'block bg-emerald-500 px-2 py-1.5 text-center text-xs font-semibold text-white transition-colors hover:bg-emerald-600';
+        return 'inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-semibold bg-emerald-100 text-emerald-800 hover:bg-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-300 dark:hover:bg-emerald-500/30 transition-colors cursor-pointer';
     }
 
-    return 'block bg-rose-500 px-2 py-1.5 text-center text-xs font-semibold text-white transition-colors hover:bg-rose-600';
+    return 'inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-semibold bg-rose-100 text-rose-800 hover:bg-rose-200 dark:bg-rose-500/20 dark:text-rose-300 dark:hover:bg-rose-500/30 transition-colors cursor-pointer';
 }
 
 const normalizeText = (value) => {
