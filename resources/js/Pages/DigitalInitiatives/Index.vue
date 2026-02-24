@@ -3,13 +3,27 @@
         <div class="animate-fade-in">
             <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Digital Initiatives</h2>
+                    <h2 class="text-2xl font-bold text-slate-900 dark:text-white">
+                        {{ tableMode === TABLE_MODE.MASTER ? 'Master Initiatives' : 'Digital Initiatives' }}
+                    </h2>
                 </div>
+                <button
+                    v-if="tableMode === TABLE_MODE.MASTER"
+                    @click="backToDigitalInitiatives"
+                    class="inline-flex items-center gap-2 rounded-lg bg-slate-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600"
+                >
+                    ← Back to Digital Initiatives
+                </button>
             </div>
 
             <section class="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
                 <article
-                    class="relative flex flex-col justify-center rounded-2xl border p-5 shadow-[0_4px_16px_rgba(28,117,188,0.3)] bg-[#1C75BC] border-[#1C75BC]"
+                    class="relative flex cursor-pointer flex-col justify-center rounded-2xl border bg-[#1C75BC] border-[#1C75BC] p-5 shadow-[0_4px_16px_rgba(28,117,188,0.3)]"
+                    role="button"
+                    tabindex="0"
+                    @click="showMasterDigitalInitiatives"
+                    @keydown.enter.prevent="showMasterDigitalInitiatives"
+                    @keydown.space.prevent="showMasterDigitalInitiatives"
                 >
                     <p
                         class="text-xs font-semibold uppercase tracking-[0.08em] text-white"
@@ -40,7 +54,7 @@
                                     v-for="(step, index) in scopeSteps"
                                     :key="`scope-step-${step.key}`"
                                     class="relative flex justify-center cursor-pointer group"
-                                    @click="toggleFilter(step.statusId)"
+                                    @click="handleFlowFilter(step.statusId)"
                                 >
                                     <span
                                         class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[10px] font-bold transition-all group-hover:ring-2 group-hover:ring-offset-1 group-hover:ring-slate-300"
@@ -84,7 +98,7 @@
                                     v-for="(step, index) in digitalSteps"
                                     :key="`step-${step.key}`"
                                     class="relative flex justify-center cursor-pointer group"
-                                    @click="toggleFilter(step.statusId)"
+                                    @click="handleFlowFilter(step.statusId)"
                                 >
                                     <span
                                         class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[10px] font-bold transition-all group-hover:ring-2 group-hover:ring-offset-1 group-hover:ring-slate-300"
@@ -116,41 +130,8 @@
                 </article>
             </section>
 
-            <!-- Filters -->
-            <!-- <div class="mb-6 flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 dark:border-white/5 dark:bg-[#1a1a1a] sm:flex-row">
-                <div class="relative flex-1">
-                    <input
-                        v-model="filters.search"
-                        type="text"
-                        placeholder="Search by no, use case, or owner..."
-                        class="w-full rounded-lg border border-slate-300 bg-white py-2 pl-10 pr-4 text-slate-900 placeholder-slate-400 focus:border-indigo-500 focus:ring-indigo-500 dark:border-white/10 dark:bg-[#131313] dark:text-slate-100 dark:placeholder-slate-500"
-                        @input="debouncedSearch"
-                    />
-                    <svg class="absolute left-3 top-2.5 h-5 w-5 text-slate-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                </div>
-                <select
-                    v-model="filters.type"
-                    class="rounded-lg border-slate-300 bg-white text-slate-700 focus:border-indigo-500 focus:ring-indigo-500 dark:border-white/10 dark:bg-[#131313] dark:text-slate-200"
-                    @change="applyFilters"
-                >
-                    <option value="">All Types</option>
-                    <option value="strategic">Strategic</option>
-                    <option value="operational">Operational</option>
-                    <option value="tactical">Tactical</option>
-                </select>
-                <select
-                    v-model="filters.status"
-                    disabled
-                    class="rounded-lg border-slate-300 bg-white text-slate-700 focus:border-indigo-500 focus:ring-indigo-500 dark:border-white/10 dark:bg-[#131313] dark:text-slate-200"
-                >
-                    <option :value="completedStatusId">{{ completedStatusLabel }}</option>
-                </select>
-            </div> -->
-
-            <!-- Table -->
-            <div class="overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-white/5 dark:bg-[#1a1a1a]">
+            <!-- Digital Initiatives Table -->
+            <div v-if="tableMode === TABLE_MODE.FLOW" class="overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-white/5 dark:bg-[#1a1a1a]">
                 <div class="overflow-x-auto">
                     <table class="w-full min-w-[920px] divide-y divide-slate-200 dark:divide-white/5">
                         <thead class="bg-slate-50 dark:bg-white/5">
@@ -237,7 +218,7 @@
             </div>
 
             <div
-                v-if="filteredItems.length === 0"
+                v-if="tableMode === TABLE_MODE.FLOW && filteredItems.length === 0"
                 class="mt-6 rounded-xl border border-slate-200 bg-white py-12 text-center dark:border-white/5 dark:bg-[#1a1a1a]"
             >
                 <p class="text-slate-500 dark:text-slate-400">
@@ -246,6 +227,63 @@
                 <p class="mt-2 text-sm text-slate-400 dark:text-slate-500" v-if="activeFlowFilter !== null">
                     Status yang dipilih belum memiliki data inisiatif.
                 </p>
+            </div>
+
+            <!-- Master Digital Initiatives Table -->
+            <div v-if="tableMode === TABLE_MODE.MASTER" class="overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-white/5 dark:bg-[#1a1a1a]">
+                <div class="border-b border-slate-200 px-4 py-3 dark:border-white/10">
+                    <p class="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
+                        Data Sumber `mst_initiative` (tipe_initiative = 1)
+                    </p>
+                </div>
+
+                <div class="overflow-x-hidden">
+                    <table class="w-full table-fixed divide-y divide-slate-200 text-[11px] dark:divide-white/5">
+                        <colgroup>
+                            <col class="w-[4%]">
+                            <col class="w-[7%]">
+                            <col class="w-[20%]">
+                            <col class="w-[20%]">
+                            <col class="w-[22%]">
+                            <col class="w-[14%]">
+                            <col class="w-[14%]">
+                        </colgroup>
+                        <thead class="bg-slate-50 dark:bg-white/5">
+                            <tr>
+                                <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">No</th>
+                                <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Code</th>
+                                <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Centre of Excellence (CoE)</th>
+                                <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Nama Inisiatif</th>
+                                <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Deskripsi</th>
+                                <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Organisasi</th>
+                                <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Sumber</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 bg-white dark:divide-white/5 dark:bg-[#1a1a1a]">
+                            <tr v-for="(item, index) in mstInitiativesList" :key="`mst-digital-${item.id}`" class="transition-colors hover:bg-slate-50 dark:hover:bg-white/5">
+                                <td class="px-3 py-3 text-[11px] font-medium text-slate-600 dark:text-slate-400">{{ index + 1 }}</td>
+                                <td class="px-3 py-3 text-[11px] font-medium text-slate-700 dark:text-slate-200">{{ item.code ?? '-' }}</td>
+                                <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">{{ coeName(item) }}</td>
+                                <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">
+                                    <p class="font-medium break-words">{{ item.name ?? '-' }}</p>
+                                </td>
+                                <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">{{ descriptionText(item) }}</td>
+                                <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">{{ organizationWithGroup(item) }}</td>
+                                <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">
+                                    <span class="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-700 dark:bg-white/10 dark:text-slate-300">
+                                        {{ statusName(item) }}
+                                    </span>
+                                </td>
+                            </tr>
+
+                            <tr v-if="mstInitiativesList.length === 0">
+                                <td colspan="7" class="px-6 py-8 text-center text-xs text-slate-500 dark:text-slate-400">
+                                    Tidak ada data `mst_initiative` tipe 1.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
 
@@ -262,6 +300,10 @@ import { useFlowFilter } from '@/Composables/useFlowFilter';
 
 const props = defineProps({
     initiatives: Object,
+    mstDigitalInitiatives: {
+        type: Array,
+        default: () => [],
+    },
     filters: Object,
     statusOptions: {
         type: Array,
@@ -281,10 +323,53 @@ const props = defineProps({
     }
 });
 
+const asList = (value) => {
+    if (Array.isArray(value)) {
+        return value;
+    }
+
+    if (value && typeof value === 'object') {
+        return Object.values(value);
+    }
+
+    return [];
+};
+
+// const { activeFlowFilter, filteredItems, toggleFilter } = useFlowFilter(
+//     () => asList(props.itInitiatives),
+//     (item) => item.status
+// );
+
+const TABLE_MODE = {
+    FLOW: 'flow',
+    MASTER: 'master',
+};
+
+const tableMode = ref(TABLE_MODE.FLOW);
+
+const showMasterDigitalInitiatives = () => {
+    tableMode.value = TABLE_MODE.MASTER;
+    activeFlowFilter.value = null;
+};
+
+const backToDigitalInitiatives = () => {
+    tableMode.value = TABLE_MODE.FLOW;
+    activeFlowFilter.value = null;
+};
+
+const handleFlowFilter = (statusId) => {
+    tableMode.value = TABLE_MODE.FLOW;
+    toggleFilter(statusId);
+};
+
 const { activeFlowFilter, filteredItems, toggleFilter } = useFlowFilter(
     () => props.initiatives,
     (item) => item.status
 );
+
+const mstInitiativesList = computed(() => {
+    return Array.isArray(props.mstDigitalInitiatives) ? props.mstDigitalInitiatives : [];
+});
 
 const statusOptions = computed(() => {
     if (props.statusOptions.length > 0) {
@@ -445,4 +530,38 @@ function actionCellClass(isReady) {
 
     return 'block bg-rose-500 px-2 py-1.5 text-center text-xs font-semibold text-white transition-colors hover:bg-rose-600';
 }
+
+const normalizeText = (value) => {
+    const text = String(value ?? '').trim();
+    return text.length > 0 ? text : '-';
+};
+
+const coeName = (item) => normalizeText(item?.coe?.name ?? item?.coe_name ?? item?.coe_id);
+
+const organizationName = (item) => normalizeText(item?.organization?.name ?? item?.business_unit_name ?? item?.business_unit);
+
+const groubName = (item) => normalizeText(item?.organization?.groub?.name);
+
+const organizationWithGroup = (item) => {
+    const org = organizationName(item);
+    const group = groubName(item);
+
+    if (org === '-' && group === '-') {
+        return '-';
+    }
+
+    if (group === '-') {
+        return org;
+    }
+
+    if (org === '-') {
+        return group;
+    }
+
+    return `${org} (${group})`;
+};
+
+const statusName = (item) => normalizeText(item?.status);
+
+const descriptionText = (item) => normalizeText(item?.description);
 </script>
