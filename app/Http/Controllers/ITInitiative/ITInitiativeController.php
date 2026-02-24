@@ -16,6 +16,10 @@ use Inertia\Response;
 
 class ITInitiativeController extends Controller
 {
+    private const REVIEW_STATUS_OPTIONS = ['At Risk', 'On Track', 'Not Started', 'Not Signed'];
+
+    private const DEFAULT_REVIEW_STATUS = 'Not Started';
+
     public function roadmapIndex(Request $request): Response
     {
         $selectedProjectId = $request->integer('project_id');
@@ -154,6 +158,7 @@ class ITInitiativeController extends Controller
             \App\Models\PcStatusImplementation::create([
                 'project_id' => $project->id,
                 'status' => $statusName,
+                'review_status' => self::DEFAULT_REVIEW_STATUS,
                 'date' => now()->toDateString(),
                 'time_start' => now()->toTimeString(),
             ]);
@@ -208,6 +213,7 @@ class ITInitiativeController extends Controller
             \App\Models\PcStatusImplementation::create([
                 'project_id' => $project->id,
                 'status' => $statusName,
+                'review_status' => self::DEFAULT_REVIEW_STATUS,
                 'date' => now()->toDateString(),
                 'time_start' => now()->toTimeString(),
             ]);
@@ -227,12 +233,14 @@ class ITInitiativeController extends Controller
     {
         $validated = $request->validate([
             'status' => 'required|string|max:255',
+            'review_status' => 'required|string|in:' . implode(',', self::REVIEW_STATUS_OPTIONS),
             'month_year' => 'required|date_format:Y-m',
         ]);
 
         \App\Models\PcStatusImplementation::create([
             'project_id' => $project->id,
             'status' => $validated['status'],
+            'review_status' => $validated['review_status'],
             'date' => \Carbon\Carbon::createFromFormat('Y-m', $validated['month_year'])->startOfMonth()->toDateString(),
             'time_start' => now()->toTimeString(),
         ]);
@@ -246,5 +254,23 @@ class ITInitiativeController extends Controller
         $status->delete();
 
         return redirect()->back()->with('success', 'Status deleted successfully.');
+    }
+
+    public function updateImplementationStatus(Request $request, $id): RedirectResponse
+    {
+        $validated = $request->validate([
+            'status' => 'required|string|max:255',
+            'review_status' => 'required|string|in:' . implode(',', self::REVIEW_STATUS_OPTIONS),
+            'month_year' => 'required|date_format:Y-m',
+        ]);
+
+        $status = \App\Models\PcStatusImplementation::findOrFail($id);
+        $status->update([
+            'status' => $validated['status'],
+            'review_status' => $validated['review_status'],
+            'date' => \Carbon\Carbon::createFromFormat('Y-m', $validated['month_year'])->startOfMonth()->toDateString(),
+        ]);
+
+        return redirect()->back()->with('success', 'Implementation status updated successfully.');
     }
 }
