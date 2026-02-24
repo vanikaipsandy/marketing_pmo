@@ -94,11 +94,13 @@ class ITInitiativeController extends Controller
                 'business_unit',
                 'code',
                 'name',
+                'description',
                 'status',
             ])
             ->with([
                 'coe:id,name',
-                'organization:id,name',
+                'organization:id,name,groub_id',
+                'organization.groub:id,name',
             ])
             ->where('tipe_initiative', 2)
             ->orderBy('code')
