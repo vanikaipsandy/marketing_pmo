@@ -151,16 +151,17 @@
 
             <div class="overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-white/5 dark:bg-[#1a1a1a]">
                 <div class="overflow-x-auto">
-                    <table class="w-full min-w-[920px] divide-y divide-slate-200 dark:divide-white/5">
+                    <table class="w-full min-w-[1720px] divide-y divide-slate-200 dark:divide-white/5">
                         <thead class="bg-slate-50 dark:bg-white/5">
                             <tr>
                                 <th scope="col" class="w-10 whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">No</th>
                                 <th scope="col" class="w-16 whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Code</th>
                                 <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">IT Arsitektur Building Blok</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Daftar Inisiatif</th>
-                                <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">State</th>
+                                <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Usulan</th>
                                 <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Bulan / Tahun</th>
-                                <th scope="col" class="w-1/3 px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Terbaru</th>
+                                <th scope="col" class="w-[30rem] px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Review</th>
+                                <th scope="col" class="w-[44rem] px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Implementasi</th>
                                 <th scope="col" class="whitespace-nowrap p-0 text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
                                     <div class="w-[180px] border-l border-slate-200 dark:border-white/10 float-right">
                                         <div class="border-b border-slate-200 px-2 py-1.5 text-center dark:border-white/10">Action</div>
@@ -189,7 +190,7 @@
                                         {{ project.charter?.category || 'Uncategorized' }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 text-xs text-slate-700 dark:text-slate-200">
+                                <td class="w-[30rem] px-6 py-4 text-xs text-slate-700 dark:text-slate-200">
                                     <span class="font-medium text-slate-700 dark:text-slate-200">{{ project.name || '-' }}</span>
                                 </td>
                                 <td class="whitespace-nowrap px-6 py-4">
@@ -202,6 +203,16 @@
                                 </td>
                                 <td class="whitespace-nowrap px-6 py-4 text-xs font-medium text-slate-700 dark:text-slate-300">
                                     {{ latestItDate(project) || '-' }}
+                                </td>
+                                <td class="w-[44rem] px-6 py-4 text-xs text-slate-700 dark:text-slate-200">
+                                    <span
+                                        v-if="latestItReviewStatus(project)"
+                                        class="inline-flex items-center rounded-md bg-amber-100 px-2 py-1 text-[11px] font-medium text-amber-800 dark:bg-amber-500/20 dark:text-amber-300 break-words whitespace-normal leading-relaxed"
+                                        :title="latestItReviewStatus(project)"
+                                    >
+                                        {{ latestItReviewStatus(project) }}
+                                    </span>
+                                    <span v-else class="text-slate-400 dark:text-slate-500 italic text-xs">-</span>
                                 </td>
                                 <td class="px-6 py-4 text-xs text-slate-700 dark:text-slate-200">
                                     <span
@@ -237,7 +248,7 @@
                                 </td>
                             </tr>
                             <tr v-if="filteredItems.length === 0">
-                                <td colspan="8" class="px-6 py-8 text-center text-xs text-slate-500 dark:text-slate-400">
+                                <td colspan="9" class="px-6 py-8 text-center text-xs text-slate-500 dark:text-slate-400">
                                     <span v-if="activeFlowFilter === null">
                                         Silakan klik salah satu status di atas untuk menampilkan data inisiatif.
                                     </span>
@@ -497,6 +508,20 @@ const latestItStatus = (item) => {
     const normalizedStatus = String(rawStatus ?? '').trim();
 
     return normalizedStatus.length > 0 ? normalizedStatus : null;
+};
+
+const latestItReviewStatus = (item) => {
+    const rawReviewStatus = item?.latest_implementation_status?.review_status
+        ?? item?.latestImplementationStatus?.review_status
+        ?? item?.latest_pc_status_implementation?.review_status
+        ?? item?.latestPcStatusImplementation?.review_status
+        ?? item?.pc_status_implementations?.[0]?.review_status
+        ?? item?.pcStatusImplementations?.[0]?.review_status
+        ?? null;
+
+    const normalizedReviewStatus = String(rawReviewStatus ?? '').trim();
+
+    return normalizedReviewStatus.length > 0 ? normalizedReviewStatus : null;
 };
 
 const latestItDate = (item) => {
