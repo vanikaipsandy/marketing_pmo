@@ -86,9 +86,22 @@ class ITInitiativeController extends Controller
             ->orderBy('id', 'asc')
             ->get();
 
-        $totalItInitiatives = MstInitiative::query()
+        $masterItInitiatives = MstInitiative::query()
+            ->select([
+                'id',
+                'coe_id',
+                'tipe_initiative',
+                'business_unit',
+                'code',
+                'name',
+                'status',
+            ])
             ->where('tipe_initiative', 2)
-            ->count();
+            ->orderBy('code')
+            ->get()
+            ->values();
+
+        $totalItInitiatives = $masterItInitiatives->count();
 
         $statusCountsRaw = Project::query()
             ->selectRaw('status, COUNT(*) as total')
@@ -100,6 +113,7 @@ class ITInitiativeController extends Controller
             'statusOptions' => $statusOptions,
             'completedStatusId' => $baselineStatusId,
             'totalItInitiatives' => $totalItInitiatives,
+            'masterItInitiatives' => $masterItInitiatives,
             'statusCounts' => $statusCountsRaw,
             'filters'  => [
                 'search' => $filters['search'] ?? null,

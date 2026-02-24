@@ -9,18 +9,18 @@
 
             <section class="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
                 <article
-                    class="relative flex flex-col justify-center rounded-2xl border p-5 shadow-[0_4px_16px_rgba(167,201,66,0.3)] bg-[#A7C942] border-[#A7C942]"
+                    class="relative flex cursor-pointer flex-col justify-center rounded-2xl border border-[#A7C942] bg-[#A7C942] p-5 shadow-[0_4px_16px_rgba(167,201,66,0.3)]"
                     role="button"
                     tabindex="0"
-                    @click="showAllItInitiatives"
-                    @keydown.enter.prevent="showAllItInitiatives"
-                    @keydown.space.prevent="showAllItInitiatives"
+                    @click="showMasterItInitiatives"
+                    @keydown.enter.prevent="showMasterItInitiatives"
+                    @keydown.space.prevent="showMasterItInitiatives"
                 >
                     <p
                         class="text-xs font-semibold uppercase tracking-[0.08em] text-white"
                         style="text-shadow: 0 1px 3px rgba(0,0,0,0.3);"
                     >
-                        Total IT Inisiatif 
+                        Total IT Inisiatif
                     </p>
                     <p
                         class="mt-2 flex items-center justify-between text-3xl font-bold text-white"
@@ -30,28 +30,25 @@
                     </p>
                 </article>
 
-                <article class="flex flex-col justify-center rounded-2xl border border-slate-200 bg-white px-5 py-3 shadow-[0_4px_16px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-[#171717] lg:col-span-2 space-y-4">
+                <article class="space-y-4 rounded-2xl border border-slate-200 bg-white px-5 py-3 shadow-[0_4px_16px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-[#171717] lg:col-span-2">
                     <div>
                         <div class="mb-2 flex items-center justify-between gap-2">
                             <h2 class="text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Scope Charter IT Initiative Timeline</h2>
                         </div>
 
                         <div>
-                            <div
-                                class="grid"
-                                :style="gridStyle(scopeSteps)"
-                            >
+                            <div class="grid" :style="gridStyle(scopeSteps)">
                                 <div
                                     v-for="(step, index) in scopeSteps"
                                     :key="`scope-step-${step.key}`"
-                                    class="relative flex justify-center cursor-pointer group"
-                                    @click="toggleFilter(step.statusId)"
+                                    class="group relative flex cursor-pointer justify-center"
+                                    @click="handleFlowFilter(step.statusId)"
                                 >
                                     <span
                                         class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[10px] font-bold transition-all group-hover:ring-2 group-hover:ring-offset-1 group-hover:ring-slate-300"
                                         :class="[
                                             step.circleClass,
-                                            activeFlowFilter === step.statusId ? 'ring-2 ring-offset-2 ring-blue-500 shadow-md transform scale-110' : ''
+                                            activeFlowFilter === step.statusId && tableMode === TABLE_MODE.FLOW ? 'ring-2 ring-offset-2 ring-blue-500 shadow-md transform scale-110' : ''
                                         ]"
                                     >
                                         {{ step.count }}
@@ -64,10 +61,7 @@
                                 </div>
                             </div>
 
-                            <div
-                                class="mt-2 grid gap-1 text-center"
-                                :style="gridStyle(scopeSteps)"
-                            >
+                            <div class="mt-2 grid gap-1 text-center" :style="gridStyle(scopeSteps)">
                                 <div v-for="step in scopeSteps" :key="`scope-label-${step.key}`">
                                     <p class="text-[9px] font-semibold text-slate-700 dark:text-slate-200">{{ step.label }}</p>
                                 </div>
@@ -81,21 +75,18 @@
                         </div>
 
                         <div>
-                            <div
-                                class="grid"
-                                :style="gridStyle(digitalSteps)"
-                            >
+                            <div class="grid" :style="gridStyle(digitalSteps)">
                                 <div
                                     v-for="(step, index) in digitalSteps"
                                     :key="`step-${step.key}`"
-                                    class="relative flex justify-center cursor-pointer group"
-                                    @click="toggleFilter(step.statusId)"
+                                    class="group relative flex cursor-pointer justify-center"
+                                    @click="handleFlowFilter(step.statusId)"
                                 >
                                     <span
                                         class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[10px] font-bold transition-all group-hover:ring-2 group-hover:ring-offset-1 group-hover:ring-slate-300"
                                         :class="[
                                             step.circleClass,
-                                            activeFlowFilter === step.statusId ? 'ring-2 ring-offset-2 ring-blue-500 shadow-md transform scale-110' : ''
+                                            activeFlowFilter === step.statusId && tableMode === TABLE_MODE.FLOW ? 'ring-2 ring-offset-2 ring-blue-500 shadow-md transform scale-110' : ''
                                         ]"
                                     >
                                         {{ step.count }}
@@ -108,10 +99,7 @@
                                 </div>
                             </div>
 
-                            <div
-                                class="mt-2 grid gap-1 text-center"
-                                :style="gridStyle(digitalSteps)"
-                            >
+                            <div class="mt-2 grid gap-1 text-center" :style="gridStyle(digitalSteps)">
                                 <div v-for="step in digitalSteps" :key="`label-${step.key}`">
                                     <p class="text-[9px] font-semibold text-slate-700 dark:text-slate-200">{{ step.label }}</p>
                                 </div>
@@ -120,194 +108,46 @@
                     </div>
                 </article>
             </section>
-            <!-- FILTER -->
-<!-- 
-            <div class="mb-6 flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 dark:border-white/5 dark:bg-[#1a1a1a] sm:flex-row">
-                <div class="relative flex-1">
-                    <input
-                        v-model="filters.search"
-                        type="text"
-                        placeholder="Search by name or code..."
-                        class="w-full rounded-lg border border-slate-300 bg-white py-2 pl-10 pr-4 text-slate-900 placeholder-slate-400 focus:border-indigo-500 focus:ring-indigo-500 dark:border-white/10 dark:bg-[#131313] dark:text-slate-100 dark:placeholder-slate-500"
-                        @input="debouncedSearch"
-                    />
-                    <svg class="absolute left-3 top-2.5 h-5 w-5 text-slate-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                </div>
-                <select
-                    v-model="filters.status"
-                    disabled
-                    class="w-full rounded-lg border-slate-300 bg-white py-1.5 text-sm text-slate-700 focus:border-indigo-500 focus:ring-indigo-500 dark:border-white/10 dark:bg-[#131313] dark:text-slate-200 sm:w-auto"
-                >
-                    <option :value="completedStatusId">{{ completedStatusLabel }}</option>
-                </select>
-                <select
-                    v-model="filters.month"
-                    class="w-full rounded-lg border-slate-300 bg-white py-1.5 text-sm text-slate-700 focus:border-indigo-500 focus:ring-indigo-500 dark:border-white/10 dark:bg-[#131313] dark:text-slate-200 sm:w-auto"
-                    @change="applyFilters"
-                >
-                    <option value="">All Months</option>
-                    <option v-for="month in months" :key="month.value" :value="month.value">
-                        {{ month.label }}
-                    </option>
-                </select>
-            </div> -->
 
-            <div class="overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-white/5 dark:bg-[#1a1a1a]">
-                <div class="overflow-x-hidden">
-                    <table class="w-full table-fixed divide-y divide-slate-200 text-[11px] dark:divide-white/5">
-                        <colgroup>
-                            <col class="w-[4%]">
-                            <col class="w-[7%]">
-                            <col class="w-[14%]">
-                            <col class="w-[17%]">
-                            <col class="w-[10%]">
-                            <col class="w-[10%]">
-                            <col class="w-[11%]">
-                            <col class="w-[16%]">
-                            <col class="w-[11%]">
-                        </colgroup>
-                        <thead class="bg-slate-50 dark:bg-white/5">
-                            <tr>
-                                <th scope="col" class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">No</th>
-                                <th scope="col" class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Code</th>
-                                <th scope="col" class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">IT Arsitektur Building Blok</th>
-                                <th scope="col" class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Daftar Inisiatif</th>
-                                <th scope="col" class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Usulan</th>
-                                <th scope="col" class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Bulan / Tahun</th>
-                                <th scope="col" class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Review</th>
-                                <th scope="col" class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Implementasi</th>
-                                <th scope="col" class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-200 bg-white dark:divide-white/5 dark:bg-[#1a1a1a]">
-                            <tr v-for="(project, index) in visibleItems" :key="project.id" class="group transition-colors hover:bg-slate-50 dark:hover:bg-white/5">
-                                <td class="px-3 py-3 text-[11px] font-medium text-slate-600 dark:text-slate-400">
-                                    {{ index + 1 }}
-                                </td>
-                                <td class="px-3 py-3 text-[11px] font-medium text-slate-600 dark:text-slate-400">
-                                    {{ project.code || '-' }}
-                                </td>
-                                <td 
-                                    v-if="shouldShowCategory(index)"
-                                    :rowspan="getCategoryRowspan(index)"
-                                    class="px-3 py-3 align-top border-r border-slate-100 bg-slate-50/50 dark:border-white/5 dark:bg-white/[0.02]"
-                                >
-                                    <span class="inline-flex rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-semibold leading-tight text-blue-800 dark:bg-blue-500/20 dark:text-blue-300">
-                                        {{ project.charter?.category || 'Uncategorized' }}
-                                    </span>
-                                </td>
-                                <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">
-                                    <span class="font-medium text-slate-700 dark:text-slate-200 break-words">{{ project.name || '-' }}</span>
-                                </td>
-                                <td class="px-3 py-3">
-                                    <span
-                                        class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium capitalize"
-                                        :class="statusBadgeClassById(project.status)"
-                                    >
-                                        {{ statusLabelFromOptions(project.status, statusOptions) }}
-                                    </span>
-                                </td>
-                                <td class="px-3 py-3 text-[11px] font-medium text-slate-700 dark:text-slate-300">
-                                    {{ latestImplementationMonthYear(project) || '-' }}
-                                </td>
-                                <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">
-                                    <span
-                                        v-if="latestReviewStatus(project)"
-                                        class="inline-flex items-center rounded-md px-2 py-1 text-[10px] font-medium break-words whitespace-normal leading-relaxed"
-                                        :class="reviewStatusBadgeClass(latestReviewStatus(project))"
-                                        :title="latestReviewStatus(project)"
-                                    >
-                                        {{ latestReviewStatus(project) }}
-                                    </span>
-                                    <span v-else class="text-slate-400 dark:text-slate-500 italic text-xs">-</span>
-                                </td>
-                                <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">
-                                    <span
-                                        v-if="latestImplementationStatus(project)"
-                                        class="inline-flex items-center rounded-md bg-slate-100 px-2 py-1 text-[10px] font-medium text-slate-700 capitalize break-words whitespace-normal leading-relaxed dark:bg-white/10 dark:text-slate-300"
-                                        :title="latestImplementationStatus(project)"
-                                    >
-                                        {{ latestImplementationStatus(project) }}
-                                    </span>
-                                    <span v-else class="text-slate-400 dark:text-slate-500 italic text-xs">-</span>
-                                </td>
-                                <td class="px-3 py-3 text-[10px] font-medium">
-                                    <div class="flex flex-col items-start gap-1">
-                                        <Link
-                                            :href="`/it-initiatives/${project.id}`"
-                                            :class="actionCellClass(hasScopeCharter(project))"
-                                            title="View Scope Charter"
-                                        >
-                                            Scope Charter
-                                        </Link>
-                                        <Link
-                                            :href="`/it-initiatives/${project.id}`"
-                                            :class="actionCellClass(hasProjectCharter(project))"
-                                            title="View Project Charter"
-                                        >
-                                            Project Charter
-                                        </Link>
-                                        <Link
-                                            :href="`/roadmap?project_id=${project.id}`"
-                                            class="inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-semibold bg-sky-100 text-sky-700 hover:bg-sky-200 dark:bg-sky-500/20 dark:text-sky-300 dark:hover:bg-sky-500/30 transition-colors"
-                                            title="Open Roadmap"
-                                        >
-                                            Roadmap
-                                        </Link>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr v-if="visibleItems.length === 0">
-                                <td colspan="8" class="px-6 py-8 text-center text-xs text-slate-500 dark:text-slate-400">
-                                    <span v-if="activeFlowFilter === null">
-                                        Silakan klik salah satu status di atas untuk menampilkan data inisiatif.
-                                    </span>
-                                    <span v-else>
-                                        Tidak ada data yang sesuai dengan filter opsi ini.
-                                    </span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            <FlowStatusTable
+                v-if="tableMode === TABLE_MODE.FLOW"
+                :items="flowItems"
+                :status-options="statusOptions"
+                :active-flow-filter="activeFlowFilter"
+            />
 
-            <div
-                v-if="visibleItems.length === 0"
-                class="mt-6 rounded-xl border border-slate-200 bg-white py-12 text-center dark:border-white/5 dark:bg-[#1a1a1a]"
-            >
-                <p class="text-slate-500 dark:text-slate-400">
-                    {{ activeFlowFilter === null ? 'Pilih status di atas untuk melihat data.' : 'Tidak ada IT initiative ditemukan.' }}
-                </p>
-                <p class="mt-2 text-sm text-slate-400 dark:text-slate-500" v-if="activeFlowFilter !== null">
-                    Status yang dipilih belum memiliki data inisiatif.
-                </p>
-            </div>
-
-
+            <MasterInitiativeTable
+                v-else
+                :items="masterItems"
+            />
         </div>
     </UserLayout>
 </template>
 
 <script setup>
 import { computed, ref } from 'vue';
-import { Link, router } from '@inertiajs/vue3';
 import UserLayout from '@/Layouts/UserLayout.vue';
-import { statusBadgeClassById, statusLabelFromOptions, statusFlowClassByIndex } from '@/Composables/initiativeStatus';
+import { statusFlowClassByIndex } from '@/Composables/initiativeStatus';
 import { useFlowFilter } from '@/Composables/useFlowFilter';
+import FlowStatusTable from '@/Components/ITInitiative/FlowStatusTable.vue';
+import MasterInitiativeTable from '@/Components/ITInitiative/MasterInitiativeTable.vue';
 
 const props = defineProps({
-    itInitiatives: Object,
-    filters: Object,
-    statusOptions: {
+    itInitiatives: {
         type: Array,
         default: () => [],
     },
-    completedStatusId: {
-        type: Number,
-        default: 5,
+    masterItInitiatives: {
+        type: Array,
+        default: () => [],
+    },
+    filters: {
+        type: Object,
+        default: () => ({}),
+    },
+    statusOptions: {
+        type: Array,
+        default: () => [],
     },
     totalItInitiatives: {
         type: Number,
@@ -316,22 +156,47 @@ const props = defineProps({
     statusCounts: {
         type: Object,
         default: () => ({}),
-    }
+    },
 });
 
+const asList = (value) => {
+    if (Array.isArray(value)) {
+        return value;
+    }
+
+    if (value && typeof value === 'object') {
+        return Object.values(value);
+    }
+
+    return [];
+};
+
 const { activeFlowFilter, filteredItems, toggleFilter } = useFlowFilter(
-    () => props.itInitiatives,
+    () => asList(props.itInitiatives),
     (item) => item.status
 );
 
-const SHOW_ALL_FILTER = '__all__';
+const TABLE_MODE = {
+    FLOW: 'flow',
+    MASTER: 'master',
+};
 
-const visibleItems = computed(() => {
-    if (activeFlowFilter.value === SHOW_ALL_FILTER) {
-        return Array.isArray(props.itInitiatives) ? props.itInitiatives : [];
-    }
+const tableMode = ref(TABLE_MODE.FLOW);
 
-    return filteredItems.value;
+const showMasterItInitiatives = () => {
+    tableMode.value = TABLE_MODE.MASTER;
+    activeFlowFilter.value = null;
+};
+
+const handleFlowFilter = (statusId) => {
+    tableMode.value = TABLE_MODE.FLOW;
+    toggleFilter(statusId);
+};
+
+const flowItems = computed(() => filteredItems.value);
+
+const masterItems = computed(() => {
+    return asList(props.masterItInitiatives);
 });
 
 const statusOptions = computed(() => {
@@ -346,14 +211,6 @@ const statusOptions = computed(() => {
         { id: 4, name: 'approve', label: 'Approve' },
         { id: 5, name: 'baseline', label: 'Baseline' },
     ];
-});
-
-const completedStatusId = computed(() => {
-    return Number(props.completedStatusId || 5);
-});
-
-const completedStatusLabel = computed(() => {
-    return statusLabelFromOptions(completedStatusId.value, statusOptions.value);
 });
 
 const scopeStatusOrder = ['drafting', 'propose', 'review', 'approve'];
@@ -397,7 +254,6 @@ const scopeStatusOptions = computed(() => {
 });
 
 const scopeSteps = computed(() => {
-    // Currently defaulting to 0 as Scope Charter does not have specific charter status counts
     return scopeStatusOptions.value.map((status, index) => {
         const flowClass = statusFlowClassByIndex(index);
         const key = String(status.id);
@@ -433,153 +289,4 @@ const digitalSteps = computed(() => {
 const gridStyle = (steps = []) => ({
     gridTemplateColumns: `repeat(${Math.max(steps.length, 1)}, minmax(0, 1fr))`,
 });
-
-const filters = ref({
-    search: props.filters.search || '',
-    status: completedStatusId.value,
-    month: props.filters.month || '',
-});
-
-const months = [
-    { value: '01', label: 'January' },
-    { value: '02', label: 'February' },
-    { value: '03', label: 'March' },
-    { value: '04', label: 'April' },
-    { value: '05', label: 'May' },
-    { value: '06', label: 'June' },
-    { value: '07', label: 'July' },
-    { value: '08', label: 'August' },
-    { value: '09', label: 'September' },
-    { value: '10', label: 'October' },
-    { value: '11', label: 'November' },
-    { value: '12', label: 'December' },
-];
-
-const shouldShowCategory = (index) => {
-    if (index === 0) return true;
-    const current = visibleItems.value[index].charter?.category || 'Uncategorized';
-    const previous = visibleItems.value[index - 1].charter?.category || 'Uncategorized';
-    return current !== previous;
-};
-
-const getCategoryRowspan = (index) => {
-    let count = 1;
-    const current = visibleItems.value[index].charter?.category || 'Uncategorized';
-    for (let i = index + 1; i < visibleItems.value.length; i++) {
-        if ((visibleItems.value[i].charter?.category || 'Uncategorized') === current) {
-            count++;
-        } else {
-            break;
-        }
-    }
-    return count;
-};
-
-const showAllItInitiatives = () => {
-    activeFlowFilter.value = SHOW_ALL_FILTER;
-};
-
-let timeout = null;
-const debouncedSearch = () => {
-    clearTimeout(timeout);
-    timeout = setTimeout(applyFilters, 300);
-};
-
-const applyFilters = () => {
-    router.get('/it-initiatives', filters.value, { preserveState: true, replace: true });
-};
-
-function hasFilled(val) {
-    return val !== null && val !== undefined && String(val).trim() !== '';
-}
-
-function hasScopeCharter(project) {
-    return hasFilled(project?.code) && hasFilled(project?.name);
-}
-
-function hasProjectCharter(project) {
-    const charter = project?.charter;
-
-    if (!charter || typeof charter !== 'object') {
-        return false;
-    }
-
-    return [
-        charter.category,
-        charter.duration,
-        charter.background,
-        charter.objectives,
-        charter.scope,
-        charter.impact_value,
-    ].some(hasFilled);
-}
-
-function actionCellClass(isReady) {
-    if (isReady) {
-        return 'inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-semibold bg-emerald-100 text-emerald-800 hover:bg-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-300 dark:hover:bg-emerald-500/30 transition-colors cursor-pointer';
-    }
-
-    return 'inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-semibold bg-rose-100 text-rose-800 hover:bg-rose-200 dark:bg-rose-500/20 dark:text-rose-300 dark:hover:bg-rose-500/30 transition-colors cursor-pointer';
-}
-
-const implementationHistory = (item) => {
-    const history = Array.isArray(item?.pcStatusImplementations)
-        ? item.pcStatusImplementations
-        : Array.isArray(item?.pc_status_implementations)
-            ? item.pc_status_implementations
-            : [];
-
-    return history;
-};
-
-const latestImplementationLog = (item) => {
-    const history = implementationHistory(item);
-    return Array.isArray(history) && history.length > 0 ? history[0] : null;
-};
-
-const latestImplementationStatus = (item) => {
-    const rawStatus = latestImplementationLog(item)?.status ?? null;
-    const normalizedStatus = String(rawStatus ?? '').trim();
-
-    return normalizedStatus.length > 0 ? normalizedStatus : null;
-};
-
-const latestReviewStatus = (item) => {
-    const rawReviewStatus = latestImplementationLog(item)?.review_status ?? null;
-    const normalizedReviewStatus = String(rawReviewStatus ?? '').trim();
-
-    return normalizedReviewStatus.length > 0 ? normalizedReviewStatus : null;
-};
-
-const latestImplementationMonthYear = (item) => {
-    const rawDate = latestImplementationLog(item)?.date ?? null;
-    if (!rawDate) return null;
-
-    const date = new Date(rawDate);
-    if (isNaN(date.getTime())) return null;
-
-    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
-};
-
-const reviewStatusBadgeClass = (reviewStatus) => {
-    const normalized = String(reviewStatus ?? '').trim().toLowerCase();
-
-    if (normalized === 'on track') {
-        return 'bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-300';
-    }
-
-    if (normalized === 'at risk') {
-        return 'bg-amber-100 text-amber-800 dark:bg-amber-500/20 dark:text-amber-300';
-    }
-
-    if (normalized === 'not started') {
-        return 'bg-slate-100 text-slate-700 dark:bg-white/10 dark:text-slate-300';
-    }
-
-    if (normalized === 'not signed') {
-        return 'bg-rose-100 text-rose-800 dark:bg-rose-500/20 dark:text-rose-300';
-    }
-
-    return 'bg-slate-100 text-slate-700 dark:bg-white/10 dark:text-slate-300';
-};
 </script>
