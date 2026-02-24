@@ -9,44 +9,46 @@
 
             <section class="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
                 <article
-                    class="relative flex flex-col justify-center rounded-2xl border p-5 shadow-[0_4px_16px_rgba(167,201,66,0.3)] bg-[#A7C942] border-[#A7C942]"
+                    class="relative flex cursor-pointer flex-col justify-center rounded-2xl border border-[#A7C942] bg-[#A7C942] p-5 shadow-[0_4px_16px_rgba(167,201,66,0.3)]"
+                    role="button"
+                    tabindex="0"
+                    @click="showMasterItInitiatives"
+                    @keydown.enter.prevent="showMasterItInitiatives"
+                    @keydown.space.prevent="showMasterItInitiatives"
                 >
                     <p
                         class="text-xs font-semibold uppercase tracking-[0.08em] text-white"
                         style="text-shadow: 0 1px 3px rgba(0,0,0,0.3);"
                     >
-                        Total IT Inisiatif 
+                        Total IT Inisiatif
                     </p>
                     <p
                         class="mt-2 flex items-center justify-between text-3xl font-bold text-white"
                         style="text-shadow: 0 2px 6px rgba(0,0,0,0.35);"
                     >
-                        <span>{{ totalApproved }}</span>
+                        <span>{{ totalItInitiatives }}</span>
                     </p>
                 </article>
 
-                <article class="flex flex-col justify-center rounded-2xl border border-slate-200 bg-white px-5 py-3 shadow-[0_4px_16px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-[#171717] lg:col-span-2 space-y-4">
+                <article class="space-y-4 rounded-2xl border border-slate-200 bg-white px-5 py-3 shadow-[0_4px_16px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-[#171717] lg:col-span-2">
                     <div>
                         <div class="mb-2 flex items-center justify-between gap-2">
                             <h2 class="text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Scope Charter IT Initiative Timeline</h2>
                         </div>
 
                         <div>
-                            <div
-                                class="grid"
-                                :style="gridStyle(scopeSteps)"
-                            >
+                            <div class="grid" :style="gridStyle(scopeSteps)">
                                 <div
                                     v-for="(step, index) in scopeSteps"
                                     :key="`scope-step-${step.key}`"
-                                    class="relative flex justify-center cursor-pointer group"
-                                    @click="toggleFilter(step.statusId)"
+                                    class="group relative flex cursor-pointer justify-center"
+                                    @click="handleFlowFilter(step.statusId)"
                                 >
                                     <span
                                         class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[10px] font-bold transition-all group-hover:ring-2 group-hover:ring-offset-1 group-hover:ring-slate-300"
                                         :class="[
                                             step.circleClass,
-                                            activeFlowFilter === step.statusId ? 'ring-2 ring-offset-2 ring-blue-500 shadow-md transform scale-110' : ''
+                                            activeFlowFilter === step.statusId && tableMode === TABLE_MODE.FLOW ? 'ring-2 ring-offset-2 ring-blue-500 shadow-md transform scale-110' : ''
                                         ]"
                                     >
                                         {{ step.count }}
@@ -59,10 +61,7 @@
                                 </div>
                             </div>
 
-                            <div
-                                class="mt-2 grid gap-1 text-center"
-                                :style="gridStyle(scopeSteps)"
-                            >
+                            <div class="mt-2 grid gap-1 text-center" :style="gridStyle(scopeSteps)">
                                 <div v-for="step in scopeSteps" :key="`scope-label-${step.key}`">
                                     <p class="text-[9px] font-semibold text-slate-700 dark:text-slate-200">{{ step.label }}</p>
                                 </div>
@@ -76,21 +75,18 @@
                         </div>
 
                         <div>
-                            <div
-                                class="grid"
-                                :style="gridStyle(digitalSteps)"
-                            >
+                            <div class="grid" :style="gridStyle(digitalSteps)">
                                 <div
                                     v-for="(step, index) in digitalSteps"
                                     :key="`step-${step.key}`"
-                                    class="relative flex justify-center cursor-pointer group"
-                                    @click="toggleFilter(step.statusId)"
+                                    class="group relative flex cursor-pointer justify-center"
+                                    @click="handleFlowFilter(step.statusId)"
                                 >
                                     <span
                                         class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[10px] font-bold transition-all group-hover:ring-2 group-hover:ring-offset-1 group-hover:ring-slate-300"
                                         :class="[
                                             step.circleClass,
-                                            activeFlowFilter === step.statusId ? 'ring-2 ring-offset-2 ring-blue-500 shadow-md transform scale-110' : ''
+                                            activeFlowFilter === step.statusId && tableMode === TABLE_MODE.FLOW ? 'ring-2 ring-offset-2 ring-blue-500 shadow-md transform scale-110' : ''
                                         ]"
                                     >
                                         {{ step.count }}
@@ -103,10 +99,7 @@
                                 </div>
                             </div>
 
-                            <div
-                                class="mt-2 grid gap-1 text-center"
-                                :style="gridStyle(digitalSteps)"
-                            >
+                            <div class="mt-2 grid gap-1 text-center" :style="gridStyle(digitalSteps)">
                                 <div v-for="step in digitalSteps" :key="`label-${step.key}`">
                                     <p class="text-[9px] font-semibold text-slate-700 dark:text-slate-200">{{ step.label }}</p>
                                 </div>
@@ -115,6 +108,7 @@
                     </div>
                 </article>
             </section>
+<<<<<<< HEAD
             <!-- FILTER -->
 <!-- 
             <div class="mb-6 flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 dark:border-white/5 dark:bg-[#1a1a1a] sm:flex-row">
@@ -283,44 +277,98 @@
                     Status yang dipilih belum memiliki data inisiatif.
                 </p>
             </div>
+=======
+>>>>>>> eb073760521e51369335a0e415b60141b7b42bb6
 
+            <FlowStatusTable
+                v-if="tableMode === TABLE_MODE.FLOW"
+                :items="flowItems"
+                :status-options="statusOptions"
+                :active-flow-filter="activeFlowFilter"
+            />
 
+            <MasterInitiativeTable
+                v-else
+                :items="masterItems"
+            />
         </div>
     </UserLayout>
 </template>
 
 <script setup>
 import { computed, ref } from 'vue';
-import { Link, router } from '@inertiajs/vue3';
 import UserLayout from '@/Layouts/UserLayout.vue';
-import { statusBadgeClassById, statusLabelFromOptions, statusFlowClassByIndex } from '@/Composables/initiativeStatus';
+import { statusFlowClassByIndex } from '@/Composables/initiativeStatus';
 import { useFlowFilter } from '@/Composables/useFlowFilter';
+import FlowStatusTable from '@/Components/ITInitiative/FlowStatusTable.vue';
+import MasterInitiativeTable from '@/Components/ITInitiative/MasterInitiativeTable.vue';
 
 const props = defineProps({
-    itInitiatives: Object,
-    filters: Object,
+    itInitiatives: {
+        type: Array,
+        default: () => [],
+    },
+    masterItInitiatives: {
+        type: Array,
+        default: () => [],
+    },
+    filters: {
+        type: Object,
+        default: () => ({}),
+    },
     statusOptions: {
         type: Array,
         default: () => [],
     },
-    completedStatusId: {
-        type: Number,
-        default: 5,
-    },
-    totalApproved: {
+    totalItInitiatives: {
         type: Number,
         default: 0,
     },
     statusCounts: {
         type: Object,
         default: () => ({}),
-    }
+    },
 });
 
+const asList = (value) => {
+    if (Array.isArray(value)) {
+        return value;
+    }
+
+    if (value && typeof value === 'object') {
+        return Object.values(value);
+    }
+
+    return [];
+};
+
 const { activeFlowFilter, filteredItems, toggleFilter } = useFlowFilter(
-    () => props.itInitiatives,
+    () => asList(props.itInitiatives),
     (item) => item.status
 );
+
+const TABLE_MODE = {
+    FLOW: 'flow',
+    MASTER: 'master',
+};
+
+const tableMode = ref(TABLE_MODE.FLOW);
+
+const showMasterItInitiatives = () => {
+    tableMode.value = TABLE_MODE.MASTER;
+    activeFlowFilter.value = null;
+};
+
+const handleFlowFilter = (statusId) => {
+    tableMode.value = TABLE_MODE.FLOW;
+    toggleFilter(statusId);
+};
+
+const flowItems = computed(() => filteredItems.value);
+
+const masterItems = computed(() => {
+    return asList(props.masterItInitiatives);
+});
 
 const statusOptions = computed(() => {
     if (props.statusOptions.length > 0) {
@@ -334,14 +382,6 @@ const statusOptions = computed(() => {
         { id: 4, name: 'approve', label: 'Approve' },
         { id: 5, name: 'baseline', label: 'Baseline' },
     ];
-});
-
-const completedStatusId = computed(() => {
-    return Number(props.completedStatusId || 5);
-});
-
-const completedStatusLabel = computed(() => {
-    return statusLabelFromOptions(completedStatusId.value, statusOptions.value);
 });
 
 const scopeStatusOrder = ['drafting', 'propose', 'review', 'approve'];
@@ -385,7 +425,6 @@ const scopeStatusOptions = computed(() => {
 });
 
 const scopeSteps = computed(() => {
-    // Currently defaulting to 0 as Scope Charter does not have specific charter status counts
     return scopeStatusOptions.value.map((status, index) => {
         const flowClass = statusFlowClassByIndex(index);
         const key = String(status.id);
@@ -421,6 +460,7 @@ const digitalSteps = computed(() => {
 const gridStyle = (steps = []) => ({
     gridTemplateColumns: `repeat(${Math.max(steps.length, 1)}, minmax(0, 1fr))`,
 });
+<<<<<<< HEAD
 
 const filters = ref({
     search: props.filters.search || '',
@@ -550,4 +590,6 @@ const latestItDate = (item) => {
 
     return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
 };
+=======
+>>>>>>> eb073760521e51369335a0e415b60141b7b42bb6
 </script>

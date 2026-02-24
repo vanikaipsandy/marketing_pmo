@@ -1,0 +1,27 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class TrsOrganization extends Model
+{
+    protected $table = 'trs_organization';
+
+    protected $fillable = [
+        'groub_id',
+        'name',
+    ];
+
+    public function groub(): BelongsTo
+    {
+        return $this->belongsTo(Groub::class, 'groub_id');
+    }
+
+    public function initiatives(): HasMany
+    {
+        return $this->hasMany(MstInitiative::class, 'business_unit');
+    }
+}

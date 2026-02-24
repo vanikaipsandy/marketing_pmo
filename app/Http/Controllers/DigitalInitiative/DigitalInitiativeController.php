@@ -5,6 +5,7 @@ namespace App\Http\Controllers\DigitalInitiative;
 use App\Http\Controllers\Controller;
 use App\Models\DigitalInitiative;
 use App\Models\InitiativeStatus;
+use App\Models\MstInitiative;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -43,9 +44,9 @@ class DigitalInitiativeController extends Controller
             ->latest()
             ->get();
 
-        $approveStatus = $statusOptions->firstWhere('name', 'approve') ?? $statusOptions->firstWhere('name', 'baseline');
-        $approveStatusId = $approveStatus ? $approveStatus['id'] : InitiativeStatus::baselineId();
-        $totalApproved = DigitalInitiative::where('status', $approveStatusId)->count();
+        $totalDigitalInitiatives = MstInitiative::query()
+            ->where('tipe_initiative', 1)
+            ->count();
 
         $statusCountsRaw = DigitalInitiative::query()
             ->selectRaw('status, COUNT(*) as total')
@@ -56,7 +57,7 @@ class DigitalInitiativeController extends Controller
             'initiatives' => $initiatives,
             'statusOptions' => $statusOptions,
             'completedStatusId' => $baselineStatusId,
-            'totalApproved' => $totalApproved,
+            'totalDigitalInitiatives' => $totalDigitalInitiatives,
             'statusCounts' => $statusCountsRaw,
             'filters' => [
                 'search' => $search,

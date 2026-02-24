@@ -21,7 +21,7 @@
                         class="mt-2 flex items-center justify-between text-3xl font-bold text-white"
                         style="text-shadow: 0 2px 6px rgba(0,0,0,0.35);"
                     >
-                        <span>{{ totalApproved }}</span>
+                        <span>{{ totalDigitalInitiatives }}</span>
                     </p>
                 </article>
 
@@ -271,7 +271,7 @@ const props = defineProps({
         type: Number,
         default: 5,
     },
-    totalApproved: {
+    totalDigitalInitiatives: {
         type: Number,
         default: 0,
     },

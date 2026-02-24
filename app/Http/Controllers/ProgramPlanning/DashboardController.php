@@ -4,14 +4,7 @@ namespace App\Http\Controllers\ProgramPlanning;
 
 use App\Http\Controllers\Concerns\ResolvesInitiativeStatus;
 use App\Http\Controllers\Controller;
-use App\Models\Coe;
-use App\Models\DataSource;
-use App\Models\Groub;
-use App\Models\Organization;
-use App\Models\PhaseDigital;
-use App\Models\Theme;
-use App\Models\TrsDigitalInitiative;
-use App\Models\UseCase;
+use App\Models\DigitalInitiative;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -39,20 +32,20 @@ class DashboardController extends Controller
         ];
 
         $options = $this->dashboardOptions();
-        $statusOptions = $this->statusOptionsFromPhases();
-        $baselineStatusId = $this->baselineStatusId($this->statusOptions());
+        $statusOptions = $this->statusOptions();
+        $baselineStatusId = $this->baselineStatusId($statusOptions);
 
         $emptyItStatusCounts = $this->mapCountsByStatus($statusOptions, collect());
-        $digitalStatusCounts = $this->digitalStatusCountsByPhase($filters);
+        $digitalStatusCounts = $this->digitalStatusCountsByStatus();
 
-        $openDigitalInitiatives = $this->openDigitalInitiativesFiltered($filters);
+        $openDigitalInitiatives = $this->openDigitalInitiatives();
         $openItInitiatives = collect();
 
         return Inertia::render('ProgramPlanning/Dashboard', [
             'summary' => [
                 'total_it_initiatives'       => 0,
-                'total_digital_initiatives'  => TrsDigitalInitiative::query()->count(),
-                'total_all_initiatives'      => TrsDigitalInitiative::query()->count(),
+                'total_digital_initiatives'  => DigitalInitiative::query()->count(),
+                'total_all_initiatives'      => DigitalInitiative::query()->count(),
                 'status_options'             => $statusOptions,
                 'it_status_counts'           => $emptyItStatusCounts,
                 'digital_status_counts'      => $digitalStatusCounts,
@@ -72,110 +65,34 @@ class DashboardController extends Controller
 
     private function dashboardOptions(): array
     {
-        $phaseOrder = ['drafting' => 1, 'review' => 2, 'approve' => 3, 'finish' => 4];
-        $phases = PhaseDigital::query()
-            ->select(['id', 'name'])
-            ->whereIn('name', array_keys($phaseOrder))
-            ->get()
-            ->sortBy(fn (PhaseDigital $p) => $phaseOrder[strtolower((string) $p->name)] ?? 999)
-            ->values();
-
-        $coes = UseCase::query()
-            ->with('coe:id,name')
-            ->select(['id', 'coe_id'])
-            ->whereNotNull('coe_id')
-            ->get()
-            ->pluck('coe')
-            ->filter()
-            ->unique('id')
-            ->sortBy('name')
-            ->values()
-            ->map(fn (Coe $c) => ['id' => $c->id, 'name' => $c->name]);
-
-        if ($coes->isEmpty()) {
-            $coes = Coe::query()->select(['id', 'name'])->orderBy('name')->get();
-        }
-
+        // Dashboard Program Planning sekarang memakai data master `mst_digitalInitiative`
+        // (model `DigitalInitiative`), jadi opsi filter berbasis tabel transaksi tidak dipakai.
         return [
-            'sources'        => DataSource::query()->select(['id', 'name', 'month', 'year'])->orderBy('year')->orderBy('month')->get(),
-            'groubs'         => Groub::query()->select(['id', 'name'])->orderBy('name')->get(),
-            'phases'         => $phases,
-            'organizations'  => Organization::query()->select(['id', 'name'])->orderBy('name')->get(),
-            'coes'           => $coes,
-            'rjpps'          => Theme::query()->select(['id', 'name'])->orderBy('name')->get(),
+            'sources'        => collect(),
+            'groubs'         => collect(),
+            'phases'         => collect(),
+            'organizations'  => collect(),
+            'coes'           => collect(),
+            'rjpps'          => collect(),
         ];
     }
 
-    private function statusOptionsFromPhases(): array
+    private function digitalStatusCountsByStatus(): array
     {
-        $phaseOrder = ['drafting' => 1, 'review' => 2, 'approve' => 3, 'finish' => 4];
-        $phases = PhaseDigital::query()
-            ->select(['id', 'name'])
-            ->whereIn('name', array_keys($phaseOrder))
-            ->get()
-            ->sortBy(fn (PhaseDigital $p) => $phaseOrder[strtolower((string) $p->name)] ?? 999)
-            ->values();
+        $statusOptions = $this->statusOptions();
+        $rawCounts = DigitalInitiative::query()
+            ->selectRaw('status, COUNT(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
 
-        return $phases->map(fn (PhaseDigital $p) => [
-            'id'    => (int) $p->id,
-            'name'  => strtolower((string) $p->name),
-            'label' => ucfirst((string) $p->name),
-        ])->values()->all();
+        return $this->mapCountsByStatus($statusOptions, $rawCounts);
     }
 
-    private function digitalStatusCountsByPhase(array $filters): array
+    private function openDigitalInitiatives(): Collection
     {
-        $phases = PhaseDigital::query()
-            ->select(['id', 'name'])
-            ->whereIn('name', ['drafting', 'review', 'approve', 'finish'])
-            ->orderByRaw("CASE LOWER(name) WHEN 'drafting' THEN 1 WHEN 'review' THEN 2 WHEN 'approve' THEN 3 WHEN 'finish' THEN 4 ELSE 5 END")
+        return DigitalInitiative::query()
+            ->latest()
             ->get();
-
-        $baseQuery = $this->digitalInitiativesBaseQuery($filters);
-        $counts = [];
-
-        foreach ($phases as $phase) {
-            $counts[(string) $phase->id] = (clone $baseQuery)
-                ->whereHas('statuses', fn ($q) => $q->where('phase_id', $phase->id))
-                ->count();
-        }
-
-        return $counts;
-    }
-
-    private function openDigitalInitiativesFiltered(array $filters): Collection
-    {
-        return $this->digitalInitiativesBaseQuery($filters)
-            ->with([
-                'useCase:id,name,coe_id',
-                'useCase.coe:id,name',
-                'source:id,name,month,year',
-                'organizations:id,name,groub_id',
-                'rjpps:id,name,idGoal',
-                'statuses:id,name,phase_id',
-                'statuses.phase:id,name',
-            ])
-            ->orderByDesc('id')
-            ->get();
-    }
-
-    private function digitalInitiativesBaseQuery(array $filters)
-    {
-        return TrsDigitalInitiative::query()
-            ->when($filters['search'], function ($query, $search): void {
-                $query->where(function ($inner) use ($search): void {
-                    $inner->where('useCase_description', 'like', "%{$search}%");
-                    if (is_numeric($search)) {
-                        $inner->orWhere('id', (int) $search);
-                    }
-                });
-            })
-            ->when($filters['category_fase'], fn ($q, $v) => $q->where('category_fase', $v))
-            ->when($filters['source_id'], fn ($q, $v) => $q->where('source_id', $v))
-            ->when($filters['groub_id'], fn ($q, $v) => $q->whereHas('organizations', fn ($oq) => $oq->where('groub_id', $v)))
-            ->when($filters['phase_id'], fn ($q, $v) => $q->whereHas('statuses', fn ($sq) => $sq->where('phase_id', $v)))
-            ->when($filters['organization_id'], fn ($q, $v) => $q->whereHas('organizations', fn ($oq) => $oq->where('trs_organization.id', $v)))
-            ->when($filters['coe_id'], fn ($q, $v) => $q->whereHas('useCase', fn ($uq) => $uq->where('coe_id', $v)));
     }
 
     private function categoryOptions(): array
