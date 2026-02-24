@@ -445,4 +445,38 @@ function actionCellClass(isReady) {
 
     return 'block bg-rose-500 px-2 py-1.5 text-center text-xs font-semibold text-white transition-colors hover:bg-rose-600';
 }
+
+const normalizeText = (value) => {
+    const text = String(value ?? '').trim();
+    return text.length > 0 ? text : '-';
+};
+
+const coeName = (item) => normalizeText(item?.coe?.name ?? item?.coe_name ?? item?.coe_id);
+
+const organizationName = (item) => normalizeText(item?.organization?.name ?? item?.business_unit_name ?? item?.business_unit);
+
+const groubName = (item) => normalizeText(item?.organization?.groub?.name);
+
+const organizationWithGroup = (item) => {
+    const org = organizationName(item);
+    const group = groubName(item);
+
+    if (org === '-' && group === '-') {
+        return '-';
+    }
+
+    if (group === '-') {
+        return org;
+    }
+
+    if (org === '-') {
+        return group;
+    }
+
+    return `${org} - ${group}`;
+};
+
+const statusName = (item) => normalizeText(item?.status);
+
+const descriptionText = (item) => normalizeText(item?.description);
 </script>
