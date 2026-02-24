@@ -4,16 +4,9 @@
             <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h2 class="text-2xl font-bold text-slate-900 dark:text-white">
-                        {{ tableMode === TABLE_MODE.MASTER ? 'Master Initiatives' : 'Digital Initiatives' }}
+                        Digital Initiatives
                     </h2>
                 </div>
-                <button
-                    v-if="tableMode === TABLE_MODE.MASTER"
-                    @click="backToDigitalInitiatives"
-                    class="inline-flex items-center gap-2 rounded-lg bg-slate-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600"
-                >
-                    ← Back to Digital Initiatives
-                </button>
             </div>
 
             <section class="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
