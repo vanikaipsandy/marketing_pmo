@@ -5,6 +5,7 @@ namespace App\Http\Controllers\DigitalInitiative;
 use App\Http\Controllers\Controller;
 use App\Models\Coe;
 use App\Models\DataSource;
+use App\Models\Groub;
 use App\Models\Organization;
 use App\Models\PhaseDigital;
 use App\Models\StatusDigital;
@@ -25,6 +26,7 @@ class TrsDigitalInitiativeController extends Controller
             'search' => $request->string('search')->toString(),
             'category_fase' => $request->input('category_fase'),
             'source_id' => $request->input('source_id'),
+            'groub_id' => $request->input('groub_id'),
             'phase_id' => $request->input('phase_id'),
             'organization_id' => $request->input('organization_id'),
             'coe_id' => $request->input('coe_id'),
@@ -52,6 +54,7 @@ class TrsDigitalInitiativeController extends Controller
             })
             ->when($filters['category_fase'], fn ($query, $categoryFase) => $query->where('category_fase', $categoryFase))
             ->when($filters['source_id'], fn ($query, $sourceId) => $query->where('source_id', $sourceId))
+            ->when($filters['groub_id'], fn ($query, $groubId) => $query->whereHas('organizations', fn ($orgQuery) => $orgQuery->where('groub_id', $groubId)))
             ->when($filters['phase_id'], fn ($query, $phaseId) => $query->whereHas('statuses', fn ($statusQuery) => $statusQuery->where('trs_status_digital.phase_id', $phaseId)))
             ->when($filters['organization_id'], fn ($query, $organizationId) => $query->whereHas('organizations', fn ($organizationQuery) => $organizationQuery->where('trs_organization.id', $organizationId)))
             ->when($filters['coe_id'], fn ($query, $coeId) => $query->whereHas('useCase', fn ($useCaseQuery) => $useCaseQuery->where('coe_id', $coeId)))
@@ -289,6 +292,7 @@ class TrsDigitalInitiativeController extends Controller
         return [
             'useCases' => UseCase::query()->select(['id', 'name'])->orderBy('name')->get(),
             'sources' => DataSource::query()->select(['id', 'name', 'month', 'year'])->orderBy('year')->orderBy('month')->get(),
+            'groubs' => Groub::query()->select(['id', 'name'])->orderBy('name')->get(),
             'organizations' => Organization::query()->select(['id', 'name'])->orderBy('name')->get(),
             'coes' => $coes,
             'statuses' => $statuses,
@@ -310,8 +314,8 @@ class TrsDigitalInitiativeController extends Controller
     private function categoryOptions(): array
     {
         return [
-            ['id' => 1, 'label' => 'Planning / Scope Charter'],
-            ['id' => 2, 'label' => 'Implementation / Project Charter'],
+            ['id' => 1, 'label' => 'Planning'],
+            ['id' => 2, 'label' => 'Implementation'],
         ];
     }
 }

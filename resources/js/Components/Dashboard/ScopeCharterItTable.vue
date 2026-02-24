@@ -1,15 +1,20 @@
 <template>
     <article class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717]">
-        <div class="flex items-center justify-between gap-3 border-b border-slate-200 px-5 py-4 dark:border-white/10">
-            <div>
-                <h2 class="text-base font-semibold text-slate-900 dark:text-white">{{ charterLabel }} IT Initiatives</h2>
+        <div class="border-b border-slate-200 px-5 py-4 dark:border-white/10">
+            <div class="flex items-center justify-between gap-3">
+                <div>
+                    <h2 class="text-base font-semibold text-slate-900 dark:text-white">{{ charterLabel }} IT Initiatives</h2>
+                </div>
+                <Link
+                    :href="`/it-initiatives?status=${completedStatusId}`"
+                    class="text-xs font-semibold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300"
+                >
+                    Lihat {{ completedStatusLabel }}
+                </Link>
             </div>
-            <Link
-                :href="`/it-initiatives?status=${completedStatusId}`"
-                class="text-xs font-semibold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300"
-            >
-                Lihat {{ completedStatusLabel }}
-            </Link>
+            <div v-if="$slots['header-filters']" class="mt-4">
+                <slot name="header-filters" />
+            </div>
         </div>
 
         <div class="overflow-x-auto">

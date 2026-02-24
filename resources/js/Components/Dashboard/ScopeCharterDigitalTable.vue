@@ -1,15 +1,20 @@
 <template>
     <article class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717]">
-        <div class="flex items-center justify-between gap-3 border-b border-slate-200 px-5 py-4 dark:border-white/10">
-            <div>
-                <h2 class="text-base font-semibold text-slate-900 dark:text-white">{{ charterLabel }} Digital Initiatives</h2>
+        <div class="border-b border-slate-200 px-5 py-4 dark:border-white/10">
+            <div class="flex items-center justify-between gap-3">
+                <div>
+                    <h2 class="text-base font-semibold text-slate-900 dark:text-white">{{ charterLabel }} Digital Initiatives</h2>
+                </div>
+                <Link
+                    :href="`/digital-initiatives?status=${completedStatusId}`"
+                    class="text-xs font-semibold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300"
+                >
+                    Lihat {{ completedStatusLabel }}
+                </Link>
             </div>
-            <Link
-                :href="`/digital-initiatives?status=${completedStatusId}`"
-                class="text-xs font-semibold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300"
-            >
-                Lihat {{ completedStatusLabel }}
-            </Link>
+            <div v-if="$slots['header-filters']" class="mt-4">
+                <slot name="header-filters" />
+            </div>
         </div>
 
         <div class="overflow-x-auto overflow-y-visible">
@@ -17,8 +22,7 @@
                 <thead class="bg-slate-50 dark:bg-white/5">
                     <tr>
                         <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">No</th>
-                        <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Code</th>
-                        <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Holding/Sub Holding</th>
+                        <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Type</th>
                         <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Project Owner</th>
                         <th class="min-w-[180px] px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Use Case</th>
                         <th class="min-w-[280px] px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Desc</th>
@@ -26,43 +30,31 @@
                         <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Urgency</th>
                         <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Rjjp</th>
                         <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Coe</th>
-                        <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">State</th>
-                        <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Terbaru</th>
+                        <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status</th>
                         <th class="sticky right-0 z-10 whitespace-nowrap bg-slate-50 px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500 dark:bg-white/5 dark:text-slate-400">Action</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-white/5">
-                    <tr v-for="(item, index) in items" :key="`digital-open-${item.id}`">
-                        <td class="whitespace-nowrap px-4 py-3 font-medium text-slate-900 dark:text-white">{{ index + 1 }}</td>
-                        <td class="whitespace-nowrap px-4 py-3 font-medium text-slate-900 dark:text-white">{{ cellVal(item, 'no', 'code') }}</td>
-                        <td class="whitespace-nowrap px-4 py-3 text-slate-700 dark:text-slate-200">{{ cellVal(item, 'type') }}</td>
-                        <td class="whitespace-nowrap px-4 py-3 text-slate-700 dark:text-slate-200">{{ cellVal(item, 'projectOwner', 'project_owner') }}</td>
+                    <tr v-for="item in items" :key="`digital-open-${item.id}`">
+                        <td class="whitespace-nowrap px-4 py-3 font-medium text-slate-900 dark:text-white">{{ displayVal(item, 'no') }}</td>
+                        <td class="whitespace-nowrap px-4 py-3 text-slate-700 dark:text-slate-200">{{ displayVal(item, 'type') }}</td>
+                        <td class="whitespace-nowrap px-4 py-3 text-slate-700 dark:text-slate-200">{{ displayVal(item, 'projectOwner') }}</td>
                         <td class="min-w-[180px] max-w-[320px] px-4 py-3 text-slate-700 dark:text-slate-200">
-                            <span class="whitespace-normal break-words">{{ cellVal(item, 'useCase', 'use_case') }}</span>
+                            <span class="whitespace-normal break-words">{{ displayVal(item, 'useCase') }}</span>
                         </td>
                         <td class="min-w-[280px] max-w-[400px] px-4 py-3 text-slate-700 dark:text-slate-200">
-                            <span class="whitespace-normal break-words" :title="cellVal(item, 'desc', 'description')">{{ cellVal(item, 'desc', 'description') }}</span>
+                            <span class="whitespace-normal break-words" :title="displayVal(item, 'desc')">{{ displayVal(item, 'desc') }}</span>
                         </td>
                         <td class="max-w-[150px] px-4 py-3 text-slate-700 dark:text-slate-200">
-                            <span class="line-clamp-2" :title="cellVal(item, 'value')">{{ cellVal(item, 'value') }}</span>
+                            <span class="line-clamp-2" :title="displayVal(item, 'value')">{{ displayVal(item, 'value') }}</span>
                         </td>
-                        <td class="whitespace-nowrap px-4 py-3 text-slate-700 dark:text-slate-200">{{ cellVal(item, 'urgency') }}</td>
-                        <td class="whitespace-nowrap px-4 py-3 text-slate-700 dark:text-slate-200">{{ cellVal(item, 'rjjp') }}</td>
-                        <td class="whitespace-nowrap px-4 py-3 text-slate-700 dark:text-slate-200">{{ cellVal(item, 'coe') }}</td>
+                        <td class="whitespace-nowrap px-4 py-3 text-slate-700 dark:text-slate-200">{{ displayVal(item, 'urgency') }}</td>
+                        <td class="whitespace-nowrap px-4 py-3 text-slate-700 dark:text-slate-200">{{ displayVal(item, 'rjjp') }}</td>
+                        <td class="whitespace-nowrap px-4 py-3 text-slate-700 dark:text-slate-200">{{ displayVal(item, 'coe') }}</td>
                         <td class="whitespace-nowrap px-4 py-3">
-                            <span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize" :class="statusBadgeClassById(item.status)">
-                                {{ statusLabelFromOptions(item.status, statusOptions) }}
+                            <span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize" :class="statusBadgeClassById(statusBadgeItem(item))">
+                                {{ statusDisplay(item) }}
                             </span>
-                        </td>
-                        <td class="whitespace-nowrap px-4 py-3">
-                            <span 
-                                v-if="item.uc_status_implementations && item.uc_status_implementations.length > 0" 
-                                class="inline-flex rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700 dark:bg-white/10 dark:text-slate-300 capitalize" 
-                                :title="item.uc_status_implementations[0].status"
-                            >
-                                {{ item.uc_status_implementations[0].status }}
-                            </span>
-                            <span v-else class="text-slate-400 dark:text-slate-500 italic text-xs">-</span>
                         </td>
                         <td class="sticky right-0 z-10 whitespace-nowrap bg-white px-4 py-3 text-right shadow-[-4px_0_8px_rgba(0,0,0,0.05)] dark:bg-[#171717] dark:shadow-[-4px_0_8px_rgba(0,0,0,0.2)]">
                             <div class="flex items-center justify-end gap-1">
@@ -90,7 +82,7 @@
                     </tr>
 
                     <tr v-if="items.length === 0">
-                        <td colspan="12" class="px-4 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
+                        <td colspan="11" class="px-4 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
                             Semua digital initiatives sudah {{ lowerCompletedStatusLabel }}.
                         </td>
                     </tr>
@@ -126,6 +118,10 @@ const props = defineProps({
         type: String,
         default: 'Scope Charter',
     },
+    categoryOptions: {
+        type: Array,
+        default: () => [],
+    },
 });
 
 const lowerCompletedStatusLabel = computed(() => String(props.completedStatusLabel || '').toLowerCase());
@@ -138,5 +134,60 @@ function cellVal(item, ...keys) {
     }
 
     return '-';
+}
+
+const categoryLabel = (value) => {
+    const found = (props.categoryOptions || []).find((c) => Number(c.id) === Number(value));
+    return found ? found.label : '-';
+};
+
+const scoreLabel = (value) => {
+    const map = { 1: 'Low', 2: 'Medium', 3: 'High', 4: 'TBC' };
+    return map[Number(value)] ?? '-';
+};
+
+function displayVal(item, field) {
+    if (!item || typeof item !== 'object') return '-';
+    const v = (x) => x !== undefined && x !== null && String(x).trim() !== '';
+    switch (field) {
+        case 'no':
+            return v(item.no) ? item.no : (item.id ?? '-');
+        case 'type':
+            return item.category_fase != null ? categoryLabel(item.category_fase) : cellVal(item, 'type');
+        case 'projectOwner':
+            if (item.organizations?.length) {
+                return item.organizations.map((o) => o.name).join(', ');
+            }
+            return cellVal(item, 'projectOwner', 'project_owner');
+        case 'useCase':
+            return item.use_case?.name ?? cellVal(item, 'useCase', 'use_case');
+        case 'desc':
+            return item.useCase_description ?? cellVal(item, 'desc', 'description');
+        case 'value':
+            return item.value != null ? scoreLabel(item.value) : cellVal(item, 'value');
+        case 'urgency':
+            return item.urgency != null ? scoreLabel(item.urgency) : cellVal(item, 'urgency');
+        case 'rjjp':
+            if (item.rjpps?.length) return item.rjpps.map((r) => r.name).join(', ');
+            return cellVal(item, 'rjjp');
+        case 'coe':
+            return item.use_case?.coe?.name ?? cellVal(item, 'coe');
+        default:
+            return cellVal(item, field);
+    }
+}
+
+function statusDisplay(item) {
+    if (item.statuses?.length) {
+        return item.statuses.map((s) => s.name).join(', ');
+    }
+    return props.statusOptions?.length ? statusLabelFromOptions(item.status, props.statusOptions) : (item.status ?? '-');
+}
+
+function statusBadgeItem(item) {
+    if (item.statuses?.length && item.statuses[0]) {
+        return item.statuses[0].id;
+    }
+    return item.status;
 }
 </script>
