@@ -11,89 +11,96 @@
             </div>
         </div>
 
-        <div class="overflow-x-auto">
-            <table class="w-full min-w-[1720px] divide-y divide-slate-200 dark:divide-white/5">
+        <div class="overflow-x-hidden">
+            <table class="w-full table-fixed divide-y divide-slate-200 text-[11px] dark:divide-white/5">
+                <colgroup>
+                    <col class="w-[4%]">
+                    <col class="w-[7%]">
+                    <col class="w-[14%]">
+                    <col class="w-[17%]">
+                    <col class="w-[10%]">
+                    <col class="w-[10%]">
+                    <col class="w-[11%]">
+                    <col class="w-[16%]">
+                    <col class="w-[11%]">
+                </colgroup>
                 <thead class="bg-slate-50 dark:bg-white/5">
                     <tr>
-                        <th scope="col" class="w-10 whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">No</th>
-                        <th scope="col" class="w-16 whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Code</th>
-                        <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">IT Arsitektur Building Blok</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Daftar Inisiatif</th>
-                        <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Usulan</th>
-                        <th scope="col" class="whitespace-nowrap px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Bulan / Tahun</th>
-                        <th scope="col" class="w-[16rem] px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Review</th>
-                        <th scope="col" class="w-[44rem] px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Implementasi</th>
-                        <th scope="col" class="whitespace-nowrap px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Action</th>
+                        <th scope="col" class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">No</th>
+                        <th scope="col" class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Code</th>
+                        <th scope="col" class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">IT Arsitektur Building Blok</th>
+                        <th scope="col" class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Daftar Inisiatif</th>
+                        <th scope="col" class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Usulan</th>
+                        <th scope="col" class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Bulan / Tahun</th>
+                        <th scope="col" class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Review</th>
+                        <th scope="col" class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Implementasi</th>
+                        <th scope="col" class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Action</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-200 bg-white dark:divide-white/5 dark:bg-[#1a1a1a]">
-                    <template v-for="(item, index) in items" :key="`it-open-${item.id}`">
+                    <template v-for="(item, index) in sortedItems" :key="`it-open-${item.id}`">
                         <tr class="group transition-colors hover:bg-slate-50 dark:hover:bg-white/5">
-                            <td class="whitespace-nowrap px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">{{ index + 1 }}</td>
-                            <td class="whitespace-nowrap px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400">{{ item.code || '-' }}</td>
-                            <td class="whitespace-nowrap px-6 py-4 text-xs text-slate-700 dark:text-slate-200">
+                            <td class="px-3 py-3 text-[11px] font-medium text-slate-600 dark:text-slate-400">{{ index + 1 }}</td>
+                            <td class="px-3 py-3 text-[11px] font-medium text-slate-600 dark:text-slate-400">{{ item.code || '-' }}</td>
+                            <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">
                                 <span class="inline-flex rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-semibold text-blue-800 dark:bg-blue-500/20 dark:text-blue-300">
                                     {{ item.charter?.category || 'Uncategorized' }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 text-xs text-slate-700 dark:text-slate-200">
-                                <span class="font-medium text-slate-700 dark:text-slate-200">{{ item.name || '-' }}</span>
+                            <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">
+                                <span class="font-medium break-words text-slate-700 dark:text-slate-200">{{ item.name || '-' }}</span>
                             </td>
-                            <td class="whitespace-nowrap px-6 py-4">
-                                <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-medium capitalize" :class="statusBadgeClassById(item.status)">
+                            <td class="px-3 py-3">
+                                <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium capitalize" :class="statusBadgeClassById(item.status)">
                                     {{ statusLabelFromOptions(item.status, statusOptions) }}
                                 </span>
                             </td>
-                            <td class="whitespace-nowrap px-6 py-4 text-xs font-medium text-slate-700 dark:text-slate-300">
+                            <td class="px-3 py-3 text-[11px] font-medium text-slate-700 dark:text-slate-300">
                                 {{ latestItDate(item) || '-' }}
                             </td>
-                            <td class="w-[16rem] px-6 py-4 text-xs text-slate-700 dark:text-slate-200">
+                            <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">
                                 <span
                                     v-if="latestItReviewStatus(item)"
-                                    class="inline-flex items-center rounded-md bg-amber-100 px-2 py-1 text-[11px] font-medium text-amber-800 dark:bg-amber-500/20 dark:text-amber-300 break-words whitespace-normal leading-relaxed"
+                                    class="inline-flex items-center rounded-md px-2 py-1 text-[10px] font-medium break-words whitespace-normal leading-relaxed"
+                                    :class="reviewStatusBadgeClass(latestItReviewStatus(item))"
                                     :title="latestItReviewStatus(item)"
                                 >
                                     {{ latestItReviewStatus(item) }}
                                 </span>
-                                <span v-else class="text-slate-400 dark:text-slate-500 italic text-xs">-</span>
+                                <span v-else class="text-xs italic text-slate-400 dark:text-slate-500">-</span>
                             </td>
-                            <td class="w-[44rem] px-6 py-4 text-xs text-slate-700 dark:text-slate-200">
+                            <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">
                                 <span
                                     v-if="latestItStatus(item)"
-                                    class="inline-flex items-center rounded-md bg-slate-100 px-2 py-1 text-[11px] font-medium text-slate-700 capitalize dark:bg-white/10 dark:text-slate-300 break-words whitespace-normal leading-relaxed"
+                                    class="inline-flex items-center rounded-md bg-slate-100 px-2 py-1 text-[10px] font-medium text-slate-700 capitalize dark:bg-white/10 dark:text-slate-300 break-words whitespace-normal leading-relaxed"
                                     :title="latestItStatus(item)"
                                 >
                                     {{ latestItStatus(item) }}
                                 </span>
-                                <span v-else class="text-slate-400 dark:text-slate-500 italic text-xs">-</span>
+                                <span v-else class="text-xs italic text-slate-400 dark:text-slate-500">-</span>
                             </td>
-                            <td class="whitespace-nowrap px-6 py-4 text-right">
-                                <div class="flex items-center justify-end gap-1">
+                            <td class="px-3 py-3 text-[10px] font-medium">
+                                <div class="flex flex-col items-start gap-1">
                                     <Link
                                         :href="`/it-initiatives/${item.id}`"
-                                        class="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-indigo-600 dark:text-slate-500 dark:hover:bg-white/5 dark:hover:text-indigo-400"
+                                        class="inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-semibold bg-sky-100 text-sky-700 transition-colors hover:bg-sky-200 dark:bg-sky-500/20 dark:text-sky-300 dark:hover:bg-sky-500/30"
                                         title="View"
                                     >
-                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                        </svg>
+                                        View
                                     </Link>
                                     <Link
                                         :href="`/it-initiatives/${item.id}/edit`"
-                                        class="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-amber-600 dark:text-slate-500 dark:hover:bg-white/5 dark:hover:text-amber-400"
+                                        class="inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-semibold bg-amber-100 text-amber-700 transition-colors hover:bg-amber-200 dark:bg-amber-500/20 dark:text-amber-300 dark:hover:bg-amber-500/30"
                                         title="Edit"
                                     >
-                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                        </svg>
+                                        Edit
                                     </Link>
                                 </div>
                             </td>
                         </tr>
                     </template>
 
-                    <tr v-if="items.length === 0">
+                    <tr v-if="sortedItems.length === 0">
                         <td colspan="9" class="px-6 py-8 text-center text-xs text-slate-500 dark:text-slate-400">
                             Semua IT initiatives sudah {{ lowerCompletedStatusLabel }}.
                         </td>
@@ -134,6 +141,21 @@ const props = defineProps({
 
 const lowerCompletedStatusLabel = computed(() => String(props.completedStatusLabel || '').toLowerCase());
 
+const sortedItems = computed(() => {
+    return [...(props.items || [])].sort((a, b) => {
+        const aId = Number(a?.id);
+        const bId = Number(b?.id);
+        const aValid = Number.isFinite(aId);
+        const bValid = Number.isFinite(bId);
+
+        if (!aValid && !bValid) return 0;
+        if (!aValid) return 1;
+        if (!bValid) return -1;
+
+        return aId - bId;
+    });
+});
+
 const latestItStatus = (item) => {
     const rawStatus = item?.latest_implementation_status
         ?? item?.latestImplementationStatus
@@ -160,6 +182,28 @@ const latestItReviewStatus = (item) => {
     const normalizedReviewStatus = String(rawReviewStatus ?? '').trim();
 
     return normalizedReviewStatus.length > 0 ? normalizedReviewStatus : null;
+};
+
+const reviewStatusBadgeClass = (reviewStatus) => {
+    const normalized = String(reviewStatus ?? '').trim().toLowerCase();
+
+    if (normalized === 'on track') {
+        return 'bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-300';
+    }
+
+    if (normalized === 'at risk') {
+        return 'bg-amber-100 text-amber-800 dark:bg-amber-500/20 dark:text-amber-300';
+    }
+
+    if (normalized === 'not started') {
+        return 'bg-slate-100 text-slate-700 dark:bg-white/10 dark:text-slate-300';
+    }
+
+    if (normalized === 'not signed') {
+        return 'bg-rose-100 text-rose-800 dark:bg-rose-500/20 dark:text-rose-300';
+    }
+
+    return 'bg-slate-100 text-slate-700 dark:bg-white/10 dark:text-slate-300';
 };
 
 const latestItDate = (item) => {

@@ -17,65 +17,73 @@
             </div>
         </div>
 
-        <div class="overflow-x-auto overflow-y-visible">
-            <table class="min-w-max w-full divide-y divide-slate-200 text-sm dark:divide-white/10">
+        <div class="overflow-x-hidden">
+            <table class="w-full table-fixed divide-y divide-slate-200 text-[11px] dark:divide-white/5">
+                <colgroup>
+                    <col class="w-[4%]">
+                    <col class="w-[7%]">
+                    <col class="w-[9%]">
+                    <col class="w-[12%]">
+                    <col class="w-[17%]">
+                    <col class="w-[10%]">
+                    <col class="w-[7%]">
+                    <col class="w-[7%]">
+                    <col class="w-[9%]">
+                    <col class="w-[8%]">
+                    <col class="w-[10%]">
+                </colgroup>
                 <thead class="bg-slate-50 dark:bg-white/5">
                     <tr>
-                        <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">No</th>
-                        <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Type</th>
-                        <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Project Owner</th>
-                        <th class="min-w-[180px] px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Use Case</th>
-                        <th class="min-w-[280px] px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Desc</th>
-                        <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Value</th>
-                        <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Urgency</th>
-                        <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Rjjp</th>
-                        <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Coe</th>
-                        <th class="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status</th>
-                        <th class="sticky right-0 z-10 whitespace-nowrap bg-slate-50 px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500 dark:bg-white/5 dark:text-slate-400">Action</th>
+                        <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">No</th>
+                        <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Type</th>
+                        <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Project Owner</th>
+                        <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Use Case</th>
+                        <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Desc</th>
+                        <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Value</th>
+                        <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Urgency</th>
+                        <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Rjjp</th>
+                        <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Coe</th>
+                        <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status</th>
+                        <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Action</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100 dark:divide-white/5">
-                    <tr v-for="item in items" :key="`digital-open-${item.id}`">
-                        <td class="whitespace-nowrap px-4 py-3 font-medium text-slate-900 dark:text-white">{{ displayVal(item, 'no') }}</td>
-                        <td class="whitespace-nowrap px-4 py-3 text-slate-700 dark:text-slate-200">{{ displayVal(item, 'type') }}</td>
-                        <td class="whitespace-nowrap px-4 py-3 text-slate-700 dark:text-slate-200">{{ displayVal(item, 'projectOwner') }}</td>
-                        <td class="min-w-[180px] max-w-[320px] px-4 py-3 text-slate-700 dark:text-slate-200">
-                            <span class="whitespace-normal break-words">{{ displayVal(item, 'useCase') }}</span>
+                <tbody class="divide-y divide-slate-200 bg-white dark:divide-white/5 dark:bg-[#1a1a1a]">
+                    <tr v-for="item in items" :key="`digital-open-${item.id}`" class="group transition-colors hover:bg-slate-50 dark:hover:bg-white/5">
+                        <td class="px-3 py-3 text-[11px] font-medium text-slate-600 dark:text-slate-400">{{ displayVal(item, 'no') }}</td>
+                        <td class="px-3 py-3 text-[11px] font-medium text-slate-700 dark:text-slate-200">{{ displayVal(item, 'type') }}</td>
+                        <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">{{ displayVal(item, 'projectOwner') }}</td>
+                        <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">
+                            <span class="break-words">{{ displayVal(item, 'useCase') }}</span>
                         </td>
-                        <td class="min-w-[280px] max-w-[400px] px-4 py-3 text-slate-700 dark:text-slate-200">
-                            <span class="whitespace-normal break-words" :title="displayVal(item, 'desc')">{{ displayVal(item, 'desc') }}</span>
+                        <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">
+                            <span class="break-words" :title="displayVal(item, 'desc')">{{ displayVal(item, 'desc') }}</span>
                         </td>
-                        <td class="max-w-[150px] px-4 py-3 text-slate-700 dark:text-slate-200">
+                        <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">
                             <span class="line-clamp-2" :title="displayVal(item, 'value')">{{ displayVal(item, 'value') }}</span>
                         </td>
-                        <td class="whitespace-nowrap px-4 py-3 text-slate-700 dark:text-slate-200">{{ displayVal(item, 'urgency') }}</td>
-                        <td class="whitespace-nowrap px-4 py-3 text-slate-700 dark:text-slate-200">{{ displayVal(item, 'rjjp') }}</td>
-                        <td class="whitespace-nowrap px-4 py-3 text-slate-700 dark:text-slate-200">{{ displayVal(item, 'coe') }}</td>
-                        <td class="whitespace-nowrap px-4 py-3">
-                            <span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize" :class="statusBadgeClassById(statusBadgeItem(item))">
+                        <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">{{ displayVal(item, 'urgency') }}</td>
+                        <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">{{ displayVal(item, 'rjjp') }}</td>
+                        <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">{{ displayVal(item, 'coe') }}</td>
+                        <td class="px-3 py-3">
+                            <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium capitalize" :class="statusBadgeClassById(statusBadgeItem(item))">
                                 {{ statusDisplay(item) }}
                             </span>
                         </td>
-                        <td class="sticky right-0 z-10 whitespace-nowrap bg-white px-4 py-3 text-right shadow-[-4px_0_8px_rgba(0,0,0,0.05)] dark:bg-[#171717] dark:shadow-[-4px_0_8px_rgba(0,0,0,0.2)]">
-                            <div class="flex items-center justify-end gap-1">
+                        <td class="px-3 py-3 text-[10px] font-medium">
+                            <div class="flex flex-col items-start gap-1">
                                 <Link
                                     :href="`/digital-initiatives/${item.id}`"
-                                    class="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-indigo-600 dark:text-slate-500 dark:hover:bg-white/5 dark:hover:text-indigo-400"
+                                    class="inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-semibold bg-sky-100 text-sky-700 transition-colors hover:bg-sky-200 dark:bg-sky-500/20 dark:text-sky-300 dark:hover:bg-sky-500/30"
                                     title="View"
                                 >
-                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                    </svg>
+                                    View
                                 </Link>
                                 <Link
                                     :href="`/digital-initiatives/${item.id}/edit`"
-                                    class="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-amber-600 dark:text-slate-500 dark:hover:bg-white/5 dark:hover:text-amber-400"
+                                    class="inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-semibold bg-amber-100 text-amber-700 transition-colors hover:bg-amber-200 dark:bg-amber-500/20 dark:text-amber-300 dark:hover:bg-amber-500/30"
                                     title="Edit"
                                 >
-                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                    </svg>
+                                    Edit
                                 </Link>
                             </div>
                         </td>

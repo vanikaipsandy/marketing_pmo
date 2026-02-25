@@ -4,10 +4,36 @@ import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } fro
 
 const props = defineProps({
     show: Boolean,
+    mode: {
+        type: String,
+        default: 'status',
+        validator: (value) => ['status', 'confirm'].includes(value),
+    },
     status: {
         type: String,
         default: 'pending',
         validator: (value) => ['pending', 'rejected', 'deactivated'].includes(value)
+    },
+    title: {
+        type: String,
+        default: '',
+    },
+    message: {
+        type: String,
+        default: '',
+    },
+    confirmText: {
+        type: String,
+        default: 'Konfirmasi',
+    },
+    cancelText: {
+        type: String,
+        default: 'Batal',
+    },
+    confirmTone: {
+        type: String,
+        default: 'danger',
+        validator: (value) => ['danger', 'warning', 'primary'].includes(value),
     },
     user: {
         type: Object,
@@ -15,7 +41,7 @@ const props = defineProps({
     }
 });
 
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close', 'confirm']);
 
 const statusConfig = {
     pending: {
@@ -53,7 +79,39 @@ const statusConfig = {
     }
 };
 
-const config = computed(() => statusConfig[props.status] || statusConfig.pending);
+const confirmToneClass = computed(() => {
+    if (props.confirmTone === 'warning') {
+        return 'bg-amber-600 hover:bg-amber-700';
+    }
+
+    if (props.confirmTone === 'primary') {
+        return 'bg-indigo-600 hover:bg-indigo-700';
+    }
+
+    return 'bg-rose-600 hover:bg-rose-700';
+});
+
+const config = computed(() => {
+    if (props.mode === 'confirm') {
+        return {
+            title: props.title || 'Konfirmasi',
+            message: props.message || 'Apakah Anda yakin ingin melanjutkan aksi ini?',
+            iconBg: 'bg-rose-100 dark:bg-rose-900/30',
+            iconColor: 'text-rose-600 dark:text-rose-400',
+            iconPath: 'M12 9v3m0 3h.01M5.07 19h13.86c1.54 0 2.5-1.67 1.73-3L13.73 4c-.77-1.33-2.69-1.33-3.46 0L3.34 16c-.77 1.33.19 3 1.73 3z',
+            showBadge: false,
+            badgeBg: '',
+            badgeDot: '',
+            badgeText: '',
+            animate: false,
+        };
+    }
+
+    return {
+        ...(statusConfig[props.status] || statusConfig.pending),
+        showBadge: true,
+    };
+});
 
 const getInitials = (name) => {
     if (!name) return 'U';
@@ -130,7 +188,7 @@ export default {
                                 </div>
 
                                 <!-- User Info -->
-                                <div v-if="user" class="w-full p-4 bg-gray-50 dark:bg-white/5 rounded-xl mb-4">
+                                <div v-if="mode === 'status' && user" class="w-full p-4 bg-gray-50 dark:bg-white/5 rounded-xl mb-4">
                                     <div class="flex items-center gap-3">
                                         <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white font-semibold text-sm">
                                             {{ getInitials(user.name) }}
@@ -143,7 +201,7 @@ export default {
                                 </div>
 
                                 <!-- Status Badge -->
-                                <div class="mb-6">
+                                <div v-if="config.showBadge" class="mb-6">
                                     <span 
                                         class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium"
                                         :class="config.badgeBg"
@@ -157,9 +215,27 @@ export default {
                                 </div>
 
                                 <!-- Action Button -->
-                                <button 
-                                    type="button" 
-                                    class="w-full inline-flex justify-center rounded-xl border border-transparent bg-emerald-600 px-4 py-3 text-sm font-medium text-white hover:bg-emerald-700 shadow-lg shadow-emerald-500/20 focus:outline-none transition-all" 
+                                <div v-if="mode === 'confirm'" class="w-full grid grid-cols-2 gap-2">
+                                    <button
+                                        type="button"
+                                        class="inline-flex justify-center rounded-xl border border-slate-200 px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/5 focus:outline-none transition-all"
+                                        @click="emit('close')"
+                                    >
+                                        {{ cancelText }}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="inline-flex justify-center rounded-xl border border-transparent px-4 py-3 text-sm font-medium text-white shadow-lg focus:outline-none transition-all"
+                                        :class="confirmToneClass"
+                                        @click="emit('confirm')"
+                                    >
+                                        {{ confirmText }}
+                                    </button>
+                                </div>
+                                <button
+                                    v-else
+                                    type="button"
+                                    class="w-full inline-flex justify-center rounded-xl border border-transparent bg-emerald-600 px-4 py-3 text-sm font-medium text-white hover:bg-emerald-700 shadow-lg shadow-emerald-500/20 focus:outline-none transition-all"
                                     @click="emit('close')"
                                 >
                                     Mengerti

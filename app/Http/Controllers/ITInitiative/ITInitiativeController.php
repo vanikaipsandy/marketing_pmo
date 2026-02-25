@@ -11,6 +11,7 @@ use App\Models\MstInitiative;
 use App\Models\Project;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -153,6 +154,7 @@ class ITInitiativeController extends Controller
             
             \App\Models\PcStatusImplementation::create([
                 'project_id' => $project->id,
+                'review_status' => 'Not Started',
                 'status' => $statusName,
                 'date' => now()->toDateString(),
                 'time_start' => now()->toTimeString(),
@@ -181,7 +183,7 @@ class ITInitiativeController extends Controller
 
     public function edit(Project $project): Response
     {
-        $project->load(['pcStatusImplementations']);
+        $project->load(['pcStatusImplementations', 'charter']);
         
         return Inertia::render('ITInitiative/Edit', [
             'itInitiative' => $project,
@@ -198,15 +200,32 @@ class ITInitiativeController extends Controller
 
     public function update(ITInitiativeUpdateRequest $request, Project $project): RedirectResponse
     {
+        $validated = $request->validated();
         $oldStatus = $project->status;
-        $project->update($request->validated());
+        $charterCategory = trim((string) ($validated['charter_category'] ?? ''));
+        unset($validated['charter_category']);
 
-        if ((string)$project->status !== (string)$oldStatus || !$project->wasRecentlyCreated) {
+        $project->update($validated);
+
+        if ($charterCategory !== '') {
+            $latestCharter = $project->charters()->latest('id')->first();
+
+            if ($latestCharter) {
+                $latestCharter->update(['category' => $charterCategory]);
+            } else {
+                $project->charters()->create([
+                    'category' => $charterCategory,
+                ]);
+            }
+        }
+
+        if ((string)$project->status !== (string)$oldStatus) {
             $statusModel = InitiativeStatus::find($project->status);
             $statusName = $statusModel ? $statusModel->name : (string)$project->status;
             
             \App\Models\PcStatusImplementation::create([
                 'project_id' => $project->id,
+                'review_status' => 'Not Started',
                 'status' => $statusName,
                 'date' => now()->toDateString(),
                 'time_start' => now()->toTimeString(),
@@ -227,17 +246,37 @@ class ITInitiativeController extends Controller
     {
         $validated = $request->validate([
             'status' => 'required|string|max:255',
+            'review_status' => ['required', Rule::in(['At Risk', 'On Track', 'Not Started', 'Not Signed'])],
             'month_year' => 'required|date_format:Y-m',
         ]);
 
         \App\Models\PcStatusImplementation::create([
             'project_id' => $project->id,
+            'review_status' => $validated['review_status'],
             'status' => $validated['status'],
             'date' => \Carbon\Carbon::createFromFormat('Y-m', $validated['month_year'])->startOfMonth()->toDateString(),
             'time_start' => now()->toTimeString(),
         ]);
 
         return redirect()->back()->with('success', 'Status added successfully.');
+    }
+
+    public function updateImplementationStatus(Request $request, $id): RedirectResponse
+    {
+        $validated = $request->validate([
+            'status' => 'required|string|max:255',
+            'review_status' => ['required', Rule::in(['At Risk', 'On Track', 'Not Started', 'Not Signed'])],
+            'month_year' => 'required|date_format:Y-m',
+        ]);
+
+        $status = \App\Models\PcStatusImplementation::findOrFail($id);
+        $status->update([
+            'status' => $validated['status'],
+            'review_status' => $validated['review_status'],
+            'date' => \Carbon\Carbon::createFromFormat('Y-m', $validated['month_year'])->startOfMonth()->toDateString(),
+        ]);
+
+        return redirect()->back()->with('success', 'Status updated successfully.');
     }
 
     public function destroyImplementationStatus($id): RedirectResponse

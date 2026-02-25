@@ -110,14 +110,14 @@
             </section>
 
             <FlowStatusTable
-                v-if="tableMode === TABLE_MODE.FLOW"
+                v-if="hasTableSelection && tableMode === TABLE_MODE.FLOW"
                 :items="flowItems"
                 :status-options="statusOptions"
                 :active-flow-filter="activeFlowFilter"
             />
 
             <MasterInitiativeTable
-                v-else
+                v-else-if="hasTableSelection"
                 :items="masterItems"
             />
         </div>
@@ -182,13 +182,16 @@ const TABLE_MODE = {
 };
 
 const tableMode = ref(TABLE_MODE.FLOW);
+const hasTableSelection = ref(false);
 
 const showMasterItInitiatives = () => {
+    hasTableSelection.value = true;
     tableMode.value = TABLE_MODE.MASTER;
     activeFlowFilter.value = null;
 };
 
 const handleFlowFilter = (statusId) => {
+    hasTableSelection.value = true;
     tableMode.value = TABLE_MODE.FLOW;
     toggleFilter(statusId);
 };

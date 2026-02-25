@@ -1,143 +1,212 @@
 <template>
     <UserLayout title="Edit IT Initiative">
-        <div class="mx-auto max-w-2xl animate-fade-in">
-            <div class="mb-8">
-                <Link href="/it-initiatives" class="mb-2 flex items-center gap-1 text-sm text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400">
+        <div class="mx-auto max-w-[1860px] animate-fade-in space-y-6">
+            <div>
+                <Link
+                    href="/it-initiatives"
+                    class="mb-2 flex items-center gap-1 text-sm text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400"
+                >
                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                     </svg>
                     Back to IT Initiatives
                 </Link>
                 <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Edit IT Initiative</h2>
+                <p class="text-sm text-slate-500 dark:text-slate-400">
+                    Spreadsheet mode: edit data langsung pada kolom tabel.
+                </p>
             </div>
 
-            <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-white/5 dark:bg-[#1a1a1a]">
-                <form class="space-y-6" @submit.prevent="submit">
-                    <div class="grid grid-cols-1 gap-6 md:grid-cols-4">
-                        <div class="md:col-span-1">
-                            <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">IT Initiative Code</label>
-                            <input
-                                v-model="form.code"
-                                type="text"
-                                class="w-full rounded-lg border-slate-300 bg-white text-slate-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-white/10 dark:bg-[#131313] dark:text-slate-100"
-                                placeholder="PRJ-001"
-                            />
-                            <p v-if="form.errors.code" class="mt-1 text-xs text-red-500">{{ form.errors.code }}</p>
-                        </div>
-                        <div class="md:col-span-3">
-                            <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">IT Initiative Name</label>
-                            <input
-                                v-model="form.name"
-                                type="text"
-                                class="w-full rounded-lg border-slate-300 bg-white text-slate-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-white/10 dark:bg-[#131313] dark:text-slate-100"
-                                placeholder="e.g., UI/UX Standardization"
-                            />
-                            <p v-if="form.errors.name" class="mt-1 text-xs text-red-500">{{ form.errors.name }}</p>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                        <div>
-                            <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Company Owner</label>
-                            <input
-                                v-model="form.owner_name"
-                                type="text"
-                                class="w-full rounded-lg border-slate-300 bg-white text-slate-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-white/10 dark:bg-[#131313] dark:text-slate-100"
-                                placeholder="e.g., PT Example Indonesia"
-                            />
-                            <p v-if="form.errors.owner_name" class="mt-1 text-xs text-red-500">{{ form.errors.owner_name }}</p>
-                        </div>
-
-                        <div>
-                            <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Status</label>
-                            <select
-                                v-model="form.status"
-                                class="w-full rounded-lg border-slate-300 bg-white text-slate-700 focus:border-indigo-500 focus:ring-indigo-500 dark:border-white/10 dark:bg-[#131313] dark:text-slate-200"
-                            >
-                                <option v-for="statusOption in statusOptions" :key="statusOption.id" :value="statusOption.id">
-                                    {{ statusOption.label }}
-                                </option>
-                            </select>
-                            <p v-if="form.errors.status" class="mt-1 text-xs text-red-500">{{ form.errors.status }}</p>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-4 dark:border-white/5">
-                        <Link href="/it-initiatives" class="rounded-lg px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-white/5">
-                            Cancel
-                        </Link>
-                        <button
-                            type="submit"
-                            :disabled="form.processing"
-                            class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
-                        >
-                            Save IT Initiative
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-            <div class="mt-8 rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-white/5 dark:bg-[#1a1a1a]">
-                <div class="mb-4 flex items-center justify-between">
-                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Status Implementation History</h3>
+            <article class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717]">
+                <div class="border-b border-slate-200 px-5 py-4 dark:border-white/10">
+                    <h3 class="text-base font-semibold text-slate-900 dark:text-white">Project Charter IT Initiatives</h3>
                 </div>
-                
-                <form @submit.prevent="submitHistory" class="mb-6 flex gap-3">
-                    <input
-                        v-model="historyForm.status"
-                        type="text"
-                        class="flex-1 rounded-lg border-slate-300 bg-white text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-white/10 dark:bg-[#131313] dark:text-slate-100"
-                        placeholder="Enter new status (e.g. In Progress, Completed)"
-                        required
-                    />
-                    <input
-                        v-model="historyForm.month_year"
-                        type="month"
-                        class="w-48 rounded-lg border-slate-300 bg-white text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-white/10 dark:bg-[#131313] dark:text-slate-100"
-                        required
-                    />
-                    <button
-                        type="submit"
-                        :disabled="historyForm.processing"
-                        class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
-                    >
-                        Add Status
-                    </button>
-                </form>
 
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-slate-200 text-sm dark:divide-white/10">
+                <div class="overflow-x-hidden">
+                    <table class="w-full table-fixed divide-y divide-slate-200 text-[11px] dark:divide-white/5">
+                        <colgroup>
+                            <col class="w-[4%]">
+                            <col class="w-[6%]">
+                            <col class="w-[12%]">
+                            <col class="w-[15%]">
+                            <col class="w-[9%]">
+                            <col class="w-[10%]">
+                            <col class="w-[10%]">
+                            <col class="w-[24%]">
+                            <col class="w-[10%]">
+                        </colgroup>
                         <thead class="bg-slate-50 dark:bg-white/5">
                             <tr>
-                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Month / Year</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status</th>
-                                <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Action</th>
+                                <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Versi</th>
+                                <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Code</th>
+                                <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">IT Arsitektur Building Blok</th>
+                                <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Daftar Inisiatif</th>
+                                <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Usulan</th>
+                                <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Bulan / Tahun</th>
+                                <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Review</th>
+                                <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Implementasi</th>
+                                <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Action</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-100 dark:divide-white/5">
-                            <tr v-for="log in itInitiative.pc_status_implementations" :key="log.id">
-                                <td class="whitespace-nowrap px-4 py-3 font-medium text-slate-700 dark:text-slate-300">{{ formatMonthYear(log.date) }}</td>
-                                <td class="whitespace-nowrap px-4 py-3 font-medium text-slate-900 dark:text-white capitalize">{{ log.status }}</td>
-                                <td class="whitespace-nowrap px-4 py-3 text-right">
-                                    <button @click="deleteHistory(log.id)" class="text-red-500 hover:text-red-700 text-sm font-medium">Delete</button>
+                        <tbody class="divide-y divide-slate-200 bg-white dark:divide-white/5 dark:bg-[#1a1a1a]">
+                            <tr class="bg-slate-50/50 dark:bg-white/[0.03]">
+                                <td class="px-3 py-3 text-[11px] font-medium text-slate-600 dark:text-slate-400">{{ nextVersionNumber }}</td>
+                                <td class="px-3 py-3 align-top">
+                                    <input v-model="form.code" type="text" class="table-input" placeholder="PRJ-001">
+                                    <p v-if="form.errors.code" class="mt-1 text-[10px] text-rose-600">{{ form.errors.code }}</p>
+                                </td>
+                                <td class="px-3 py-3 align-top">
+                                    <input v-model="form.charter_category" type="text" class="table-input" placeholder="Contoh: Integration and Automation">
+                                    <p v-if="form.errors.charter_category" class="mt-1 text-[10px] text-rose-600">{{ form.errors.charter_category }}</p>
+                                </td>
+                                <td class="px-3 py-3 align-top">
+                                    <input v-model="form.name" type="text" class="table-input" placeholder="Nama inisiatif">
+                                    <p v-if="form.errors.name" class="mt-1 text-[10px] text-rose-600">{{ form.errors.name }}</p>
+                                </td>
+                                <td class="px-3 py-3 align-top">
+                                    <select v-model="form.status" class="table-input">
+                                        <option v-for="statusOption in statusOptions" :key="statusOption.id" :value="statusOption.id">
+                                            {{ statusOption.label }}
+                                        </option>
+                                    </select>
+                                    <p v-if="form.errors.status" class="mt-1 text-[10px] text-rose-600">{{ form.errors.status }}</p>
+                                </td>
+                                <td class="px-3 py-3 align-top">
+                                    <input v-model="historyForm.month_year" type="month" class="table-input">
+                                    <p v-if="historyForm.errors.month_year" class="mt-1 text-[10px] text-rose-600">{{ historyForm.errors.month_year }}</p>
+                                </td>
+                                <td class="px-3 py-3 align-top">
+                                    <select v-model="historyForm.review_status" class="table-input">
+                                        <option v-for="reviewStatusOption in reviewStatusOptions" :key="`new-${reviewStatusOption}`" :value="reviewStatusOption">
+                                            {{ reviewStatusOption }}
+                                        </option>
+                                    </select>
+                                    <p v-if="historyForm.errors.review_status" class="mt-1 text-[10px] text-rose-600">{{ historyForm.errors.review_status }}</p>
+                                </td>
+                                <td class="px-3 py-3 align-top">
+                                    <textarea
+                                        v-model="historyForm.status"
+                                        rows="3"
+                                        class="table-input table-textarea"
+                                        placeholder="Contoh: Mulai Tahun 2026"
+                                    />
+                                    <p v-if="historyForm.errors.status" class="mt-1 text-[10px] text-rose-600">{{ historyForm.errors.status }}</p>
+                                </td>
+                                <td class="px-3 py-3 text-[10px] font-medium align-top">
+                                    <div class="flex flex-col items-start gap-1">
+                                        <button
+                                            type="button"
+                                            :disabled="form.processing"
+                                            class="inline-flex items-center rounded-full bg-sky-100 px-2 py-0.5 text-[9px] font-semibold text-sky-700 transition-colors hover:bg-sky-200 disabled:opacity-50 dark:bg-sky-500/20 dark:text-sky-300 dark:hover:bg-sky-500/30"
+                                            @click="submitProject"
+                                        >
+                                            Save Data Utama
+                                        </button>
+                                        <button
+                                            type="button"
+                                            :disabled="historyForm.processing"
+                                            class="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-[9px] font-semibold text-emerald-700 transition-colors hover:bg-emerald-200 disabled:opacity-50 dark:bg-emerald-500/20 dark:text-emerald-300 dark:hover:bg-emerald-500/30"
+                                            @click="submitHistory"
+                                        >
+                                            Tambah Status
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
-                            <tr v-if="!itInitiative.pc_status_implementations || itInitiative.pc_status_implementations.length === 0">
-                                <td colspan="3" class="px-4 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
-                                    No status history found.
+
+                            <tr
+                                v-for="(log, index) in implementationLogs"
+                                :key="`history-${log.id}`"
+                                class="transition-colors hover:bg-slate-50 dark:hover:bg-white/5"
+                            >
+                                <td class="px-3 py-3 text-[11px] font-medium text-slate-600 dark:text-slate-400">{{ historyVersionNumber(index) }}</td>
+                                <td class="px-3 py-3 text-[11px] font-medium text-slate-700 dark:text-slate-200">{{ form.code || '-' }}</td>
+                                <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">
+                                    <span class="inline-flex rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-semibold text-blue-800 dark:bg-blue-500/20 dark:text-blue-300">
+                                        {{ form.charter_category || '-' }}
+                                    </span>
+                                </td>
+                                <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">
+                                    <span class="font-medium break-words">{{ form.name || '-' }}</span>
+                                </td>
+                                <td class="px-3 py-3">
+                                    <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium capitalize" :class="statusBadgeClassById(form.status)">
+                                        {{ selectedStatusLabel }}
+                                    </span>
+                                </td>
+                                <td class="px-3 py-3 align-top">
+                                    <input v-model="getHistoryDraft(log).month_year" type="month" class="table-input">
+                                </td>
+                                <td class="px-3 py-3 align-top">
+                                    <select v-model="getHistoryDraft(log).review_status" class="table-input">
+                                        <option v-for="reviewStatusOption in reviewStatusOptions" :key="`${log.id}-${reviewStatusOption}`" :value="reviewStatusOption">
+                                            {{ reviewStatusOption }}
+                                        </option>
+                                    </select>
+                                </td>
+                                <td class="px-3 py-3 align-top">
+                                    <textarea
+                                        v-model="getHistoryDraft(log).status"
+                                        rows="3"
+                                        class="table-input table-textarea"
+                                    />
+                                </td>
+                                <td class="px-3 py-3 text-[10px] font-medium align-top">
+                                    <div class="flex flex-col items-start gap-1">
+                                        <button
+                                            type="button"
+                                            :disabled="getHistoryDraft(log).processing"
+                                            class="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-[9px] font-semibold text-amber-700 transition-colors hover:bg-amber-200 disabled:opacity-50 dark:bg-amber-500/20 dark:text-amber-300 dark:hover:bg-amber-500/30"
+                                            @click="updateHistory(log.id)"
+                                        >
+                                            Update
+                                        </button>
+                                        <button
+                                            type="button"
+                                            :disabled="getHistoryDraft(log).processing"
+                                            class="inline-flex items-center rounded-full bg-rose-100 px-2 py-0.5 text-[9px] font-semibold text-rose-700 transition-colors hover:bg-rose-200 disabled:opacity-50 dark:bg-rose-500/20 dark:text-rose-300 dark:hover:bg-rose-500/30"
+                                            @click="openDeleteModal(log.id)"
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
+                                    <p v-if="getHistoryDraft(log).error" class="mt-1 text-[10px] text-rose-600">
+                                        {{ getHistoryDraft(log).error }}
+                                    </p>
+                                </td>
+                            </tr>
+
+                            <tr v-if="implementationLogs.length === 0">
+                                <td colspan="9" class="px-6 py-8 text-center text-xs text-slate-500 dark:text-slate-400">
+                                    Belum ada status implementasi. Gunakan baris pertama untuk menambahkan data.
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </article>
+
+            <StatusModal
+                :show="showDeleteModal"
+                mode="confirm"
+                title="Hapus Status Implementasi"
+                :message="deleteModalMessage"
+                confirm-text="Ya, Hapus"
+                cancel-text="Batal"
+                confirm-tone="danger"
+                @close="closeDeleteModal"
+                @confirm="confirmDeleteHistory"
+            />
         </div>
     </UserLayout>
 </template>
 
 <script setup>
+import { computed, reactive, ref } from 'vue';
 import { Link, useForm, router } from '@inertiajs/vue3';
 import UserLayout from '@/Layouts/UserLayout.vue';
+import StatusModal from '@/Components/StatusModal.vue';
+import { statusBadgeClassById, statusLabelFromOptions } from '@/Composables/initiativeStatus';
 
 const props = defineProps({
     itInitiative: {
@@ -158,48 +227,178 @@ const statusOptions = props.statusOptions.length > 0
     ? props.statusOptions
     : [{ id: 1, label: 'Drafting' }];
 
-const resolvedDefaultStatusId = statusOptions.some((statusOption) => statusOption.id === props.defaultStatusId)
+const reviewStatusOptions = ['On Track', 'At Risk', 'Not Started', 'Not Signed'];
+
+const resolvedDefaultStatusId = statusOptions.some((statusOption) => Number(statusOption.id) === Number(props.defaultStatusId))
     ? props.defaultStatusId
     : statusOptions[0].id;
+
+const currentMonthYear = () => new Date().toISOString().slice(0, 7);
 
 const form = useForm({
     code: props.itInitiative.code ?? '',
     name: props.itInitiative.name ?? '',
     owner_name: props.itInitiative.owner_name ?? '',
     status: props.itInitiative.status ?? resolvedDefaultStatusId,
+    charter_category: props.itInitiative.charter?.category ?? '',
 });
-
-const submit = () => {
-    form.put(`/it-initiatives/${props.itInitiative.id}`);
-};
 
 const historyForm = useForm({
     status: '',
-    month_year: new Date().toISOString().slice(0, 7),
+    review_status: 'Not Started',
+    month_year: currentMonthYear(),
 });
+
+const implementationLogs = computed(() => {
+    const source = props.itInitiative?.pc_status_implementations ?? props.itInitiative?.pcStatusImplementations ?? [];
+
+    return Array.isArray(source) ? source : [];
+});
+
+const nextVersionNumber = computed(() => implementationLogs.value.length + 1);
+
+const selectedStatusLabel = computed(() => statusLabelFromOptions(form.status, statusOptions));
+
+const historyDrafts = reactive({});
+const showDeleteModal = ref(false);
+const pendingDeleteId = ref(null);
+
+const toMonthInput = (rawDate) => {
+    const normalized = String(rawDate ?? '').trim();
+    const match = normalized.match(/^(\d{4})-(\d{2})/);
+
+    if (match) {
+        return `${match[1]}-${match[2]}`;
+    }
+
+    return currentMonthYear();
+};
+
+const getHistoryDraft = (log) => {
+    if (!historyDrafts[log.id]) {
+        historyDrafts[log.id] = {
+            month_year: toMonthInput(log.date),
+            review_status: log.review_status || 'Not Started',
+            status: log.status || '',
+            processing: false,
+            error: '',
+        };
+    }
+
+    return historyDrafts[log.id];
+};
+
+const historyVersionNumber = (index) => {
+    return Math.max(implementationLogs.value.length - index, 1);
+};
+
+const submitProject = () => {
+    form.put(`/it-initiatives/${props.itInitiative.id}`, {
+        preserveScroll: true,
+    });
+};
 
 const submitHistory = () => {
     historyForm.post(`/it-initiatives/${props.itInitiative.id}/implementation-status`, {
         preserveScroll: true,
         onSuccess: () => {
             historyForm.reset('status');
-            historyForm.month_year = new Date().toISOString().slice(0, 7);
+            historyForm.review_status = 'Not Started';
+            historyForm.month_year = currentMonthYear();
         },
     });
 };
 
-const deleteHistory = (id) => {
-    if (confirm('Are you sure you want to delete this status entry?')) {
-        router.delete(`/implementation-status/${id}`, {
-            preserveScroll: true,
-        });
-    }
+const updateHistory = (id) => {
+    const draft = historyDrafts[id];
+    if (!draft) return;
+
+    draft.processing = true;
+    draft.error = '';
+
+    router.put(`/implementation-status/${id}`, {
+        month_year: draft.month_year,
+        review_status: draft.review_status,
+        status: draft.status,
+    }, {
+        preserveScroll: true,
+        onError: (errors) => {
+            draft.error = errors.month_year || errors.review_status || errors.status || 'Gagal memperbarui status implementasi.';
+        },
+        onFinish: () => {
+            draft.processing = false;
+        },
+    });
 };
 
-const formatMonthYear = (dateStr) => {
-    if (!dateStr) return '-';
-    // dateStr format is "YYYY-MM-DD"
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+const deleteModalMessage = computed(() => {
+    if (!pendingDeleteId.value) {
+        return 'Apakah Anda yakin ingin menghapus status implementasi ini?';
+    }
+
+    const selectedLog = implementationLogs.value.find((log) => Number(log.id) === Number(pendingDeleteId.value));
+    if (!selectedLog) {
+        return 'Apakah Anda yakin ingin menghapus status implementasi ini?';
+    }
+
+    const monthYear = toMonthInput(selectedLog.date);
+    return `Data status implementasi periode ${monthYear} akan dihapus permanen. Lanjutkan?`;
+});
+
+const openDeleteModal = (id) => {
+    pendingDeleteId.value = id;
+    showDeleteModal.value = true;
+};
+
+const closeDeleteModal = () => {
+    showDeleteModal.value = false;
+    pendingDeleteId.value = null;
+};
+
+const confirmDeleteHistory = () => {
+    if (!pendingDeleteId.value) {
+        closeDeleteModal();
+        return;
+    }
+
+    const deletedId = pendingDeleteId.value;
+    showDeleteModal.value = false;
+
+    router.delete(`/implementation-status/${deletedId}`, {
+        preserveScroll: true,
+        onFinish: () => {
+            pendingDeleteId.value = null;
+        },
+    });
 };
 </script>
+
+<style scoped>
+.table-input {
+    width: 100%;
+    border-radius: 0.375rem;
+    border: 1px solid rgb(203 213 225);
+    background-color: rgb(255 255 255);
+    padding: 0.25rem 0.5rem;
+    font-size: 11px;
+    color: rgb(15 23 42);
+}
+
+.table-input:focus {
+    border-color: rgb(99 102 241);
+    outline: none;
+    box-shadow: 0 0 0 1px rgb(99 102 241 / 0.35);
+}
+
+.table-textarea {
+    min-height: 64px;
+    resize: vertical;
+    line-height: 1.35;
+}
+
+:global(.dark) .table-input {
+    border-color: rgb(255 255 255 / 0.1);
+    background-color: rgb(19 19 19);
+    color: rgb(226 232 240);
+}
+</style>

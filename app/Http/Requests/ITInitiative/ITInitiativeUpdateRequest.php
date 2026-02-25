@@ -27,6 +27,7 @@ class ITInitiativeUpdateRequest extends FormRequest
             ],
             'status' => ['required', 'integer', Rule::exists('trs_status_initiative', 'id')],
             'owner_name' => ['nullable', 'string', 'max:255'],
+            'charter_category' => ['nullable', 'string', 'max:255'],
         ];
     }
 }
