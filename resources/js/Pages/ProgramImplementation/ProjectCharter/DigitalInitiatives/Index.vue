@@ -10,27 +10,53 @@
             </div>
 
             <section class="mb-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
-                <article
-                    class="relative flex cursor-pointer flex-col justify-center rounded-2xl border bg-[#1C75BC] border-[#1C75BC] p-5 shadow-[0_4px_16px_rgba(28,117,188,0.3)]"
-                    role="button"
-                    tabindex="0"
-                    @click="showMasterDigitalInitiatives"
-                    @keydown.enter.prevent="showMasterDigitalInitiatives"
-                    @keydown.space.prevent="showMasterDigitalInitiatives"
-                >
-                    <p
-                        class="text-xs font-semibold uppercase tracking-[0.08em] text-white"
-                        style="text-shadow: 0 1px 3px rgba(0,0,0,0.3);"
+                <div class="flex h-full flex-col gap-3">
+                    <article
+                        class="relative flex min-h-[220px] flex-1 cursor-pointer flex-col justify-center rounded-2xl border bg-[#1C75BC] border-[#1C75BC] p-5 shadow-[0_4px_16px_rgba(28,117,188,0.3)]"
+                        role="button"
+                        tabindex="0"
+                        @click="showMasterDigitalInitiatives"
+                        @keydown.enter.prevent="showMasterDigitalInitiatives"
+                        @keydown.space.prevent="showMasterDigitalInitiatives"
                     >
-                        Total Digital Inisiatif 
-                    </p>
-                    <p
-                        class="mt-2 flex items-center justify-between text-3xl font-bold text-white"
-                        style="text-shadow: 0 2px 6px rgba(0,0,0,0.35);"
-                    >
-                        <span>{{ totalDigitalInitiatives }}</span>
-                    </p>
-                </article>
+                        <p
+                            class="text-xs font-semibold uppercase tracking-[0.08em] text-white"
+                            style="text-shadow: 0 1px 3px rgba(0,0,0,0.3);"
+                        >
+                            Total Digital Inisiatif 
+                        </p>
+                        <p
+                            class="mt-2 flex items-center justify-between text-3xl font-bold text-white"
+                            style="text-shadow: 0 2px 6px rgba(0,0,0,0.35);"
+                        >
+                            <span>{{ totalDigitalInitiatives }}</span>
+                        </p>
+                    </article>
+
+                    <div class="flex flex-wrap gap-2">
+                        <button
+                            type="button"
+                            class="inline-flex items-center rounded-full border border-[#A7C942]/80 bg-[#A7C942]/15 px-3 py-1.5 text-xs font-semibold text-[#4F6B0F] transition hover:bg-[#A7C942]/25 dark:text-[#C7E67A]"
+                            @click="showAppendixList"
+                        >
+                            Appendix List
+                        </button>
+                        <button
+                            type="button"
+                            class="inline-flex items-center rounded-full border border-[#1C75BC]/45 bg-[#1C75BC]/10 px-3 py-1.5 text-xs font-semibold text-[#1C75BC] transition hover:bg-[#1C75BC]/20 dark:text-[#7FC0F2]"
+                            @click="showCompendiumList"
+                        >
+                            Compendium List
+                        </button>
+                        <button
+                            type="button"
+                            class="inline-flex items-center rounded-full border border-[#1C75BC]/45 bg-[#1C75BC]/10 px-3 py-1.5 text-xs font-semibold text-[#1C75BC] transition hover:bg-[#1C75BC]/20 dark:text-[#7FC0F2]"
+                            @click="showDigitalInitiativesList"
+                        >
+                            Digital Initiatives
+                        </button>
+                    </div>
+                </div>
 
                 <article class="flex flex-col justify-center rounded-2xl border border-slate-200 bg-white px-5 py-3 shadow-[0_4px_16px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-[#171717] lg:col-span-2 space-y-4">
                     <div>
@@ -202,6 +228,20 @@ const hasTableSelection = ref(false);
 const showMasterDigitalInitiatives = () => {
     hasTableSelection.value = true;
     tableMode.value = TABLE_MODE.MASTER;
+    activeFlowFilter.value = null;
+};
+
+const showAppendixList = () => {
+    showMasterDigitalInitiatives();
+};
+
+const showCompendiumList = () => {
+    showMasterDigitalInitiatives();
+};
+
+const showDigitalInitiativesList = () => {
+    hasTableSelection.value = true;
+    tableMode.value = TABLE_MODE.FLOW;
     activeFlowFilter.value = null;
 };
 
