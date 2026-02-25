@@ -12,9 +12,6 @@
                     Back to IT Initiatives
                 </Link>
                 <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Edit IT Initiative</h2>
-                <p class="text-sm text-slate-500 dark:text-slate-400">
-                    Spreadsheet mode: edit data langsung pada kolom tabel.
-                </p>
             </div>
 
             <article class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717]">
