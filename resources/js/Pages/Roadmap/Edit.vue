@@ -1,38 +1,89 @@
 <template>
-    <UserLayout title="Edit Roadmap">
-        <div class="space-y-5 print:space-y-0 max-w-7xl mx-auto">
+    <UserLayout title="Roadmap Input & Edit">
+        <div class="space-y-5 print:space-y-0">
             <section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-white/10 dark:bg-[#171717]">
-                <div class="mb-4">
-                    <Link href="/roadmap" class="text-sm text-indigo-600 dark:text-indigo-400 font-medium hover:underline mb-2 block">
-                        &larr; Back to Roadmap List
+                <div class="mb-4 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+                    <div>
+                        <Link href="/roadmap" class="mb-2 inline-flex text-sm font-medium text-[#0B2A8A] hover:underline dark:text-[#53BDE6]">
+                            &larr; Kembali ke Roadmap
+                        </Link>
+                        <h1 class="text-xl font-bold text-slate-900 dark:text-white">Roadmap Input & Edit</h1>
+                    </div>
+
+                    <Link
+                        href="/roadmap"
+                        class="inline-flex items-center rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-white/10 dark:bg-transparent dark:text-slate-200 dark:hover:bg-white/5"
+                    >
+                        Lihat Roadmap
                     </Link>
-                    <h1 class="text-xl font-bold text-slate-900 dark:text-white">Edit Roadmap</h1>
-                    <p class="text-sm text-slate-500 dark:text-slate-400">
-                        Update the roadmap entry.
-                    </p>
                 </div>
-                
-                <form @submit.prevent="submit" class="space-y-4 max-w-2xl">
-                    <!-- Form fields go here -->
-                </form>
+
+                <div class="max-w-sm">
+                    <label class="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
+                        Pilih Project
+                    </label>
+                    <select
+                        v-model="selectedProjectIdLocal"
+                        class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-white/10 dark:bg-[#101826] dark:text-slate-100"
+                    >
+                        <option :value="null">-- Pilih Project --</option>
+                        <option v-for="proj in projects" :key="proj.id" :value="proj.id">
+                            {{ proj.name }}
+                        </option>
+                    </select>
+                </div>
+            </section>
+
+            <main v-if="activeProject" class="space-y-5">
+                <ActivityQuarterManager :project="activeProject" />
+            </main>
+
+            <section
+                v-else
+                class="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center dark:border-white/15 dark:bg-[#171717]"
+            >
+                <p class="text-sm font-medium text-slate-600 dark:text-slate-300">
+                    <template v-if="projects.length">
+                        Pilih project di atas untuk mulai input / edit roadmap.
+                    </template>
+                    <template v-else>
+                        Belum ada project dengan data durasi / milestone bertanggal untuk diproses.
+                    </template>
+                </p>
             </section>
         </div>
     </UserLayout>
 </template>
 
 <script setup>
-import { useForm, Link } from '@inertiajs/vue3';
+import { computed, ref, watch } from 'vue';
+import { Link, router } from '@inertiajs/vue3';
 import UserLayout from '@/Layouts/UserLayout.vue';
+import ActivityQuarterManager from '@/Components/Roadmap/ActivityQuarterManager.vue';
 
 const props = defineProps({
-    roadmap: { type: Object, default: () => ({}) },
+    projects: { type: Array, default: () => [] },
+    selectedProject: { type: Object, default: null },
+    selectedProjectId: { type: Number, default: null },
 });
 
-const form = useForm({
-    // Add fields matching roadmap
+const selectedProjectIdLocal = ref(props.selectedProjectId ?? null);
+
+watch(selectedProjectIdLocal, (nextProjectId, previousProjectId) => {
+    if (nextProjectId === previousProjectId) {
+        return;
+    }
+
+    router.get('/roadmap/edit', {
+        project_id: nextProjectId || undefined,
+    }, {
+        preserveState: true,
+        preserveScroll: true,
+        replace: true,
+    });
 });
 
-const submit = () => {
-    // form.put(`/roadmap/${props.roadmap.id}`);
-};
+const activeProject = computed(() =>
+    props.projects.find((project) => project.id === selectedProjectIdLocal.value) ?? null
+);
 </script>
