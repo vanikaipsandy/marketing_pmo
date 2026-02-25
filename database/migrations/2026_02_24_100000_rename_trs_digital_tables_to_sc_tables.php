@@ -14,8 +14,8 @@ return new class extends Migration
             Schema::rename('trs_digital_initiative', 'trs_sc_initiative');
         }
 
-        if (Schema::hasTable('trs_digital_detail')) {
-            Schema::rename('trs_digital_detail', 'trs_sc_detail');
+        if (Schema::hasTable('trs_digital_details')) {
+            Schema::rename('trs_digital_details', 'trs_sc_detail');
         }
     }
 
@@ -29,7 +29,7 @@ return new class extends Migration
         }
 
         if (Schema::hasTable('trs_sc_detail')) {
-            Schema::rename('trs_sc_detail', 'trs_digital_detail');
+            Schema::rename('trs_sc_detail', 'trs_digital_details');
         }
     }
 };
