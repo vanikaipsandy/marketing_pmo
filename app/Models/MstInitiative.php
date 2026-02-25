@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use App\Models\MstCoe;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class MstInitiative extends Model
 {
@@ -28,5 +28,15 @@ class MstInitiative extends Model
     public function organization(): BelongsTo
     {
         return $this->belongsTo(TrsOrganization::class, 'business_unit');
+    }
+
+    public function initiativeRelationsRow(): HasMany
+    {
+        return $this->hasMany(MstInitiativeRelation::class, 'initiative_code_row');
+    }
+
+    public function initiativeRelationsColumn(): HasMany
+    {
+        return $this->hasMany(MstInitiativeRelation::class, 'initiative_code_column');
     }
 }
