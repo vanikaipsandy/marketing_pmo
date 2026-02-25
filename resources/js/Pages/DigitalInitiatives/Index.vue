@@ -1,7 +1,7 @@
 <template>
     <UserLayout title="Digital Initiatives">
         <div class="animate-fade-in">
-            <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h2 class="text-2xl font-bold text-slate-900 dark:text-white">
                         Digital Initiatives
@@ -9,7 +9,7 @@
                 </div>
             </div>
 
-            <section class="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
+            <section class="mb-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
                 <article
                     class="relative flex cursor-pointer flex-col justify-center rounded-2xl border bg-[#1C75BC] border-[#1C75BC] p-5 shadow-[0_4px_16px_rgba(28,117,188,0.3)]"
                     role="button"

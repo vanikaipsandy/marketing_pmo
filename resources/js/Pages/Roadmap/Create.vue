@@ -14,13 +14,13 @@
 
                 <div class="max-w-2xl rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-[#111827]">
                     <h3 class="mb-2 text-sm font-semibold text-slate-800 dark:text-slate-100">
-                        Milestone Type (Backend Defined)
+                        Tipe Milestone
                     </h3>
                     <p class="mb-3 text-xs text-slate-500 dark:text-slate-400">
-                        Simpan ke database pakai angka 1-5.
+                        Tampilan menggunakan nama: Blok dan Garis.
                     </p>
 
-                    <div class="grid grid-cols-2 gap-2 sm:grid-cols-5">
+                    <div class="grid grid-cols-2 gap-2 sm:grid-cols-2">
                         <div
                             v-for="option in milestoneTypeOptionsDisplay"
                             :key="`create-type-${option.value}`"
@@ -36,25 +36,11 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import UserLayout from '@/Layouts/UserLayout.vue';
 
-const props = defineProps({
-    milestoneTypeOptions: {
-        type: Array,
-        default: () => [],
-    },
-});
-
-const milestoneTypeOptionsDisplay = computed(() => {
-    if (Array.isArray(props.milestoneTypeOptions) && props.milestoneTypeOptions.length > 0) {
-        return props.milestoneTypeOptions;
-    }
-
-    return [1, 2, 3, 4, 5].map((value) => ({
-        value,
-        label: String(value),
-    }));
-});
+const milestoneTypeOptionsDisplay = [
+    { value: 1, label: 'Blok' },
+    { value: 2, label: 'Garis' },
+];
 </script>

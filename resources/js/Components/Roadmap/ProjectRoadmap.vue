@@ -28,51 +28,16 @@ const quarterCells = computed(() =>
 
 const totalCells = computed(() => quarterCells.value.length);
 
-const fallbackMilestoneTypeOptions = [
-    { value: 1, label: '1', timeline_style: 'block' },
-    { value: 2, label: '2', timeline_style: 'dashed' },
-    { value: 3, label: '3', timeline_style: 'block' },
-    { value: 4, label: '4', timeline_style: 'dashed' },
-    { value: 5, label: '5', timeline_style: 'block' },
-];
-
-const milestoneTypeOptionsMap = computed(() => {
-    const source = Array.isArray(props.milestoneTypeOptions) && props.milestoneTypeOptions.length > 0
-        ? props.milestoneTypeOptions
-        : fallbackMilestoneTypeOptions;
-
-    return source.reduce((accumulator, option) => {
-        const code = Number(option.value);
-
-        if (Number.isFinite(code) && code > 0) {
-            accumulator.set(code, {
-                value: code,
-                label: String(option.label ?? code),
-                timelineStyle: String(option.timeline_style ?? 'block'),
-            });
-        }
-
-        return accumulator;
-    }, new Map());
-});
-
-const defaultMilestoneType = 1;
+const TYPE_BLOCK = 1;
+const TYPE_DASHED = 2;
 
 const normalizeMilestoneType = (value) => {
-    const normalized = Number(value);
-
-    if (milestoneTypeOptionsMap.value.has(normalized)) {
-        return normalized;
-    }
-
-    return defaultMilestoneType;
+    const raw = Number(value);
+    return raw === TYPE_DASHED || raw === 4 ? TYPE_DASHED : TYPE_BLOCK;
 };
 
 const timelineStyleByType = (typeCode) => {
-    const normalized = normalizeMilestoneType(typeCode);
-    return milestoneTypeOptionsMap.value.get(normalized)?.timelineStyle === 'dashed'
-        ? 'dashed'
-        : 'block';
+    return normalizeMilestoneType(typeCode) === TYPE_DASHED ? 'dashed' : 'block';
 };
 
 /* ── Date helpers ────────────────────────────────────── */

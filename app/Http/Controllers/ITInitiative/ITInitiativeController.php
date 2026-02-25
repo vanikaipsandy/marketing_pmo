@@ -76,7 +76,7 @@ class ITInitiativeController extends Controller
         $filterStatus = $filters['status'] ?? null;
 
         $projects = Project::query()
-            ->with(['owner', 'charter', 'statusRef:id,name', 'pcStatusImplementations'])
+            ->with(['owner', 'charter', 'statusRef:id,name', 'pcStatusImplementations', 'milestones'])
             ->when($filterStatus, fn ($q, $status) => $q->where('status', $status))
             ->when($filters['search'] ?? null, fn ($q, $search) => $q->where(function ($inner) use ($search): void {
                 $inner->where('name', 'like', "%{$search}%")

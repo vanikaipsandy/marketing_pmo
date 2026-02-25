@@ -1,33 +1,45 @@
 <template>
     <UserLayout title="IT Initiatives">
         <div class="animate-fade-in">
-            <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div
+                class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+                :class="tableMode === TABLE_MODE.ROADMAP ? 'mb-3' : 'mb-4'"
+            >
                 <div>
                     <h2 class="text-2xl font-bold text-slate-900 dark:text-white">IT Initiatives</h2>
-                    <div class="mt-3 flex flex-wrap items-center gap-2">
+                    <div class="mt-2 flex flex-wrap items-center gap-2">
                         <a
                             href="#scope-charter-it-section"
                             class="inline-flex items-center rounded-full border border-[#A7C942]/60 bg-[#A7C942]/15 px-3 py-1.5 text-xs font-semibold text-[#4F6B0F] transition hover:bg-[#A7C942]/25 dark:text-[#C7E67A]"
+                            @click="activateFlowMode"
                         >
                             Scope Charter
                         </a>
                         <a
                             href="#project-charter-it-section"
                             class="inline-flex items-center rounded-full border border-[#1C75BC]/45 bg-[#1C75BC]/10 px-3 py-1.5 text-xs font-semibold text-[#1C75BC] transition hover:bg-[#1C75BC]/20 dark:text-[#7FC0F2]"
+                            @click="activateFlowMode"
                         >
                             Project Charter
                         </a>
-                        <Link
-                            href="/roadmap"
-                            class="inline-flex items-center rounded-full border border-[#1C75BC]/45 bg-[#1C75BC] px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-[#0f63b5]"
+                        <button
+                            type="button"
+                            class="inline-flex items-center rounded-full border px-3 py-1.5 text-xs font-semibold transition"
+                            :class="tableMode === TABLE_MODE.ROADMAP
+                                ? 'border-[#1C75BC] bg-[#1C75BC] text-white hover:bg-[#0f63b5]'
+                                : 'border-[#1C75BC]/45 bg-[#1C75BC]/10 text-[#1C75BC] hover:bg-[#1C75BC]/20 dark:text-[#7FC0F2]'"
+                            @click="showRoadmapView"
                         >
                             Roadmap Project Charter
-                        </Link>
+                        </button>
                     </div>
                 </div>
             </div>
 
-            <section class="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
+            <section
+                v-if="tableMode !== TABLE_MODE.ROADMAP"
+                class="mb-4 grid grid-cols-1 gap-4 lg:grid-cols-3"
+            >
                 <article
                     class="relative flex cursor-pointer flex-col justify-center rounded-2xl border border-[#A7C942] bg-[#A7C942] p-5 shadow-[0_4px_16px_rgba(167,201,66,0.3)]"
                     role="button"
@@ -137,21 +149,77 @@
             />
 
             <MasterInitiativeTable
-                v-else-if="hasTableSelection"
+                v-else-if="hasTableSelection && tableMode === TABLE_MODE.MASTER"
                 :items="masterItems"
             />
+
+            <section
+                v-else-if="hasTableSelection && tableMode === TABLE_MODE.ROADMAP"
+                class="space-y-3"
+            >
+                <div class="rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm dark:border-white/10 dark:bg-[#171717]">
+                    <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <h3 class="text-[15px] font-bold text-slate-800 dark:text-slate-100 sm:text-base">
+                                Roadmap Project Charter IT Initiatives
+                            </h3>
+                        </div>
+
+                        <div class="w-full sm:w-72">
+                            <label class="mb-1 block text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
+                                Filter Project
+                            </label>
+                            <select
+                                v-model="selectedRoadmapProjectId"
+                                class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs text-slate-700 focus:border-[#1C75BC] focus:outline-none focus:ring-2 focus:ring-[#1C75BC]/20 dark:border-white/10 dark:bg-[#101826] dark:text-slate-100"
+                            >
+                                <option value="all">Semua Project</option>
+                                <option
+                                    v-for="project in roadmapSourceItems"
+                                    :key="`roadmap-filter-${project.id}`"
+                                    :value="String(project.id)"
+                                >
+                                    {{ project.code ? `${project.code} - ${project.name}` : project.name }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <ProjectRoadmap
+                    v-for="(project, roadmapIndex) in roadmapItems"
+                    :key="`it-roadmap-${project.id}`"
+                    :project="project"
+                    :form="{
+                        objectives: project.charter?.objectives ?? '',
+                        duration: project.charter?.duration ?? '',
+                    }"
+                    :sequence="roadmapIndex + 1"
+                    :year-start="roadmapYearStart"
+                    :year-end="roadmapYearEnd"
+                />
+
+                <section
+                    v-if="roadmapItems.length === 0"
+                    class="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center dark:border-white/15 dark:bg-[#171717]"
+                >
+                    <p class="text-sm font-medium text-slate-600 dark:text-slate-300">
+                        Belum ada data roadmap untuk filter ini.
+                    </p>
+                </section>
+            </section>
         </div>
     </UserLayout>
 </template>
 
 <script setup>
 import { computed, ref } from 'vue';
-import { Link } from '@inertiajs/vue3';
 import UserLayout from '@/Layouts/UserLayout.vue';
 import { statusFlowClassByIndex } from '@/Composables/initiativeStatus';
 import { useFlowFilter } from '@/Composables/useFlowFilter';
 import FlowStatusTable from '@/Components/ITInitiative/FlowStatusTable.vue';
 import MasterInitiativeTable from '@/Components/ITInitiative/MasterInitiativeTable.vue';
+import ProjectRoadmap from '@/Components/Roadmap/ProjectRoadmap.vue';
 
 const props = defineProps({
     itInitiatives: {
@@ -200,14 +268,29 @@ const { activeFlowFilter, filteredItems, toggleFilter } = useFlowFilter(
 const TABLE_MODE = {
     FLOW: 'flow',
     MASTER: 'master',
+    ROADMAP: 'roadmap',
 };
 
 const tableMode = ref(TABLE_MODE.FLOW);
 const hasTableSelection = ref(false);
+const selectedRoadmapProjectId = ref('all');
+const roadmapYearStart = 2025;
+const roadmapYearEnd = 2029;
+
+const activateFlowMode = () => {
+    hasTableSelection.value = true;
+    tableMode.value = TABLE_MODE.FLOW;
+};
 
 const showMasterItInitiatives = () => {
     hasTableSelection.value = true;
     tableMode.value = TABLE_MODE.MASTER;
+    activeFlowFilter.value = null;
+};
+
+const showRoadmapView = () => {
+    hasTableSelection.value = true;
+    tableMode.value = TABLE_MODE.ROADMAP;
     activeFlowFilter.value = null;
 };
 
@@ -221,6 +304,20 @@ const flowItems = computed(() => filteredItems.value);
 
 const masterItems = computed(() => {
     return asList(props.masterItInitiatives);
+});
+
+const roadmapSourceItems = computed(() => asList(props.itInitiatives));
+
+const roadmapItems = computed(() => {
+    const projects = roadmapSourceItems.value;
+
+    if (selectedRoadmapProjectId.value === 'all') {
+        return projects;
+    }
+
+    const selectedId = Number(selectedRoadmapProjectId.value);
+
+    return projects.filter((project) => Number(project.id) === selectedId);
 });
 
 const statusOptions = computed(() => {

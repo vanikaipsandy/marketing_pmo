@@ -219,25 +219,13 @@ const props = defineProps({
 const quarterOptions = [1, 2, 3, 4];
 const currentYear = new Date().getFullYear();
 const defaultMilestoneType = 1;
-
-const fallbackMilestoneTypeOptions = [
-    { value: 1, label: '1', timeline_style: 'block' },
-    { value: 2, label: '2', timeline_style: 'dashed' },
-    { value: 3, label: '3', timeline_style: 'block' },
-    { value: 4, label: '4', timeline_style: 'dashed' },
-    { value: 5, label: '5', timeline_style: 'block' },
-];
+const dashedMilestoneTypes = new Set([2, 4]);
 
 const milestoneTypeOptionsDisplay = computed(() => {
-    if (Array.isArray(props.milestoneTypeOptions) && props.milestoneTypeOptions.length > 0) {
-        return props.milestoneTypeOptions.map((option) => ({
-            value: Number(option.value),
-            label: String(option.label),
-            timeline_style: String(option.timeline_style || ''),
-        }));
-    }
-
-    return fallbackMilestoneTypeOptions;
+    return [
+        { value: 1, label: 'Blok', timeline_style: 'block' },
+        { value: 2, label: 'Garis', timeline_style: 'dashed' },
+    ];
 });
 
 const editingMilestoneId = ref(null);
@@ -358,20 +346,14 @@ const roadmapMilestones = computed(() => {
 
 const normalizeMilestoneType = (value) => {
     const normalized = Number(value);
-    const exists = milestoneTypeOptionsDisplay.value.some((option) => option.value === normalized);
-
-    if (!exists) {
-        return defaultMilestoneType;
-    }
-
-    return normalized;
+    return dashedMilestoneTypes.has(normalized) ? 2 : defaultMilestoneType;
 };
 
 const milestoneTypeLabel = (value) => {
     const normalized = normalizeMilestoneType(value);
     const found = milestoneTypeOptionsDisplay.value.find((option) => option.value === normalized);
 
-    return found ? found.label : String(defaultMilestoneType);
+    return found ? found.label : 'Blok';
 };
 
 const quarterLabel = (value) => {
