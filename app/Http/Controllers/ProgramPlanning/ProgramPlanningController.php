@@ -31,13 +31,4 @@ class ProgramPlanningController extends Controller
             'totalItInitiatives'      => Project::query()->count(),
         ]);
     }
-
-    public function initiativeRelation(): Response|RedirectResponse
-    {
-        if (request()->user()?->isAdminUser()) {
-            return redirect()->route('admin.dashboard');
-        }
-
-        return Inertia::render('ProgramPlanning/InitiativeRelation');
-    }
 }

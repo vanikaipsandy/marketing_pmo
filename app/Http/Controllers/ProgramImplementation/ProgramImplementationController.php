@@ -66,12 +66,4 @@ class ProgramImplementationController extends Controller
             ->latest()
             ->get();
     }
-
-    public function initiativeRelation()
-    {
-        $mstInitiatives = MstInitiative::all();
-        return Inertia::render('ProgramImplementation/InitiativeRelation', [
-            'mstInitiatives' => $mstInitiatives,
-        ]);
-    }
 }

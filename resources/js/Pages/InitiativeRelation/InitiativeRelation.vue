@@ -18,7 +18,6 @@ defineProps({
     },
 });
 
-import InitiativeRelationDependency from '@/Components/InitiativeRelationDependency.vue';
-// import InitiativeRelationTable from '@/Components/InitiativeRelationTable.vue';
+import InitiativeRelationDependency from '@/Components/InitiativeRelation/InitiativeRelationDependency.vue';
 import UserLayout from '@/Layouts/UserLayout.vue';
 </script>
