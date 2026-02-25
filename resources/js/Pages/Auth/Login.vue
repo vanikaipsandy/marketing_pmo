@@ -1,22 +1,5 @@
 <template>
     <GuestLayout>
-<<<<<<< Updated upstream
-        <div class="min-h-screen lg:grid lg:grid-cols-[minmax(0,560px)_1fr]">
-            <section class="flex items-center justify-center px-6 py-14 sm:px-10 lg:px-16">
-                <div class="w-full max-w-md">
-                    <div class="mb-8 text-center">
-                        <img
-                            src="/logo.png"
-                            alt="Logo"
-                            class="mx-auto h-12 w-auto"
-                        />
-                        <p class="mt-5 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400 dark:text-slate-500">
-                            IT Strategic Planning System
-                        </p>
-                        <h1 class="mt-7 text-4xl font-bold tracking-tight text-slate-900 dark:text-white">Selamat Datang</h1>
-                        <p class="mt-4 text-lg leading-relaxed text-slate-500 dark:text-slate-400">
-                            Masuk dengan akun sosial media Anda untuk mengakses semua modul IT Strategic Planning System.
-=======
         <div class="min-h-screen flex flex-col lg:flex-row">
             <!-- Left Panel: Login Form -->
             <div class="flex-1 flex items-center justify-center p-6 sm:p-12">
@@ -38,7 +21,6 @@
                         <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
                             Masuk dengan akun Google Anda untuk mengakses<br class="hidden sm:block" />
                             semua modul PMO Portal.
->>>>>>> Stashed changes
                         </p>
                     </div>
 
@@ -90,16 +72,6 @@
                             >
                                 <div
                                     v-for="(slide, index) in slides"
-<<<<<<< Updated upstream
-                                    :key="`dot-${index}`"
-                                    type="button"
-                                    @click="activeSlide = index"
-                                    class="h-1.5 rounded-full transition-all duration-300"
-                                    :class="activeSlide === index ? 'w-6 bg-white' : 'w-2 bg-white/40 hover:bg-white/60'"
-                                    :aria-label="`Go to slide ${index + 1}`"
-                                ></button>
-                            </div>
-=======
                                     :key="index"
                                     v-show="activeSlide === index"
                                     class="w-full"
@@ -133,7 +105,6 @@
                                 :class="activeSlide === index ? 'w-6 bg-white/90' : 'w-1.5 bg-white/30 hover:bg-white/50'"
                                 :aria-label="`Go to slide ${index + 1}`"
                             ></button>
->>>>>>> Stashed changes
                         </div>
                     </div>
                 </div>

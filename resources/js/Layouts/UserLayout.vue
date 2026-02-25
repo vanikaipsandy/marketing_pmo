@@ -57,23 +57,12 @@ const logout = () => {
                 <!-- Left: Logo -->
                 <div class="flex items-center gap-3">
                     <Link href="/dashboard" class="group inline-flex items-center gap-3">
-<<<<<<< Updated upstream
-                        <img
-                            src="/logo.png"
-                            alt="Logo"
-                            class="h-7 w-auto transition-opacity group-hover:opacity-90"
-                        />
-                        <div class="hidden md:block">
-                            <p class="text-sm font-semibold tracking-tight text-slate-900 dark:text-white">IT Strategic Planning System</p>
-                            <p class="text-[11px] text-slate-400 dark:text-slate-500">Review ITSP Pertamina 2025-2029 Collaboration System</p>
-=======
                         <span class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white shadow-md shadow-blue-500/20 transition-transform group-hover:scale-105">
                             <ComputerDesktopIcon class="h-5 w-5" />
                         </span>
                         <div class="hidden md:block">
                             <p class="text-sm font-bold tracking-tight text-slate-900 dark:text-white">IT Strategic Planning System</p>
                             <p class="text-[10px] font-medium uppercase tracking-widest text-slate-400 dark:text-slate-500">Workspace</p>
->>>>>>> Stashed changes
                         </div>
                     </Link>
                 </div>
@@ -192,7 +181,6 @@ const logout = () => {
             </div>
         </nav>
 
-<<<<<<< Updated upstream
         <div class="sticky top-16 z-40 print:hidden">
             <div class="flex flex-col gap-2 border-b border-white/50 bg-white/40 px-4 py-2 backdrop-blur-md dark:border-white/10 dark:bg-white/5 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
                 <!-- Kiri: Program Planning / Program Implementation -->
@@ -213,10 +201,6 @@ const logout = () => {
                 </div>
             </div>
         </div>
-=======
-        <!-- ═══ Breadcrumb Navigation Bar ═══ -->
-        <Breadcrumb />
->>>>>>> Stashed changes
 
         <main class="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8 print:max-w-none print:px-0 print:py-0">
             <slot />
