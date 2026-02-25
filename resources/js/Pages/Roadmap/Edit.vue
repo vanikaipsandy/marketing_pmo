@@ -35,7 +35,10 @@
             </section>
 
             <main v-if="activeProject" class="space-y-5">
-                <ActivityQuarterManager :project="activeProject" />
+                <ActivityQuarterManager
+                    :project="activeProject"
+                    :milestone-type-options="milestoneTypeOptions"
+                />
             </main>
 
             <section
@@ -65,6 +68,7 @@ const props = defineProps({
     projects: { type: Array, default: () => [] },
     selectedProject: { type: Object, default: null },
     selectedProjectId: { type: Number, default: null },
+    milestoneTypeOptions: { type: Array, default: () => [] },
 });
 
 const selectedProjectIdLocal = ref(props.selectedProjectId ?? null);

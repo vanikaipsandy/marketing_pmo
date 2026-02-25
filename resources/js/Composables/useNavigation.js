@@ -61,7 +61,8 @@ export function useNavigation() {
                     || url === '/dashboard'
                     || url.startsWith('/strategic-pillars')
                     || url.startsWith('/digital-initiatives')
-                    || url.startsWith('/it-initiatives'),
+                    || url.startsWith('/it-initiatives')
+                    || url.startsWith('/roadmap'),
             },
             {
                 label: 'Strategic Pillars',
@@ -79,7 +80,7 @@ export function useNavigation() {
                 label: 'IT Initiatives',
                 href: '/it-initiatives',
                 icon: FolderIcon,
-                active: (url) => url.startsWith('/it-initiatives'),
+                active: (url) => url.startsWith('/it-initiatives') || url.startsWith('/roadmap'),
             },
             {
                 label: 'Initiative Relation',

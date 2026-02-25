@@ -11,24 +11,50 @@
                         Add a new roadmap entry.
                     </p>
                 </div>
-                
-                <form @submit.prevent="submit" class="space-y-4 max-w-2xl">
-                    <!-- Form fields go here -->
-                </form>
+
+                <div class="max-w-2xl rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-[#111827]">
+                    <h3 class="mb-2 text-sm font-semibold text-slate-800 dark:text-slate-100">
+                        Milestone Type (Backend Defined)
+                    </h3>
+                    <p class="mb-3 text-xs text-slate-500 dark:text-slate-400">
+                        Simpan ke database pakai angka 1-5.
+                    </p>
+
+                    <div class="grid grid-cols-2 gap-2 sm:grid-cols-5">
+                        <div
+                            v-for="option in milestoneTypeOptionsDisplay"
+                            :key="`create-type-${option.value}`"
+                            class="rounded-md border border-slate-200 bg-white px-3 py-2 text-center text-xs font-semibold text-slate-700 dark:border-white/10 dark:bg-[#1f2937] dark:text-slate-200"
+                        >
+                            {{ option.label }}
+                        </div>
+                    </div>
+                </div>
             </section>
         </div>
     </UserLayout>
 </template>
 
 <script setup>
-import { useForm, Link } from '@inertiajs/vue3';
+import { computed } from 'vue';
+import { Link } from '@inertiajs/vue3';
 import UserLayout from '@/Layouts/UserLayout.vue';
 
-const form = useForm({
-    // Add fields
+const props = defineProps({
+    milestoneTypeOptions: {
+        type: Array,
+        default: () => [],
+    },
 });
 
-const submit = () => {
-    // form.post('/roadmap');
-};
+const milestoneTypeOptionsDisplay = computed(() => {
+    if (Array.isArray(props.milestoneTypeOptions) && props.milestoneTypeOptions.length > 0) {
+        return props.milestoneTypeOptions;
+    }
+
+    return [1, 2, 3, 4, 5].map((value) => ({
+        value,
+        label: String(value),
+    }));
+});
 </script>

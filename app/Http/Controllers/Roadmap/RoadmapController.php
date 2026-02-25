@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Roadmap;
 
 use App\Http\Controllers\Controller;
+use App\Models\Milestone;
 use App\Models\Program;
 use App\Models\Project;
 use Illuminate\Database\Eloquent\Builder;
@@ -40,6 +41,7 @@ class RoadmapController extends Controller
 
         return Inertia::render('Roadmap/Show', [
             'program' => $program,
+            'milestoneTypeOptions' => Milestone::roadmapTypeOptions(),
             ...$this->roadmapYearRange(),
         ]);
     }
@@ -86,6 +88,7 @@ class RoadmapController extends Controller
 
         return [
             'projects' => $projects,
+            'milestoneTypeOptions' => Milestone::roadmapTypeOptions(),
             ...$this->roadmapYearRange(),
         ];
     }
@@ -111,6 +114,7 @@ class RoadmapController extends Controller
             'projects' => $projects,
             'selectedProject' => $projects->firstWhere('id', $resolvedProjectId),
             'selectedProjectId' => $resolvedProjectId,
+            'milestoneTypeOptions' => Milestone::roadmapTypeOptions(),
             ...$this->roadmapYearRange(),
         ];
     }

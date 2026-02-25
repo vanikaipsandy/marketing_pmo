@@ -19,15 +19,32 @@
                 <p v-if="milestoneForm.errors.title" class="mt-1 text-xs text-red-500">{{ milestoneForm.errors.title }}</p>
             </div>
 
-            <div class="lg:col-span-2">
+            <div class="lg:col-span-3">
                 <label class="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Section</label>
                 <input
                     v-model="milestoneForm.type"
                     type="text"
-                    placeholder="Contoh: Rollout"
+                    placeholder="Contoh: Assessment and Planning"
                     class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-white/10 dark:bg-[#101826] dark:text-slate-100"
                 />
                 <p v-if="milestoneForm.errors.type" class="mt-1 text-xs text-red-500">{{ milestoneForm.errors.type }}</p>
+            </div>
+
+            <div class="lg:col-span-2">
+                <label class="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Tipe Timeline</label>
+                <select
+                    v-model.number="milestoneForm.milestone_type"
+                    class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-white/10 dark:bg-[#101826] dark:text-slate-100"
+                >
+                    <option
+                        v-for="option in milestoneTypeOptionsDisplay"
+                        :key="`milestone-type-${option.value}`"
+                        :value="option.value"
+                    >
+                        {{ option.label }}
+                    </option>
+                </select>
+                <p v-if="milestoneForm.errors.milestone_type" class="mt-1 text-xs text-red-500">{{ milestoneForm.errors.milestone_type }}</p>
             </div>
 
             <div class="lg:col-span-12">
@@ -139,6 +156,7 @@
                     <tr>
                         <th class="px-3 py-2 text-left font-semibold text-slate-600 dark:text-slate-300">Activity</th>
                         <th class="px-3 py-2 text-left font-semibold text-slate-600 dark:text-slate-300">Section</th>
+                        <th class="px-3 py-2 text-left font-semibold text-slate-600 dark:text-slate-300">Tipe Timeline</th>
                         <th class="px-3 py-2 text-left font-semibold text-slate-600 dark:text-slate-300">Start</th>
                         <th class="px-3 py-2 text-left font-semibold text-slate-600 dark:text-slate-300">End</th>
                         <th class="px-3 py-2 text-left font-semibold text-slate-600 dark:text-slate-300">Output</th>
@@ -149,6 +167,7 @@
                     <tr v-for="item in roadmapMilestones" :key="item.id" :class="{ 'bg-indigo-50/50 dark:bg-indigo-500/5': editingMilestoneId === item.id }">
                         <td class="px-3 py-2 text-slate-800 dark:text-slate-100">{{ item.title }}</td>
                         <td class="px-3 py-2 text-slate-600 dark:text-slate-300">{{ item.type || '-' }}</td>
+                        <td class="px-3 py-2 text-slate-600 dark:text-slate-300">{{ milestoneTypeLabel(item.milestone_type ?? item.type) }}</td>
                         <td class="px-3 py-2 text-slate-600 dark:text-slate-300">{{ quarterLabel(item.start_date) }}</td>
                         <td class="px-3 py-2 text-slate-600 dark:text-slate-300">{{ quarterLabel(item.end_date) }}</td>
                         <td class="px-3 py-2 text-slate-600 dark:text-slate-300">{{ item.output || '-' }}</td>
@@ -172,7 +191,7 @@
                         </td>
                     </tr>
                     <tr v-if="roadmapMilestones.length === 0">
-                        <td colspan="6" class="px-3 py-4 text-center text-slate-500 dark:text-slate-400">
+                        <td colspan="7" class="px-3 py-4 text-center text-slate-500 dark:text-slate-400">
                             Belum ada activity roadmap. Tambahkan activity pertama untuk memplot Q1-Q4.
                         </td>
                     </tr>
@@ -191,10 +210,35 @@ const props = defineProps({
         type: Object,
         default: null,
     },
+    milestoneTypeOptions: {
+        type: Array,
+        default: () => [],
+    },
 });
 
 const quarterOptions = [1, 2, 3, 4];
 const currentYear = new Date().getFullYear();
+const defaultMilestoneType = 1;
+
+const fallbackMilestoneTypeOptions = [
+    { value: 1, label: '1', timeline_style: 'block' },
+    { value: 2, label: '2', timeline_style: 'dashed' },
+    { value: 3, label: '3', timeline_style: 'block' },
+    { value: 4, label: '4', timeline_style: 'dashed' },
+    { value: 5, label: '5', timeline_style: 'block' },
+];
+
+const milestoneTypeOptionsDisplay = computed(() => {
+    if (Array.isArray(props.milestoneTypeOptions) && props.milestoneTypeOptions.length > 0) {
+        return props.milestoneTypeOptions.map((option) => ({
+            value: Number(option.value),
+            label: String(option.label),
+            timeline_style: String(option.timeline_style || ''),
+        }));
+    }
+
+    return fallbackMilestoneTypeOptions;
+});
 
 const editingMilestoneId = ref(null);
 
@@ -202,6 +246,7 @@ const milestoneForm = useForm({
     title: '',
     output: '',
     type: '',
+    milestone_type: defaultMilestoneType,
     start_date: '',
     end_date: '',
 });
@@ -286,6 +331,7 @@ const resetForm = () => {
     milestoneForm.reset();
     milestoneForm.clearErrors();
     milestoneForm.type = '';
+    milestoneForm.milestone_type = defaultMilestoneType;
     editingMilestoneId.value = null;
     useQuarterRange.value = false;
     resetMilestoneRange();
@@ -309,6 +355,24 @@ const roadmapMilestones = computed(() => {
         return String(left.start_date || '').localeCompare(String(right.start_date || ''));
     });
 });
+
+const normalizeMilestoneType = (value) => {
+    const normalized = Number(value);
+    const exists = milestoneTypeOptionsDisplay.value.some((option) => option.value === normalized);
+
+    if (!exists) {
+        return defaultMilestoneType;
+    }
+
+    return normalized;
+};
+
+const milestoneTypeLabel = (value) => {
+    const normalized = normalizeMilestoneType(value);
+    const found = milestoneTypeOptionsDisplay.value.find((option) => option.value === normalized);
+
+    return found ? found.label : String(defaultMilestoneType);
+};
 
 const quarterLabel = (value) => {
     const date = parseDate(value);
@@ -354,6 +418,7 @@ const startEdit = (item) => {
 
     milestoneForm.title = item.title || '';
     milestoneForm.type = item.type || '';
+    milestoneForm.milestone_type = normalizeMilestoneType(item.milestone_type ?? item.type);
     milestoneForm.output = item.output || '';
     milestoneForm.start_date = item.start_date || '';
     milestoneForm.end_date = item.end_date || '';
@@ -412,6 +477,7 @@ const submitForm = () => {
     }
 
     milestoneForm.clearErrors();
+    milestoneForm.milestone_type = normalizeMilestoneType(milestoneForm.milestone_type);
 
     if (!buildDates()) {
         return;

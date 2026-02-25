@@ -4,6 +4,26 @@
             <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h2 class="text-2xl font-bold text-slate-900 dark:text-white">IT Initiatives</h2>
+                    <div class="mt-3 flex flex-wrap items-center gap-2">
+                        <a
+                            href="#scope-charter-it-section"
+                            class="inline-flex items-center rounded-full border border-[#A7C942]/60 bg-[#A7C942]/15 px-3 py-1.5 text-xs font-semibold text-[#4F6B0F] transition hover:bg-[#A7C942]/25 dark:text-[#C7E67A]"
+                        >
+                            Scope Charter
+                        </a>
+                        <a
+                            href="#project-charter-it-section"
+                            class="inline-flex items-center rounded-full border border-[#1C75BC]/45 bg-[#1C75BC]/10 px-3 py-1.5 text-xs font-semibold text-[#1C75BC] transition hover:bg-[#1C75BC]/20 dark:text-[#7FC0F2]"
+                        >
+                            Project Charter
+                        </a>
+                        <Link
+                            href="/roadmap"
+                            class="inline-flex items-center rounded-full border border-[#1C75BC]/45 bg-[#1C75BC] px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-[#0f63b5]"
+                        >
+                            Roadmap Project Charter
+                        </Link>
+                    </div>
                 </div>
             </div>
 
@@ -31,7 +51,7 @@
                 </article>
 
                 <article class="space-y-4 rounded-2xl border border-slate-200 bg-white px-5 py-3 shadow-[0_4px_16px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-[#171717] lg:col-span-2">
-                    <div>
+                    <div id="scope-charter-it-section">
                         <div class="mb-2 flex items-center justify-between gap-2">
                             <h2 class="text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Scope Charter IT Initiative Timeline</h2>
                         </div>
@@ -69,7 +89,7 @@
                         </div>
                     </div>
 
-                    <div class="border-t border-slate-100 pt-4 dark:border-white/5">
+                    <div id="project-charter-it-section" class="border-t border-slate-100 pt-4 dark:border-white/5">
                         <div class="mb-2 flex items-center justify-between gap-2">
                             <h2 class="text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Project Charter IT Initiative Timeline</h2>
                         </div>
@@ -126,6 +146,7 @@
 
 <script setup>
 import { computed, ref } from 'vue';
+import { Link } from '@inertiajs/vue3';
 import UserLayout from '@/Layouts/UserLayout.vue';
 import { statusFlowClassByIndex } from '@/Composables/initiativeStatus';
 import { useFlowFilter } from '@/Composables/useFlowFilter';
