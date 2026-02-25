@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Roadmap;
 
 use App\Http\Controllers\Controller;
+use App\Models\Milestone;
 use App\Models\Program;
 use App\Models\Project;
 use Illuminate\Database\Eloquent\Builder;
@@ -17,7 +18,7 @@ class RoadmapController extends Controller
      */
     public function index(): Response
     {
-        return Inertia::render('Roadmap/Index', $this->buildRoadmapOverviewPayload());
+        return Inertia::render('ProgramImplementation/RoadMap/Index', $this->buildRoadmapOverviewPayload());
     }
 
     /**
@@ -25,7 +26,7 @@ class RoadmapController extends Controller
      */
     public function edit(Request $request): Response
     {
-        return Inertia::render('Roadmap/Edit', $this->buildRoadmapEditorPayload($request));
+        return Inertia::render('ProgramImplementation/RoadMap/Edit', $this->buildRoadmapEditorPayload($request));
     }
 
     /**
@@ -38,8 +39,9 @@ class RoadmapController extends Controller
             $query->orderBy('trs_projects.id');
         }]);
 
-        return Inertia::render('Roadmap/Show', [
+        return Inertia::render('ProgramImplementation/RoadMap/Show', [
             'program' => $program,
+            'milestoneTypeOptions' => Milestone::roadmapTypeOptions(),
             ...$this->roadmapYearRange(),
         ]);
     }
@@ -86,6 +88,7 @@ class RoadmapController extends Controller
 
         return [
             'projects' => $projects,
+            'milestoneTypeOptions' => Milestone::roadmapTypeOptions(),
             ...$this->roadmapYearRange(),
         ];
     }
@@ -111,6 +114,7 @@ class RoadmapController extends Controller
             'projects' => $projects,
             'selectedProject' => $projects->firstWhere('id', $resolvedProjectId),
             'selectedProjectId' => $resolvedProjectId,
+            'milestoneTypeOptions' => Milestone::roadmapTypeOptions(),
             ...$this->roadmapYearRange(),
         ];
     }

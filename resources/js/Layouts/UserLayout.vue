@@ -197,7 +197,7 @@ const logout = () => {
             </div>
         </div>
 
-        <main class="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8 print:max-w-none print:px-0 print:py-0">
+        <main class="mx-auto w-full max-w-7xl px-4 pt-5 pb-8 sm:px-6 lg:px-8 print:max-w-none print:px-0 print:py-0">
             <slot />
         </main>
 

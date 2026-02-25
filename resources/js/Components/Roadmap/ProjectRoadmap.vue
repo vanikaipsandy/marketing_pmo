@@ -7,6 +7,7 @@ const props = defineProps({
     sequence:  { type: [Number, String], default: null },
     yearStart: { type: Number, default: 2025 },
     yearEnd:   { type: Number, default: 2029 },
+    milestoneTypeOptions: { type: Array, default: () => [] },
 });
 
 /* ── Year / Quarter grid ─────────────────────────────── */
@@ -26,6 +27,18 @@ const quarterCells = computed(() =>
 );
 
 const totalCells = computed(() => quarterCells.value.length);
+
+const TYPE_BLOCK = 1;
+const TYPE_DASHED = 2;
+
+const normalizeMilestoneType = (value) => {
+    const raw = Number(value);
+    return raw === TYPE_DASHED || raw === 4 ? TYPE_DASHED : TYPE_BLOCK;
+};
+
+const timelineStyleByType = (typeCode) => {
+    return normalizeMilestoneType(typeCode) === TYPE_DASHED ? 'dashed' : 'block';
+};
 
 /* ── Date helpers ────────────────────────────────────── */
 
@@ -64,17 +77,19 @@ const sortedMilestones = computed(() =>
 const buildRowsFromMilestones = () => {
     const sections = new Map();
     for (const ms of sortedMilestones.value) {
-        const label  = String(ms.type || '').trim() || 'Roadmap Activity';
+        const sectionLabel = String(ms.type || 'Roadmap Activity').trim() || 'Roadmap Activity';
+        const typeCode = normalizeMilestoneType(ms.milestone_type ?? ms.type);
         const si     = toQuarterIndex(ms.start_date ?? ms.end_date);
         const ei     = toQuarterIndex(ms.end_date   ?? ms.start_date);
         const hasTL  = Boolean(ms.start_date || ms.end_date) && si !== null && ei !== null;
-        if (!sections.has(label)) sections.set(label, []);
-        sections.get(label).push({
+        if (!sections.has(sectionLabel)) sections.set(sectionLabel, []);
+        sections.get(sectionLabel).push({
             activity:    ms.title || '-',
             output:      toLineItems(ms.output),
             hasTimeline: hasTL,
             start:       hasTL ? Math.min(si, ei) : null,
             end:         hasTL ? Math.max(si, ei) : null,
+            timelineStyle: timelineStyleByType(typeCode),
         });
     }
     return [...sections.entries()].map(([label, rows]) => ({ label, rows }));
@@ -83,12 +98,18 @@ const buildRowsFromMilestones = () => {
 const roadmapSections = computed(() => {
     if (sortedMilestones.value.length > 0) return buildRowsFromMilestones();
     const rows = objectives.value.length
-        ? objectives.value.map((obj) => ({ activity: obj, output: [obj], hasTimeline: false, start: null, end: null }))
-        : [{ activity: 'Belum ada activity roadmap', output: [], hasTimeline: false, start: null, end: null }];
+        ? objectives.value.map((obj) => ({ activity: obj, output: [obj], hasTimeline: false, start: null, end: null, timelineStyle: 'block' }))
+        : [{ activity: 'Belum ada activity roadmap', output: [], hasTimeline: false, start: null, end: null, timelineStyle: 'block' }];
     return [{ label: objectives.value.length ? 'Objectives' : 'Roadmap Activity', rows }];
 });
 
 const isActive = (row, idx) => row.hasTimeline && idx >= row.start && idx <= row.end;
+
+const timelineCellClass = (row, quarterIndex, cell) => ({
+    'cell-tl-active-block': isActive(row, quarterIndex) && row.timelineStyle !== 'dashed',
+    'cell-tl-active-dashed': isActive(row, quarterIndex) && row.timelineStyle === 'dashed',
+    'border-r-blue': cell.quarter === 4,
+});
 </script>
 
 <template>
@@ -154,10 +175,7 @@ const isActive = (row, idx) => row.hasTimeline && idx >= row.start && idx <= row
                         <td
                             v-for="(cell, i) in quarterCells" :key="`tl-${si}-${ri}-${i}`"
                             class="cell-tl"
-                            :class="{
-                                'cell-tl-active': isActive(row, i),
-                                'border-r-blue': cell.quarter === 4,
-                            }"
+                            :class="timelineCellClass(row, i, cell)"
                         ></td>
                         <td class="cell-output">
                             <ul v-if="row.output.length" class="output-list">
@@ -175,14 +193,14 @@ const isActive = (row, idx) => row.hasTimeline && idx >= row.start && idx <= row
 <style scoped>
 /* ── Variables ─────────────────────────────────── */
 .roadmap-wrap {
-    --blue:   #0b2a8a;
-    --blue-lt: #d9e7ff;
-    --grid:   #c5d0e0;
+    --blue:   #1c75bc;
+    --blue-lt: #e2f0fb;
+    --grid:   #b9d1e8;
     --text:   #0f172a;
-    --text-sm: #374151;
+    --text-sm: #111827;
     --bg:     #ffffff;
     --bg-row: #f9fbff;
-    --active: #1e40af;
+    --active: #000000;
     font-family: "Segoe UI", Arial, sans-serif;
 }
 
@@ -261,16 +279,16 @@ const isActive = (row, idx) => row.hasTimeline && idx >= row.start && idx <= row
 .cell-section {
     font-size: 10px;
     font-weight: 700;
-    color: var(--blue);
+    color: #000000;
     padding: 3px 8px 3px 16px;
-    border-left: 3px solid var(--blue);
+    border-left: 3px solid #000000;
     line-height: 1.2;
     vertical-align: middle;
 }
 
 .cell-activity {
     font-size: 11px;
-    color: var(--text-sm);
+    color: #000000;
     padding: 3px 8px 3px 24px;
     line-height: 1.3;
     vertical-align: top;
@@ -284,12 +302,24 @@ const isActive = (row, idx) => row.hasTimeline && idx >= row.start && idx <= row
     padding: 0;
     background: var(--bg-row);
 }
-.cell-tl-active { background: var(--active); }
+.cell-tl-active-block { background: var(--active); }
+
+.cell-tl-active-dashed {
+    background-color: var(--bg-row);
+    background-image: repeating-linear-gradient(
+        90deg,
+        #000000 0 6px,
+        transparent 6px 10px
+    );
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100% 2px;
+}
 
 /* ── Output cell ────────────────────────────────── */
 .cell-output {
     font-size: 10px;
-    color: var(--text-sm);
+    color: #000000;
     padding: 4px 6px;
     vertical-align: top;
     line-height: 1.3;

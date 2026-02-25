@@ -19,6 +19,7 @@ class MilestoneController extends Controller
             'title' => $payload['title'],
             'output' => $payload['output'] ?? null,
             'type' => $payload['type'],
+            'milestone_type' => Milestone::normalizeRoadmapType($payload['milestone_type'] ?? null),
             'start_date' => $payload['start_date'] ?? null,
             'end_date' => $payload['end_date'] ?? null,
             'order' => $nextOrder,
@@ -39,6 +40,7 @@ class MilestoneController extends Controller
             'title' => $payload['title'],
             'output' => $payload['output'] ?? null,
             'type' => $payload['type'],
+            'milestone_type' => Milestone::normalizeRoadmapType($payload['milestone_type'] ?? null),
             'start_date' => $payload['start_date'] ?? null,
             'end_date' => $payload['end_date'] ?? null,
         ]);

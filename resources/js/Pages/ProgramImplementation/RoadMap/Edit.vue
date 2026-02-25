@@ -35,7 +35,10 @@
             </section>
 
             <main v-if="activeProject" class="space-y-5">
-                <ActivityQuarterManager :project="activeProject" />
+                <ActivityQuarterManager
+                    :project="activeProject"
+                    :milestone-type-options="milestoneTypeOptionsDisplay"
+                />
             </main>
 
             <section
@@ -68,6 +71,11 @@ const props = defineProps({
 });
 
 const selectedProjectIdLocal = ref(props.selectedProjectId ?? null);
+
+const milestoneTypeOptionsDisplay = [
+    { value: 1, label: 'Blok', timeline_style: 'block' },
+    { value: 2, label: 'Garis', timeline_style: 'dashed' },
+];
 
 watch(selectedProjectIdLocal, (nextProjectId, previousProjectId) => {
     if (nextProjectId === previousProjectId) {

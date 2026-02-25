@@ -16,6 +16,7 @@ const implementationChildHrefs = [
     '/strategic-pillars',
     '/digital-initiatives',
     '/it-initiatives',
+    '/roadmap',
     '/program-implementation/budgeting',
     '/program-implementation/initiative-relation',
 ];

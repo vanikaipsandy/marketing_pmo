@@ -35,6 +35,7 @@
                         :sequence="projectIndex + 1"
                         :year-start="yearStart"
                         :year-end="yearEnd"
+                        :milestone-type-options="milestoneTypeOptions"
                     />
                 </div>
             </template>
@@ -57,5 +58,6 @@ defineProps({
     program: { type: Object, default: () => ({}) },
     yearStart: { type: Number, default: 2025 },
     yearEnd: { type: Number, default: 2029 },
+    milestoneTypeOptions: { type: Array, default: () => [] },
 });
 </script>
