@@ -133,6 +133,7 @@
             <MasterInitiativeTable
                 v-if="hasTableSelection && tableMode === TABLE_MODE.MASTER"
                 :items="mstInitiativesList"
+                :initiative-items="allDigitalInitiatives"
             />
 
 
@@ -217,6 +218,10 @@ const { activeFlowFilter, filteredItems, toggleFilter } = useFlowFilter(
 
 const mstInitiativesList = computed(() => {
     return asList(props.mstDigitalInitiatives);
+});
+
+const allDigitalInitiatives = computed(() => {
+    return asList(props.initiatives);
 });
 
 const statusOptions = computed(() => {

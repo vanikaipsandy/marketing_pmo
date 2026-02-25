@@ -74,7 +74,7 @@ class DigitalInitiativeController extends Controller
             ->get()
             ->values();
 
-        return Inertia::render('DigitalInitiatives/Index', [
+        return Inertia::render('ProgramImplementation/ProjectCharter/DigitalInitiatives/Index', [
             'initiatives' => $initiatives,
             'mstDigitalInitiatives' => $masterDigitalInitiatives,
             'statusOptions' => $statusOptions,
@@ -91,7 +91,7 @@ class DigitalInitiativeController extends Controller
 
     public function create(): Response
     {
-        return Inertia::render('DigitalInitiatives/Create', [
+        return Inertia::render('ProgramImplementation/ProjectCharter/DigitalInitiatives/Create', [
             'statusOptions' => InitiativeStatus::ordered()
                 ->map(fn (InitiativeStatus $status) => [
                     'id' => (int) $status->id,
@@ -140,14 +140,14 @@ class DigitalInitiativeController extends Controller
     {
         $digitalInitiative->load('statusRef:id,name');
 
-        return Inertia::render('DigitalInitiatives/Show', [
+        return Inertia::render('ProgramImplementation/ProjectCharter/DigitalInitiatives/Show', [
             'initiative' => $digitalInitiative,
         ]);
     }
 
     public function edit(DigitalInitiative $digitalInitiative): Response
     {
-        return Inertia::render('DigitalInitiatives/Edit', [
+        return Inertia::render('ProgramImplementation/ProjectCharter/DigitalInitiatives/Edit', [
             'initiative' => $digitalInitiative,
             'statusOptions' => InitiativeStatus::ordered()
                 ->map(fn (InitiativeStatus $status) => [

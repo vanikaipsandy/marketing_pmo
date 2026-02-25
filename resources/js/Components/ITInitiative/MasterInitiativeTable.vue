@@ -11,11 +11,12 @@
                 <colgroup>
                     <col class="w-[4%]">
                     <col class="w-[7%]">
-                    <col class="w-[20%]">
-                    <col class="w-[20%]">
+                    <col class="w-[17%]">
+                    <col class="w-[16%]">
                     <col class="w-[22%]">
-                    <col class="w-[14%]">
-                    <col class="w-[14%]">
+                    <col class="w-[12%]">
+                    <col class="w-[10%]">
+                    <col class="w-[12%]">
                 </colgroup>
                 <thead class="bg-slate-50 dark:bg-white/5">
                     <tr>
@@ -26,6 +27,7 @@
                         <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Deskripsi</th>
                         <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Organisasi</th>
                         <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Sumber</th>
+                        <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Action</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-200 bg-white dark:divide-white/5 dark:bg-[#1a1a1a]">
@@ -43,10 +45,35 @@
                                 {{ statusName(item) }}
                             </span>
                         </td>
+                        <td class="px-3 py-3 text-[10px] font-medium">
+                            <div class="flex flex-col items-start gap-1">
+                                <Link
+                                    :href="scopeCharterHref(item)"
+                                    :class="actionCellClass(hasLinkedProject(item))"
+                                    title="View Scope Charter"
+                                >
+                                    Scope Charter
+                                </Link>
+                                <Link
+                                    :href="projectCharterHref(item)"
+                                    :class="actionCellClass(hasLinkedProject(item))"
+                                    title="View Project Charter"
+                                >
+                                    Project Charter
+                                </Link>
+                                <Link
+                                    :href="roadmapHref(item)"
+                                    class="inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-semibold bg-sky-100 text-sky-700 transition-colors hover:bg-sky-200 dark:bg-sky-500/20 dark:text-sky-300 dark:hover:bg-sky-500/30"
+                                    title="Open Roadmap"
+                                >
+                                    Roadmap
+                                </Link>
+                            </div>
+                        </td>
                     </tr>
 
                     <tr v-if="items.length === 0">
-                        <td colspan="7" class="px-6 py-8 text-center text-xs text-slate-500 dark:text-slate-400">
+                        <td colspan="8" class="px-6 py-8 text-center text-xs text-slate-500 dark:text-slate-400">
                             Tidak ada data `mst_initiative` tipe 2.
                         </td>
                     </tr>
@@ -57,6 +84,8 @@
 </template>
 
 <script setup>
+import { Link } from '@inertiajs/vue3';
+
 defineProps({
     items: {
         type: Array,
@@ -97,4 +126,29 @@ const organizationWithGroup = (item) => {
 const statusName = (item) => normalizeText(item?.status);
 
 const descriptionText = (item) => normalizeText(item?.description);
+
+const hasLinkedProject = (item) => Boolean(Number(item?.project_id));
+
+const scopeCharterHref = (item) => {
+    const projectId = Number(item?.project_id);
+    return projectId > 0 ? `/it-initiatives/${projectId}` : '/it-initiatives';
+};
+
+const projectCharterHref = (item) => {
+    const projectId = Number(item?.project_id);
+    return projectId > 0 ? `/it-initiatives/${projectId}?open_charter=1` : '/it-initiatives';
+};
+
+const roadmapHref = (item) => {
+    const projectId = Number(item?.project_id);
+    return projectId > 0 ? `/roadmap?project_id=${projectId}` : '/roadmap';
+};
+
+const actionCellClass = (isReady) => {
+    if (isReady) {
+        return 'inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-semibold bg-emerald-100 text-emerald-800 hover:bg-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-300 dark:hover:bg-emerald-500/30 transition-colors cursor-pointer';
+    }
+
+    return 'inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-semibold bg-rose-100 text-rose-800 hover:bg-rose-200 dark:bg-rose-500/20 dark:text-rose-300 dark:hover:bg-rose-500/30 transition-colors cursor-pointer';
+};
 </script>

@@ -11,6 +11,7 @@ use App\Models\MstInitiative;
 use App\Models\Project;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -53,7 +54,7 @@ class ITInitiativeController extends Controller
                 ->find($resolvedProjectId)
             : null;
 
-        return Inertia::render('Roadmap/Index', [
+        return Inertia::render('ProgramImplementation/RoadMap/Index', [
             'itInitiatives' => $projects,
             'selectedProject' => $selectedProject,
             'selectedProjectId' => $resolvedProjectId,
@@ -87,17 +88,22 @@ class ITInitiativeController extends Controller
             ->orderBy('id', 'asc')
             ->get();
 
+        $masterSelectColumns = [
+            'id',
+            'coe_id',
+            'tipe_initiative',
+            'business_unit',
+            'code',
+            'name',
+            'description',
+            'status',
+        ];
+        if (Schema::hasColumn('mst_initiative', 'project_id')) {
+            $masterSelectColumns[] = 'project_id';
+        }
+
         $masterItInitiatives = MstInitiative::query()
-            ->select([
-                'id',
-                'coe_id',
-                'tipe_initiative',
-                'business_unit',
-                'code',
-                'name',
-                'description',
-                'status',
-            ])
+            ->select($masterSelectColumns)
             ->with([
                 'coe:id,name',
                 'organization:id,name,groub_id',
@@ -115,7 +121,7 @@ class ITInitiativeController extends Controller
             ->groupBy('status')
             ->pluck('total', 'status');
 
-        return Inertia::render('ITInitiative/Index', [
+        return Inertia::render('ProgramImplementation/ProjectCharter/ITInitiatives/Index', [
             'itInitiatives' => $projects,
             'statusOptions' => $statusOptions,
             'completedStatusId' => $baselineStatusId,
@@ -132,7 +138,7 @@ class ITInitiativeController extends Controller
 
     public function create(): Response
     {
-        return Inertia::render('ITInitiative/Create', [
+        return Inertia::render('ProgramImplementation/ProjectCharter/ITInitiatives/Create', [
             'statusOptions' => InitiativeStatus::ordered()
                 ->map(fn (InitiativeStatus $status) => [
                     'id' => (int) $status->id,
@@ -176,7 +182,7 @@ class ITInitiativeController extends Controller
             'statusRef:id,name',
         ]);
 
-        return Inertia::render('ITInitiative/Show', [
+        return Inertia::render('ProgramImplementation/ProjectCharter/ITInitiatives/Show', [
             'itInitiative' => $project,
         ]);
     }
@@ -185,7 +191,7 @@ class ITInitiativeController extends Controller
     {
         $project->load(['pcStatusImplementations', 'charter']);
         
-        return Inertia::render('ITInitiative/Edit', [
+        return Inertia::render('ProgramImplementation/ProjectCharter/ITInitiatives/Edit', [
             'itInitiative' => $project,
             'statusOptions' => InitiativeStatus::ordered()
                 ->map(fn (InitiativeStatus $status) => [

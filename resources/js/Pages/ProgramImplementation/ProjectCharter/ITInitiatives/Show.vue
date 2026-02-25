@@ -179,7 +179,7 @@
 
 <script setup>
 import { computed, ref, watch } from 'vue';
-import { Link, useForm } from '@inertiajs/vue3';
+import { Link, useForm, usePage } from '@inertiajs/vue3';
 import UserLayout from '@/Layouts/UserLayout.vue';
 import CharterDocument from './Partials/CharterDocument.vue';
 import { statusBadgeClassById, statusLabelFromOptions } from '@/Composables/initiativeStatus';
@@ -187,6 +187,7 @@ import { statusBadgeClassById, statusLabelFromOptions } from '@/Composables/init
 const props = defineProps({
     itInitiative: Object,
 });
+const page = usePage();
 
 const statusOptions = computed(() => {
     const defaultOptions = [
@@ -249,7 +250,14 @@ const charterVersions = computed(() => {
 
 const defaultCharter = computed(() => props.itInitiative?.charter ?? charterVersions.value[0] ?? null);
 const selectedCharterId = ref(defaultCharter.value ? String(defaultCharter.value.id) : '');
-const isCharterOpen = ref(false);
+const shouldOpenCharterFromQuery = computed(() => {
+    const query = String(page.url ?? '').split('?')[1] ?? '';
+    const params = new URLSearchParams(query);
+    const value = String(params.get('open_charter') ?? '').toLowerCase();
+
+    return value === '1' || value === 'true' || value === 'yes';
+});
+const isCharterOpen = ref(shouldOpenCharterFromQuery.value);
 const isEditing = ref(false);
 
 const form = useForm(mapCharterToForm(defaultCharter.value));

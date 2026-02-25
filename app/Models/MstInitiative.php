@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\MstCoe;
+use App\Models\Project;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -14,6 +15,7 @@ class MstInitiative extends Model
         'coe_id',
         'tipe_initiative',
         'business_unit',
+        'project_id',
         'code',
         'name',
         'description',
@@ -28,5 +30,10 @@ class MstInitiative extends Model
     public function organization(): BelongsTo
     {
         return $this->belongsTo(TrsOrganization::class, 'business_unit');
+    }
+
+    public function project(): BelongsTo
+    {
+        return $this->belongsTo(Project::class, 'project_id');
     }
 }
