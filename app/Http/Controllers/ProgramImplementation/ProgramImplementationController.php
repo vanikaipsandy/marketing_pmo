@@ -4,7 +4,7 @@ namespace App\Http\Controllers\ProgramImplementation;
 
 use App\Http\Controllers\Concerns\ResolvesInitiativeStatus;
 use App\Http\Controllers\Controller;
-use App\Models\InitiativeStatus;
+use App\Models\DigitalInitiative;
 use App\Models\Project;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
@@ -47,7 +47,7 @@ class ProgramImplementationController extends Controller
 
     private function openDigitalInitiatives(int $baselineStatusId)
     {
-        return \App\Models\DigitalInitiative::query()
+        return DigitalInitiative::query()
             ->with(['statusRef:id,name', 'ucStatusImplementations'])
             ->latest()
             ->get();
@@ -64,5 +64,10 @@ class ProgramImplementationController extends Controller
             ])
             ->latest()
             ->get();
+    }
+
+    private function initiativeRelation()
+    {
+        return Inertia::render('ProgramImplementation/InitiativeRelation');
     }
 }

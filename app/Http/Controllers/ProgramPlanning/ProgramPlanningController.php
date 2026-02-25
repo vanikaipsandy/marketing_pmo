@@ -32,12 +32,12 @@ class ProgramPlanningController extends Controller
         ]);
     }
 
-    public function matrixDependency(): Response|RedirectResponse
+    public function initiativeRelation(): Response|RedirectResponse
     {
         if (request()->user()?->isAdminUser()) {
             return redirect()->route('admin.dashboard');
         }
 
-        return Inertia::render('ProgramPlanning/MatrixDependency');
+        return Inertia::render('ProgramPlanning/InitiativeRelation');
     }
 }

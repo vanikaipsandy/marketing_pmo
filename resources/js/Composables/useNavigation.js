@@ -41,10 +41,10 @@ export function useNavigation() {
                 active: (url) => url.startsWith('/program-planning/program-definition'),
             },
             {
-                label: 'Matrix Dependency',
-                href: '/program-planning/matrix-dependency',
+                label: 'Initiative Relation',
+                href: '/program-planning/initiative-relation',
                 icon: TableCellsIcon,
-                active: (url) => url.startsWith('/program-planning/matrix-dependency'),
+                active: (url) => url.startsWith('/program-planning/initiative-relation'),
             },
             {
                 label: 'Program Evaluation',
@@ -82,16 +82,16 @@ export function useNavigation() {
                 active: (url) => url.startsWith('/it-initiatives'),
             },
             {
+                label: 'Initiative Relation',
+                href: '/program-implementation/initiative-relation',
+                icon: TableCellsIcon,
+                active: (url) => url.startsWith('/program-implementation/initiative-relation'),
+            },
+            {
                 label: 'RKAP',
                 href: '/program-implementation/budgeting',
                 icon: DocumentTextIcon,
                 active: (url) => url.startsWith('/program-implementation/budgeting'),
-            },
-            {
-                label: 'Matrix Dependency',
-                href: '/program-implementation/matrix-dependency',
-                icon: TableCellsIcon,
-                active: (url) => url.startsWith('/program-implementation/matrix-dependency'),
             },
             {
                 label: 'Architecture',

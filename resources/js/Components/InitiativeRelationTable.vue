@@ -1,7 +1,7 @@
 <template>
     <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717]">
         <div class="border-b border-slate-200 px-5 py-4 dark:border-white/10">
-            <h2 class="text-base font-semibold text-slate-900 dark:text-white">Tabel Matrix Dependency</h2>
+            <h2 class="text-base font-semibold text-slate-900 dark:text-white">Tabel Initiative Relation</h2>
         </div>
 
         <div class="overflow-x-auto">
