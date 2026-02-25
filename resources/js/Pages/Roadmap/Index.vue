@@ -1,45 +1,69 @@
 <template>
     <UserLayout title="Roadmap">
-        <div class="space-y-5 print:space-y-0">
+        <div class="space-y-6 print:space-y-0">
             <section class="print:hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-white/10 dark:bg-[#171717]">
-                <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                     <div>
-                        <h1 class="text-xl font-bold text-slate-900 dark:text-white">Project Roadmap</h1>
+                        <h1 class="text-xl font-bold text-slate-900 dark:text-white">Roadmap {{ yearStart }}-{{ yearEnd }}</h1>
                         <p class="text-sm text-slate-500 dark:text-slate-400">
-                            Module roadmap terpisah dari project. Hanya project dengan data durasi atau milestone bertanggal yang tampil.
+                            View seluruh project dari atas ke bawah.
                         </p>
                     </div>
+
+                    <Link
+                        href="/roadmap/edit"
+                        class="inline-flex items-center rounded-lg bg-[#0B2A8A] px-3 py-2 text-xs font-semibold text-white transition hover:bg-[#102f95]"
+                    >
+                        Buka Proses Input / Edit
+                    </Link>
                 </div>
             </section>
 
-            <main v-if="selectedProject" class="space-y-5 print:m-0 print:p-0">
-                <ActivityQuarterManager :project="selectedProject" />
-                <ProjectRoadmap :project="selectedProject" :form="roadmapForm" />
-            </main>
+            <section v-if="projects.length > 0" class="space-y-0">
+                <ProjectRoadmap
+                    v-for="(project, projectIndex) in projects"
+                    :key="`roadmap-${project.id}`"
+                    :project="project"
+                    :form="{
+                        objectives: project.charter?.objectives ?? '',
+                        duration: project.charter?.duration ?? '',
+                    }"
+                    :sequence="projectIndex + 1"
+                    :year-start="yearStart"
+                    :year-end="yearEnd"
+                />
+            </section>
 
-            <section v-else class="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center dark:border-white/15 dark:bg-[#171717]">
+            <section
+                v-else
+                class="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center dark:border-white/15 dark:bg-[#171717]"
+            >
                 <p class="text-sm font-medium text-slate-600 dark:text-slate-300">
-                    Belum ada project dengan data durasi/tanggal untuk ditampilkan di roadmap.
+                    Belum ada data project untuk ditampilkan.
                 </p>
             </section>
+
         </div>
     </UserLayout>
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { Link } from '@inertiajs/vue3';
 import UserLayout from '@/Layouts/UserLayout.vue';
-import ProjectRoadmap from './Partials/ProjectRoadmap.vue';
-import ActivityQuarterManager from './Partials/ActivityQuarterManager.vue';
+import ProjectRoadmap from '@/Components/Roadmap/ProjectRoadmap.vue';
 
-const props = defineProps({
-    itInitiatives: { type: Array, default: () => [] },
-    selectedProject: { type: Object, default: null },
-    selectedProjectId: { type: Number, default: null },
+defineProps({
+    projects: {
+        type: Array,
+        default: () => [],
+    },
+    yearStart: {
+        type: Number,
+        default: 2025,
+    },
+    yearEnd: {
+        type: Number,
+        default: 2029,
+    },
 });
-
-const roadmapForm = computed(() => ({
-    objectives: props.selectedProject?.charter?.objectives || '',
-    duration: props.selectedProject?.charter?.duration || '',
-}));
 </script>

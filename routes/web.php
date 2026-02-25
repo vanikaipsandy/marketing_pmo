@@ -10,6 +10,7 @@ use App\Http\Controllers\DigitalInitiative\TrsDigitalInitiativeController;
 use App\Http\Controllers\ITInitiative\CharterController;
 use App\Http\Controllers\ITInitiative\ITInitiativeController;
 use App\Http\Controllers\ITInitiative\MilestoneController;
+use App\Http\Controllers\Roadmap\RoadmapController;
 use App\Http\Controllers\ProgramImplementation\DashboardController;
 use App\Http\Controllers\ProgramImplementation\ProgramImplementationController;
 use App\Http\Controllers\ProgramPlanning\DashboardController as PlanningDashboardController;
@@ -71,7 +72,10 @@ Route::middleware(['auth', 'approved'])->group(function () {
     Route::resource('digital-initiatives', DigitalInitiativeController::class);
 
     // IT Initiatives & Charters
-    Route::get('/roadmap', [ITInitiativeController::class, 'roadmapIndex'])->name('roadmap.index');
+    // Roadmap — dedicated controller (all programs & per-program views)
+    Route::get('/roadmap', [RoadmapController::class, 'index'])->name('roadmap.index');
+    Route::get('/roadmap/edit', [RoadmapController::class, 'edit'])->name('roadmap.edit');
+    Route::get('/roadmap/{program}', [RoadmapController::class, 'show'])->name('roadmap.show');
     Route::resource('it-initiatives', ITInitiativeController::class)
         ->parameters(['it-initiatives' => 'project']);
     Route::post('/it-initiatives/{project}/charter', [CharterController::class, 'store'])->name('it-initiatives.charter.store');
