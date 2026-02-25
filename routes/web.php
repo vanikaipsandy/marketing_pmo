@@ -59,7 +59,7 @@ Route::middleware(['auth', 'approved'])->group(function () {
     Route::get('/program-implementation/budgeting', fn () => Inertia::render('Placeholder/Index', [
         'title' => 'Budgeting',
     ]))->name('program-implementation.budgeting');
-    Route::get('/program-implementation/initiative-relation', fn () => Inertia::render('ProgramImplementation/InitiativeRelation'))->name('program-implementation.initiative-relation');
+    Route::get('/program-implementation/initiative-relation', [ProgramImplementationController::class, 'initiativeRelation'])->name('program-implementation.initiative-relation');
     Route::get('/architecture', fn () => Inertia::render('Placeholder/Index', [
         'title' => 'Architecture',
     ]))->name('architecture.index');

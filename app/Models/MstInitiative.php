@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\MstCoe;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -19,19 +20,9 @@ class MstInitiative extends Model
         'status',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'coe_id' => 'integer',
-            'tipe_initiative' => 'integer',
-            'business_unit' => 'integer',
-            'code' => 'integer',
-        ];
-    }
-
     public function coe(): BelongsTo
     {
-        return $this->belongsTo(TrsCoe::class, 'coe_id');
+        return $this->belongsTo(MstCoe::class, 'coe_id');
     }
 
     public function organization(): BelongsTo

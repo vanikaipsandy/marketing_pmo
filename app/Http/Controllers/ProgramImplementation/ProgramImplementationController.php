@@ -5,6 +5,7 @@ namespace App\Http\Controllers\ProgramImplementation;
 use App\Http\Controllers\Concerns\ResolvesInitiativeStatus;
 use App\Http\Controllers\Controller;
 use App\Models\DigitalInitiative;
+use App\Models\MstInitiative;
 use App\Models\Project;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
@@ -66,8 +67,11 @@ class ProgramImplementationController extends Controller
             ->get();
     }
 
-    private function initiativeRelation()
+    public function initiativeRelation()
     {
-        return Inertia::render('ProgramImplementation/InitiativeRelation');
+        $mstInitiatives = MstInitiative::all();
+        return Inertia::render('ProgramImplementation/InitiativeRelation', [
+            'mstInitiatives' => $mstInitiatives,
+        ]);
     }
 }
