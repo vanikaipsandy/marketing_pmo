@@ -6,7 +6,6 @@ use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Auth\SsoController;
 use App\Http\Controllers\CompanyProfile\CompanyController;
 use App\Http\Controllers\DigitalInitiative\DigitalInitiativeController;
-use App\Http\Controllers\DigitalInitiative\TrsDigitalInitiativeController;
 use App\Http\Controllers\InitiativeRelation\InitiativeRelationController;
 use App\Http\Controllers\ITInitiative\CharterController;
 use App\Http\Controllers\ITInitiative\ITInitiativeController;
@@ -21,6 +20,7 @@ use App\Http\Controllers\ProgramPlanning\ProgramPlanningController;
 use App\Http\Controllers\ProgramPlanning\ProgramDefinition\IndexController as ProgramDefinitionController;
 use App\Http\Controllers\Roadmap\RoadmapController;
 use App\Http\Controllers\StrategicPillar\StrategicPillarController;
+use App\Http\Controllers\ProgramEvaluation\TrsReviewPCController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -67,7 +67,14 @@ Route::middleware(['auth', 'approved'])->group(function () {
     Route::get('/program-implementation/budgeting', fn () => Inertia::render('Placeholder/Index', [
         'title' => 'Budgeting',
     ]))->name('program-implementation.budgeting');
-    Route::get('/program-implementation/initiative-relation', [InitiativeRelationController::class, 'index'])->name('program-implementation.initiative-relation');
+    Route::prefix('/program-implementation/initiative-relation')->name('initiative-relations.')->group(function () {
+        Route::get('/', [InitiativeRelationController::class, 'index'])->name('index');
+        Route::get('/create', [InitiativeRelationController::class, 'create'])->name('create');
+        Route::post('/', [InitiativeRelationController::class, 'store'])->name('store');
+        Route::get('/{initiativeRelation}/edit', [InitiativeRelationController::class, 'edit'])->name('edit');
+        Route::put('/{initiativeRelation}', [InitiativeRelationController::class, 'update'])->name('update');
+        Route::delete('/{initiativeRelation}', [InitiativeRelationController::class, 'destroy'])->name('destroy');
+    });
     Route::get('/architecture', fn () => Inertia::render('Placeholder/Index', [
         'title' => 'Architecture',
     ]))->name('architecture.index');
@@ -79,6 +86,7 @@ Route::middleware(['auth', 'approved'])->group(function () {
 
     // Digital Initiatives
     Route::resource('digital-initiatives', DigitalInitiativeController::class);
+
     // IT Initiatives & Charters
     // Roadmap — dedicated controller (all programs & per-program views)
     Route::get('/roadmap', [RoadmapController::class, 'index'])->name('roadmap.index');
