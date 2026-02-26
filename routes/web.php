@@ -11,10 +11,12 @@ use App\Http\Controllers\InitiativeRelation\InitiativeRelationController;
 use App\Http\Controllers\ITInitiative\CharterController;
 use App\Http\Controllers\ITInitiative\ITInitiativeController;
 use App\Http\Controllers\ITInitiative\MilestoneController;
+use App\Http\Controllers\MasterData\MasterDataController;
 use App\Http\Controllers\ProgramImplementation\DashboardController;
 use App\Http\Controllers\ProgramImplementation\ProgramImplementationController;
 use App\Http\Controllers\ProgramPlanning\DashboardController as PlanningDashboardController;
 use App\Http\Controllers\ProgramPlanning\ProgramPlanningController;
+use App\Http\Controllers\ProgramPlanning\ProgramDefinition\IndexController as ProgramDefinitionController;
 use App\Http\Controllers\Roadmap\RoadmapController;
 use App\Http\Controllers\StrategicPillar\StrategicPillarController;
 use Illuminate\Support\Facades\Route;
@@ -53,7 +55,7 @@ Route::middleware(['auth', 'approved'])->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
     Route::get('/dashboard-monitoring', PlanningDashboardController::class)->name('dashboard-monitoring');
     Route::get('/program-planning/rsti-sub-holding', [ProgramPlanningController::class, 'rstiSubHolding'])->name('program-planning.rsti-sub-holding');
-    Route::get('/program-planning/program-definition', [ProgramPlanningController::class, 'programDefinition'])->name('program-planning.program-definition');
+    Route::get('/program-planning/program-definition', ProgramDefinitionController::class)->name('program-planning.program-definition');
     Route::get('/program-planning/initiative-relation', [InitiativeRelationController::class, 'index'])->name('program-implementation.initiative-relation');
     Route::redirect('/program-planning/initiative', '/program-planning/initiative-relation');
     Route::get('/program-implementation', ProgramImplementationController::class)->name('program-implementation.index');
@@ -65,6 +67,7 @@ Route::middleware(['auth', 'approved'])->group(function () {
     Route::get('/architecture', fn () => Inertia::render('Placeholder/Index', [
         'title' => 'Architecture',
     ]))->name('architecture.index');
+    Route::get('/master-data', MasterDataController::class)->name('master-data.index');
     Route::get('/program-information', fn () => Inertia::render('Placeholder/Index', [
         'title' => 'Program Information',
     ]))->name('program-information.index');

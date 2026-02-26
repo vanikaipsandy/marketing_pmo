@@ -112,6 +112,12 @@ export function useNavigation() {
                 icon: DocumentTextIcon,
                 active: (url) => url.startsWith('/policy'),
             },
+            {
+                label: 'Master Data',
+                href: '/master-data',
+                icon: TableCellsIcon,
+                active: (url) => url.startsWith('/master-data'),
+            },
 
             {
                 label: 'Company Profile',

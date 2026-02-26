@@ -12,6 +12,7 @@ import {
     SunIcon,
     MoonIcon,
     ChevronDownIcon,
+    TableCellsIcon,
     ArrowRightOnRectangleIcon,
 } from '@heroicons/vue/24/outline';
 
@@ -104,6 +105,18 @@ const logout = () => {
                                 <div class="px-4 py-3">
                                     <p class="truncate text-sm font-semibold text-slate-900 dark:text-white">{{ displayName }}</p>
                                     <p class="truncate text-xs text-slate-500 dark:text-slate-400">{{ userEmail }}</p>
+                                </div>
+                                <div class="p-1">
+                                    <MenuItem v-slot="{ active }">
+                                        <Link
+                                            href="/master-data"
+                                            class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-indigo-600 transition-colors dark:text-indigo-300"
+                                            :class="active ? 'bg-indigo-50 dark:bg-indigo-500/10' : ''"
+                                        >
+                                            <TableCellsIcon class="h-4 w-4" />
+                                            Master Data
+                                        </Link>
+                                    </MenuItem>
                                 </div>
                                 <div class="p-1">
                                     <MenuItem v-slot="{ active }">
