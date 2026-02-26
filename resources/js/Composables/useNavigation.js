@@ -91,7 +91,7 @@ export function useNavigation() {
                 active: (url) => url.startsWith('/it-initiatives') || url.startsWith('/roadmap'),
             },
             {
-                label: 'Initiative Relation',
+                label: 'Initiatives Relations',
                 href: '/program-implementation/initiative-relation',
                 icon: TableCellsIcon,
                 active: (url) => url.startsWith('/program-implementation/initiative-relation'),

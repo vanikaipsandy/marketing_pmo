@@ -3,7 +3,7 @@
         <div class="space-y-6 animate-fade-in-up">
             <div class="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                    <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Initiative Relation</h1>
+                    <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Initiatives Relations</h1>
                     <p class="text-sm text-slate-500 dark:text-slate-400">Kelola dependensi antar initiative.</p>
                 </div>
                 <Link

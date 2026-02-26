@@ -39,103 +39,100 @@
             </div>
         </div>
 
-        <div class="max-h-[70vh] overflow-auto">
+        <div>
             <table class="w-full min-w-[1120px] border-collapse text-sm">
                 <thead class="bg-slate-50 dark:bg-white/5">
                     <tr>
                         <th
-                            class="sticky top-0 z-20 w-10 border border-slate-200 bg-slate-50 px-4 py-3 text-center align-middle text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-400">
-                            Code
+                            class="border border-slate-200 bg-slate-50 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-400">
+                            Work Package 1
                         </th>
                         <th
-                            class="sticky top-0 z-20 w-56 border border-slate-200 bg-slate-50 px-4 py-3 text-center align-middle text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-400">
-                            Initiative
+                            class="border border-slate-200 bg-slate-50 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-400">
+                            Work Package 2
                         </th>
                         <th
-                            class="sticky top-0 z-20 w-32 border border-slate-200 bg-slate-50 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-400">
-                            Relation Type
-                        </th>
-                        <th
-                            class="sticky top-0 z-20 w-56 border border-slate-200 bg-slate-50 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-400">
-                            Predecessor
-                        </th>
-                        <th
-                            class="sticky top-0 z-20 w-56 border border-slate-200 bg-slate-50 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-400">
-                            Successor
-                        </th>
-                        <th
-                            class="sticky top-0 z-20 border border-slate-200 bg-slate-50 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-400">
+                            class="border border-slate-200 bg-slate-50 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-400">
                             Justifikasi
                         </th>
                         <th
-                            class="sticky top-0 z-20 w-20 border border-slate-200 bg-slate-50 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-400">
+                            class="border border-slate-200 bg-slate-50 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-400">
+                            Version
+                        </th>
+                        <th
+                            class="w-20 border border-slate-200 bg-slate-50 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-400">
                             Action
                         </th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-if="!filteredInitiatives.length">
-                        <td colspan="6"
+                        <td colspan="5"
                             class="border border-slate-200 px-4 py-6 text-center text-sm text-slate-500 dark:border-white/10 dark:text-slate-400">
                             Belum ada data initiative.
                         </td>
                     </tr>
-                    <tr v-for="row in initiativeTableRows" :key="row.key"
-                        class="transition hover:bg-slate-50 dark:hover:bg-white/5">
-                        <td v-if="row.isFirst" :rowspan="row.rowspan"
-                            class="border border-slate-200 px-4 py-3 text-center align-middle text-sm text-slate-800 dark:border-white/10 dark:text-slate-200">
-                            {{ row.initiative.code ?? row.initiative.id ?? '-' }}
-                        </td>
-                        <td v-if="row.isFirst" :rowspan="row.rowspan"
-                            class="border border-slate-200 px-4 py-3 align-middle text-sm text-slate-800 dark:border-white/10 dark:text-slate-200">
-                            {{ row.initiative.name ?? '-' }}
-                        </td>
-                        <td
-                            class="border border-slate-200 px-4 py-3 text-center align-middle dark:border-white/10">
-                            <div v-if="row.relation" class="flex flex-col items-center gap-1">
-                                <component
-                                    :is="getRelationIconComponent(row.relation.type_relation)"
-                                    class="h-6 w-6 text-slate-600 dark:text-slate-400"
-                                />
-                                <span class="text-xs text-slate-600 dark:text-slate-400">
-                                    {{ getRelationLabel(row.relation.type_relation) }}
+                    <template v-for="initiative in filteredInitiatives" :key="initiative.id">
+                        <!-- Initiative Header Row -->
+                        <tr class="bg-slate-100 dark:bg-slate-900/30">
+                            <td colspan="5"
+                                class="border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-800 dark:border-white/10 dark:text-slate-200">
+                                <span class="text-slate-600 dark:text-slate-400">Code:</span>
+                                {{ initiative.code ?? initiative.id ?? '-' }}
+                                <span class="mx-2 text-slate-400">|</span>
+                                <span class="text-slate-600 dark:text-slate-400">Initiative:</span>
+                                {{ initiative.name ?? '-' }}
+                            </td>
+                        </tr>
+                        <!-- Relation Rows -->
+                        <tr v-for="(relation, index) in relationRowsByInitiative(initiative)" :key="`${initiative.id}-${index}`"
+                            class="transition hover:bg-slate-50 dark:hover:bg-white/5">
+                            <td
+                                class="border border-slate-200 px-4 py-3 text-sm text-slate-800 dark:border-white/10 dark:text-slate-200">
+                                <span v-if="relation"
+                                    class="inline-block border border-slate-300 bg-slate-100 px-2 py-0.5 rounded text-slate-700 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100">
+                                    {{ relation.predecessor }}
                                 </span>
-                            </div>
-                            <span v-else class="text-slate-300 dark:text-slate-600">-</span>
-                        </td>
-                        <td
-                            class="border border-slate-200 px-4 py-3 text-sm text-slate-800 dark:border-white/10 dark:text-slate-200">
-                            <span v-if="row.relation"
-                                class="inline-block border border-slate-300 bg-slate-100 px-2 py-0.5 rounded text-slate-700 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100">
-                                {{ row.relation.predecessor }}
-                            </span>
-                            <span v-else class="text-slate-400">-</span>
-                        </td>
+                                <span v-else class="text-slate-400">-</span>
+                            </td>
 
-                        <td
-                            class="border border-slate-200 px-4 py-3 text-sm text-slate-800 dark:border-white/10 dark:text-slate-200">
-                            <span v-if="row.relation" class="inline-block border border-emerald-300 bg-emerald-50 px-2 py-0.5 rounded text-emerald-700 dark:border-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200">
-                                {{ row.relation.successor }}
-                            </span>
-                            <span v-else class="text-slate-400">-</span>
-                        </td>
-                        <td
-                            class="border border-slate-200 px-4 py-3 text-sm text-slate-800 dark:border-white/10 dark:text-slate-200">
-                            {{ row.relation?.justifikasi ?? '-' }}
-                        </td>
-                        <td
-                            class="border border-slate-200 px-4 py-3 text-center align-middle dark:border-white/10">
-                            <button
-                                v-if="row.relation"
-                                type="button"
-                                class="relative z-10 cursor-pointer rounded-full border border-blue-300 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-600 transition hover:bg-blue-100 dark:border-blue-800 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50"
-                                @click="handleEditRelation(row.initiative, row.relation)"
-                            >
-                                Edit
-                            </button>
-                            <span v-else class="text-slate-300 dark:text-slate-600">-</span>
-                        </td>
-                    </tr>
+                            <td
+                                class="border border-slate-200 px-4 py-3 text-sm text-slate-800 dark:border-white/10 dark:text-slate-200">
+                                <span v-if="relation" class="inline-block border border-emerald-300 bg-emerald-50 px-2 py-0.5 rounded text-emerald-700 dark:border-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200">
+                                    {{ relation.successor }}
+                                </span>
+                                <span v-else class="text-slate-400">-</span>
+                            </td>
+                            <td
+                                class="border border-slate-200 px-4 py-3 text-sm text-slate-800 dark:border-white/10 dark:text-slate-200">
+                                {{ relation?.justifikasi ?? '-' }}
+                            </td>
+                            <td
+                                class="border border-slate-200 px-4 py-3 text-center text-sm text-slate-800 dark:border-white/10 dark:text-slate-200">
+                                {{ relation?.model_relasi ?? '-' }}
+                            </td>
+                            <td
+                                class="border border-slate-200 px-4 py-3 text-center align-middle dark:border-white/10">
+                                <button
+                                    v-if="relation"
+                                    type="button"
+                                    class="relative z-10 cursor-pointer rounded-full border border-blue-300 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-600 transition hover:bg-blue-100 dark:border-blue-800 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50"
+                                    @click="handleEditRelation(initiative, relation)"
+                                >
+                                    Edit
+                                </button>
+                                <span v-else class="text-slate-300 dark:text-slate-600">-</span>
+                            </td>
+                        </tr>
+                        <!-- Empty row if no relations -->
+                        <tr v-if="!relationRowsByInitiative(initiative).length"
+                            class="transition hover:bg-slate-50 dark:hover:bg-white/5">
+                            <td colspan="5"
+                                class="border border-slate-200 px-4 py-3 text-center text-sm text-slate-400 dark:border-white/10 dark:text-slate-500">
+                                Tidak ada relasi
+                            </td>
+                        </tr>
+                    </template>
                 </tbody>
             </table>
         </div>
@@ -342,36 +339,5 @@ const relationsByInitiativeId = computed(() => {
 const relationRowsByInitiative = (initiative) => (
     relationsByInitiativeId.value.get(Number(initiative?.id)) ?? []
 );
-
-const initiativeTableRows = computed(() => {
-    const rows = [];
-
-    filteredInitiatives.value.forEach((initiative) => {
-        const relations = relationRowsByInitiative(initiative);
-
-        if (!relations.length) {
-            rows.push({
-                key: `initiative-${initiative.id}-empty`,
-                initiative,
-                relation: null,
-                isFirst: true,
-                rowspan: 1,
-            });
-            return;
-        }
-
-        relations.forEach((relation, index) => {
-            rows.push({
-                key: `initiative-${initiative.id}-relation-${index}`,
-                initiative,
-                relation,
-                isFirst: index === 0,
-                rowspan: relations.length,
-            });
-        });
-    });
-
-    return rows;
-});
 
 </script>
