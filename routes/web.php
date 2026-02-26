@@ -15,6 +15,8 @@ use App\Http\Controllers\MasterData\MasterDataController;
 use App\Http\Controllers\ProgramImplementation\DashboardController;
 use App\Http\Controllers\ProgramImplementation\ProgramImplementationController;
 use App\Http\Controllers\ProgramPlanning\DashboardController as PlanningDashboardController;
+use App\Http\Controllers\ProgramPlanning\ProgramDefinition\DigitalInitiatives\IndexController as ProgramDefinitionDigitalInitiativesController;
+use App\Http\Controllers\ProgramPlanning\ProgramDefinition\ITInitiatives\IndexController as ProgramDefinitionITInitiativesController;
 use App\Http\Controllers\ProgramPlanning\ProgramPlanningController;
 use App\Http\Controllers\ProgramPlanning\ProgramDefinition\IndexController as ProgramDefinitionController;
 use App\Http\Controllers\Roadmap\RoadmapController;
@@ -56,6 +58,8 @@ Route::middleware(['auth', 'approved'])->group(function () {
     Route::get('/dashboard-monitoring', PlanningDashboardController::class)->name('dashboard-monitoring');
     Route::get('/program-planning/rsti-sub-holding', [ProgramPlanningController::class, 'rstiSubHolding'])->name('program-planning.rsti-sub-holding');
     Route::get('/program-planning/program-definition', ProgramDefinitionController::class)->name('program-planning.program-definition');
+    Route::get('/program-planning/program-definition/digital-initiatives', ProgramDefinitionDigitalInitiativesController::class)->name('program-planning.program-definition.digital-initiatives');
+    Route::get('/program-planning/program-definition/it-initiatives', ProgramDefinitionITInitiativesController::class)->name('program-planning.program-definition.it-initiatives');
     Route::get('/program-planning/initiative-relation', [InitiativeRelationController::class, 'index'])->name('program-implementation.initiative-relation');
     Route::redirect('/program-planning/initiative', '/program-planning/initiative-relation');
     Route::get('/program-implementation', ProgramImplementationController::class)->name('program-implementation.index');

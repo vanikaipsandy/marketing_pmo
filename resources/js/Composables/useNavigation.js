@@ -35,10 +35,18 @@ export function useNavigation() {
                 active: (url) => url.startsWith('/program-planning/rsti-sub-holding'),
             },
             {
-                label: 'Program Definition',
-                href: '/program-planning/program-definition',
+                label: 'Program Definition Digital Initiatives',
+                href: '/program-planning/program-definition/digital-initiatives',
                 icon: DocumentTextIcon,
-                active: (url) => url.startsWith('/program-planning/program-definition'),
+                active: (url) =>
+                    url.startsWith('/program-planning/program-definition/digital-initiatives')
+                    || url === '/program-planning/program-definition',
+            },
+            {
+                label: 'Program Definition IT Initiatives',
+                href: '/program-planning/program-definition/it-initiatives',
+                icon: DocumentTextIcon,
+                active: (url) => url.startsWith('/program-planning/program-definition/it-initiatives'),
             },
             {
                 label: 'Initiative Relation',

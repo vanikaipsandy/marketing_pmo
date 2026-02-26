@@ -9,7 +9,8 @@ const currentUrl = computed(() => page.url);
 
 const planningChildHrefs = [
     '/program-planning/rsti-sub-holding',
-    '/program-planning/program-definition',
+    '/program-planning/program-definition/digital-initiatives',
+    '/program-planning/program-definition/it-initiatives',
     '/program-planning/initiative-relation',
 ];
 const implementationChildHrefs = [
