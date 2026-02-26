@@ -73,8 +73,12 @@ Route::middleware(['auth', 'approved'])->group(function () {
     Route::get('/architecture', fn () => Inertia::render('Placeholder/Index', [
         'title' => 'Architecture',
     ]))->name('architecture.index');
+
+    // Program Evaluation
     Route::get('/program-evalution', [TrsReviewPCController::class, 'index'])->name('program-evaluation.index');
     Route::get('/program-evalution/{trsReviewPC}', [TrsReviewPCController::class, 'show'])->name('program-evaluation.show');
+
+    // Strategic Pillars
     Route::get('/strategic-pillars/{goal?}', [StrategicPillarController::class, 'index'])->name('strategic-pillars.index');
 
     // Digital Initiatives
