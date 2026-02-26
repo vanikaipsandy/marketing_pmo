@@ -258,7 +258,15 @@ class InitiativeRelationController extends Controller
     private function initiativeOptions(): array
     {
         return MstInitiative::query()
-            ->select(['id', 'code', 'name', 'tipe_initiative'])
+            ->select([
+                'id',
+                'code',
+                'name',
+                'tipe_initiative',
+                'description',
+                'status',
+                'business_unit',
+            ])
             ->orderBy('code')
             ->orderBy('name')
             ->get()
@@ -267,6 +275,9 @@ class InitiativeRelationController extends Controller
                 'code' => $initiative->code,
                 'name' => $initiative->name,
                 'tipe_initiative' => $initiative->tipe_initiative,
+                'description' => $initiative->description,
+                'status' => $initiative->status,
+                'business_unit' => $initiative->business_unit,
             ])
             ->values()
             ->all();

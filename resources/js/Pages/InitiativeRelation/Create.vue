@@ -25,12 +25,12 @@
                 <form class="space-y-6 p-6" @submit.prevent="submit">
                     <!-- Work Package 1 Section -->
                     <div class="rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-[#131313]">
-                        <label class="mb-3 block text-sm font-semibold text-slate-700 dark:text-slate-300">Work Package 1</label>
+                        <label class="mb-3 block text-sm font-semibold text-slate-700 dark:text-slate-300">Pilih Initiative</label>
                         <select
                             v-model="form.initiative_code_row"
                             class="h-12 w-full rounded-md border-slate-300 bg-white px-4 text-base shadow-sm focus:border-slate-400 focus:ring-slate-300 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-200"
                         >
-                            <option value="">Pilih work package</option>
+                            <option value="">Pilih Initiative</option>
                             <option v-for="initiative in initiativeOptions" :key="initiative.id" :value="initiative.id">
                                 {{ initiativeLabel(initiative) }}
                             </option>
@@ -39,28 +39,41 @@
                     </div>
 
                     <!-- Work Package 1 Details -->
-                    <div v-if="selectedInitiativeRow" class="rounded-lg border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-900/30 dark:bg-emerald-900/10">
-                        <h3 class="mb-4 text-sm font-semibold text-emerald-900 dark:text-emerald-200">Detail Work Package 1</h3>
-                        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            <div>
-                                <p class="text-xs font-medium text-emerald-700 dark:text-emerald-300">Project Charter</p>
-                                <p class="mt-1 text-sm text-emerald-900 dark:text-emerald-100">{{ selectedInitiativeRow.project_charter || '-' }}</p>
-                            </div>
-                            <div>
-                                <p class="text-xs font-medium text-emerald-700 dark:text-emerald-300">Roadmap</p>
-                                <p class="mt-1 text-sm text-emerald-900 dark:text-emerald-100">{{ selectedInitiativeRow.roadmap || '-' }}</p>
-                            </div>
+                    <div v-if="selectedInitiativeRow" class="rounded-lg border border-emerald-200 bg-emerald-50 overflow-hidden dark:border-emerald-900/30 dark:bg-emerald-900/10">
+                        <div class="overflow-x-auto">
+                            <table class="w-full border-collapse text-xs">
+                                <thead>
+                                    <tr class="bg-emerald-100/70 dark:bg-emerald-900/30">
+                                        <th class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-left font-semibold text-emerald-900 dark:text-emerald-200 whitespace-nowrap">Code</th>
+                                        <th class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-left font-semibold text-emerald-900 dark:text-emerald-200 whitespace-nowrap">Name</th>
+                                        <th class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-left font-semibold text-emerald-900 dark:text-emerald-200 whitespace-nowrap">Description</th>
+                                        <th class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-left font-semibold text-emerald-900 dark:text-emerald-200 whitespace-nowrap">Source</th>
+                                        <th class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-left font-semibold text-emerald-900 dark:text-emerald-200 whitespace-nowrap">Type</th>
+                                        <th class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-left font-semibold text-emerald-900 dark:text-emerald-200 whitespace-nowrap">BU</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="hover:bg-emerald-50/50 dark:hover:bg-emerald-900/15">
+                                        <td class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-emerald-900 dark:text-emerald-100 whitespace-nowrap">{{ selectedInitiativeRow.code || '-' }}</td>
+                                        <td class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-emerald-900 dark:text-emerald-100 max-w-xs truncate">{{ selectedInitiativeRow.name || '-' }}</td>
+                                        <td class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-emerald-900 dark:text-emerald-100 whitespace-normal break-words">{{ selectedInitiativeRow.description || '-' }}</td>
+                                        <td class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-emerald-900 dark:text-emerald-100 whitespace-nowrap">{{ selectedInitiativeRow.status || '-' }}</td>
+                                        <td class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-emerald-900 dark:text-emerald-100 whitespace-nowrap">{{ formatInitiativeType(selectedInitiativeRow.tipe_initiative) }}</td>
+                                        <td class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-emerald-900 dark:text-emerald-100 whitespace-nowrap">{{ selectedInitiativeRow.business_unit || '-' }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
 
                     <!-- Work Package 2 Section -->
                     <div class="rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-[#131313]">
-                        <label class="mb-3 block text-sm font-semibold text-slate-700 dark:text-slate-300">Work Package 2</label>
+                        <label class="mb-3 block text-sm font-semibold text-slate-700 dark:text-slate-300">Pilih Initiative</label>
                         <select
                             v-model="form.initiative_code_column"
                             class="h-12 w-full rounded-md border-slate-300 bg-white px-4 text-base shadow-sm focus:border-slate-400 focus:ring-slate-300 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-200"
                         >
-                            <option value="">Pilih work package</option>
+                            <option value="">Pilih Initiative</option>
                             <option v-for="initiative in initiativeOptions" :key="initiative.id" :value="initiative.id">
                                 {{ initiativeLabel(initiative) }}
                             </option>
@@ -69,17 +82,30 @@
                     </div>
 
                     <!-- Work Package 2 Details -->
-                    <div v-if="selectedInitiativeColumn" class="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-900/30 dark:bg-blue-900/10">
-                        <h3 class="mb-4 text-sm font-semibold text-blue-900 dark:text-blue-200">Detail Work Package 2</h3>
-                        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            <div>
-                                <p class="text-xs font-medium text-blue-700 dark:text-blue-300">Project Charter</p>
-                                <p class="mt-1 text-sm text-blue-900 dark:text-blue-100">{{ selectedInitiativeColumn.project_charter || '-' }}</p>
-                            </div>
-                            <div>
-                                <p class="text-xs font-medium text-blue-700 dark:text-blue-300">Roadmap</p>
-                                <p class="mt-1 text-sm text-blue-900 dark:text-blue-100">{{ selectedInitiativeColumn.roadmap || '-' }}</p>
-                            </div>
+                    <div v-if="selectedInitiativeColumn" class="rounded-lg border border-blue-200 bg-blue-50 overflow-hidden dark:border-blue-900/30 dark:bg-blue-900/10">
+                        <div class="overflow-x-auto">
+                            <table class="w-full border-collapse text-xs">
+                                <thead>
+                                    <tr class="bg-blue-100/70 dark:bg-blue-900/30">
+                                        <th class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-left font-semibold text-blue-900 dark:text-blue-200 whitespace-nowrap">Code</th>
+                                        <th class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-left font-semibold text-blue-900 dark:text-blue-200 whitespace-nowrap">Name</th>
+                                        <th class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-left font-semibold text-blue-900 dark:text-blue-200 whitespace-nowrap">Description</th>
+                                        <th class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-left font-semibold text-blue-900 dark:text-blue-200 whitespace-nowrap">Source</th>
+                                        <th class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-left font-semibold text-blue-900 dark:text-blue-200 whitespace-nowrap">Type</th>
+                                        <th class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-left font-semibold text-blue-900 dark:text-blue-200 whitespace-nowrap">BU</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="hover:bg-blue-50/50 dark:hover:bg-blue-900/15">
+                                        <td class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-blue-900 dark:text-blue-100 whitespace-nowrap">{{ selectedInitiativeColumn.code || '-' }}</td>
+                                        <td class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-blue-900 dark:text-blue-100 max-w-xs truncate">{{ selectedInitiativeColumn.name || '-' }}</td>
+                                        <td class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-blue-900 dark:text-blue-100 whitespace-normal break-words">{{ selectedInitiativeColumn.description || '-' }}</td>
+                                        <td class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-blue-900 dark:text-blue-100 whitespace-nowrap">{{ selectedInitiativeColumn.status || '-' }}</td>
+                                        <td class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-blue-900 dark:text-blue-100 whitespace-nowrap">{{ formatInitiativeType(selectedInitiativeColumn.tipe_initiative) }}</td>
+                                        <td class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-blue-900 dark:text-blue-100 whitespace-nowrap">{{ selectedInitiativeColumn.business_unit || '-' }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
 
@@ -214,6 +240,14 @@ const getSelectedLabel = (type) => {
     if (!initiativeId) return null;
     const initiative = props.initiativeOptions.find(opt => opt.id == initiativeId);
     return initiative ? initiativeLabel(initiative) : null;
+};
+
+const formatInitiativeType = (typeValue) => {
+    const typeMap = {
+        1: 'Digital',
+        2: 'IT',
+    };
+    return typeMap[typeValue] || '-';
 };
 
 const submit = () => {

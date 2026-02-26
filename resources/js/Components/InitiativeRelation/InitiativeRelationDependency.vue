@@ -41,30 +41,6 @@
 
         <div>
             <table class="w-full min-w-[1120px] border-collapse text-sm">
-                <thead class="bg-slate-50 dark:bg-white/5">
-                    <tr>
-                        <th
-                            class="border border-slate-200 bg-slate-50 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-400">
-                            Work Package 1
-                        </th>
-                        <th
-                            class="border border-slate-200 bg-slate-50 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-400">
-                            Work Package 2
-                        </th>
-                        <th
-                            class="border border-slate-200 bg-slate-50 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-400">
-                            Justifikasi
-                        </th>
-                        <th
-                            class="border border-slate-200 bg-slate-50 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-400">
-                            Version
-                        </th>
-                        <th
-                            class="w-20 border border-slate-200 bg-slate-50 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-400">
-                            Action
-                        </th>
-                    </tr>
-                </thead>
                 <tbody>
                     <tr v-if="!filteredInitiatives.length">
                         <td colspan="5"
@@ -83,6 +59,29 @@
                                 <span class="text-slate-600 dark:text-slate-400">Initiative:</span>
                                 {{ initiative.name ?? '-' }}
                             </td>
+                        </tr>
+                        <!-- Column Headers for each Initiative -->
+                        <tr class="bg-slate-50 dark:bg-white/5">
+                            <th
+                                class="border border-slate-200 bg-slate-50 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-400">
+                                Predecessor
+                            </th>
+                            <th
+                                class="border border-slate-200 bg-slate-50 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-400">
+                                Successor
+                            </th>
+                            <th
+                                class="border border-slate-200 bg-slate-50 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-400">
+                                Justifikasi
+                            </th>
+                            <th
+                                class="border border-slate-200 bg-slate-50 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-400">
+                                Model Relasi
+                            </th>
+                            <th
+                                class="w-20 border border-slate-200 bg-slate-50 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-400">
+                                Action
+                            </th>
                         </tr>
                         <!-- Relation Rows -->
                         <tr v-for="(relation, index) in relationRowsByInitiative(initiative)" :key="`${initiative.id}-${index}`"
