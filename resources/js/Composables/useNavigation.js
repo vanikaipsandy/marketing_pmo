@@ -48,9 +48,9 @@ export function useNavigation() {
             },
             {
                 label: 'Program Evaluation',
-                href: '/program-information',
+                href: '/program-evalution',
                 icon: DocumentTextIcon,
-                active: (url) => url.startsWith('/program-information'),
+                active: (url) => url.startsWith('/program-evalution'),
             },
             {
                 label: 'Program Implementation',

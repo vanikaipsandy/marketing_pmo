@@ -6,7 +6,6 @@ use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Auth\SsoController;
 use App\Http\Controllers\CompanyProfile\CompanyController;
 use App\Http\Controllers\DigitalInitiative\DigitalInitiativeController;
-use App\Http\Controllers\DigitalInitiative\TrsDigitalInitiativeController;
 use App\Http\Controllers\InitiativeRelation\InitiativeRelationController;
 use App\Http\Controllers\ITInitiative\CharterController;
 use App\Http\Controllers\ITInitiative\ITInitiativeController;
@@ -17,6 +16,7 @@ use App\Http\Controllers\ProgramPlanning\DashboardController as PlanningDashboar
 use App\Http\Controllers\ProgramPlanning\ProgramPlanningController;
 use App\Http\Controllers\Roadmap\RoadmapController;
 use App\Http\Controllers\StrategicPillar\StrategicPillarController;
+use App\Http\Controllers\ProgramEvaluation\TrsReviewPCController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -65,13 +65,13 @@ Route::middleware(['auth', 'approved'])->group(function () {
     Route::get('/architecture', fn () => Inertia::render('Placeholder/Index', [
         'title' => 'Architecture',
     ]))->name('architecture.index');
-    Route::get('/program-information', fn () => Inertia::render('Placeholder/Index', [
-        'title' => 'Program Information',
-    ]))->name('program-information.index');
+    Route::get('/program-evalution', [TrsReviewPCController::class, 'index'])->name('program-evaluation.index');
+    Route::get('/program-evalution/{trsReviewPC}', [TrsReviewPCController::class, 'show'])->name('program-evaluation.show');
     Route::get('/strategic-pillars/{goal?}', [StrategicPillarController::class, 'index'])->name('strategic-pillars.index');
 
     // Digital Initiatives
     Route::resource('digital-initiatives', DigitalInitiativeController::class);
+
     // IT Initiatives & Charters
     // Roadmap — dedicated controller (all programs & per-program views)
     Route::get('/roadmap', [RoadmapController::class, 'index'])->name('roadmap.index');
