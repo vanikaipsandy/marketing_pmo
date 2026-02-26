@@ -28,7 +28,7 @@
                         <label class="mb-3 block text-sm font-semibold text-slate-700 dark:text-slate-300">Work Package 1</label>
                         <select
                             v-model="form.initiative_code_row"
-                            class="h-12 w-full rounded-md border-slate-300 bg-white px-4 text-base shadow-sm focus:border-slate-400 focus:ring-slate-300 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-200"
+                            class="h-12 w-full rounded-md border-slate-300 bg-white px-4 text-sm shadow-sm focus:border-slate-400 focus:ring-slate-300 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-200"
                         >
                             <option value="">Pilih work package</option>
                             <option v-for="initiative in initiativeOptions" :key="initiative.id" :value="initiative.id">
@@ -41,7 +41,15 @@
                     <!-- Work Package 1 Details -->
                     <div v-if="selectedInitiativeRow" class="rounded-lg border border-emerald-200 bg-emerald-50 overflow-hidden dark:border-emerald-900/30 dark:bg-emerald-900/10">
                         <div class="overflow-x-auto">
-                            <table class="w-full border-collapse text-xs">
+                            <table class="w-full table-fixed border-collapse text-xs">
+                                <colgroup>
+                                    <col class="w-[6%]">
+                                    <col class="w-[22%]">
+                                    <col class="w-[44%]">
+                                    <col class="w-[12%]">
+                                    <col class="w-[6%]">
+                                    <col class="w-[10%]">
+                                </colgroup>
                                 <thead>
                                     <tr class="bg-emerald-100/70 dark:bg-emerald-900/30">
                                         <th class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-left font-semibold text-emerald-900 dark:text-emerald-200 whitespace-nowrap">Code</th>
@@ -55,14 +63,50 @@
                                 <tbody>
                                     <tr class="hover:bg-emerald-50/50 dark:hover:bg-emerald-900/15">
                                         <td class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-emerald-900 dark:text-emerald-100 whitespace-nowrap">{{ selectedInitiativeRow.code || '-' }}</td>
-                                        <td class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-emerald-900 dark:text-emerald-100 max-w-xs truncate">{{ selectedInitiativeRow.name || '-' }}</td>
+                                        <td class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-emerald-900 dark:text-emerald-100 whitespace-normal break-words">{{ selectedInitiativeRow.name || '-' }}</td>
                                         <td class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-emerald-900 dark:text-emerald-100 whitespace-normal break-words">{{ selectedInitiativeRow.description || '-' }}</td>
-                                        <td class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-emerald-900 dark:text-emerald-100 whitespace-nowrap">{{ selectedInitiativeRow.status || '-' }}</td>
+                                        <td class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-emerald-900 dark:text-emerald-100 whitespace-normal break-words">{{ selectedInitiativeRow.status || '-' }}</td>
                                         <td class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-emerald-900 dark:text-emerald-100 whitespace-nowrap">{{ formatInitiativeType(selectedInitiativeRow.tipe_initiative) }}</td>
-                                        <td class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-emerald-900 dark:text-emerald-100 whitespace-nowrap">{{ selectedInitiativeRow.business_unit || '-' }}</td>
+                                        <td class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-emerald-900 dark:text-emerald-100 whitespace-nowrap">{{ selectedInitiativeRow.business_unit_name || selectedInitiativeRow.business_unit || '-' }}</td>
                                     </tr>
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="border-t border-emerald-200 dark:border-emerald-900/30">
+                            <div class="px-3 py-2 bg-emerald-100/70 dark:bg-emerald-900/30 text-[11px] font-semibold uppercase tracking-wide text-emerald-900 dark:text-emerald-200">
+                                Relasi Initiative
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full table-fixed border-collapse text-[11px]">
+                                    <colgroup>
+                                        <col class="w-[22%]">
+                                        <col class="w-[22%]">
+                                        <col class="w-[34%]">
+                                        <col class="w-[22%]">
+                                    </colgroup>
+                                    <thead>
+                                        <tr class="bg-emerald-100/70 dark:bg-emerald-900/30">
+                                            <th class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-left font-semibold text-emerald-900 dark:text-emerald-200 whitespace-nowrap">Predecessor</th>
+                                            <th class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-left font-semibold text-emerald-900 dark:text-emerald-200 whitespace-nowrap">Successor</th>
+                                            <th class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-left font-semibold text-emerald-900 dark:text-emerald-200 whitespace-nowrap">Justifikasi</th>
+                                            <th class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-left font-semibold text-emerald-900 dark:text-emerald-200 whitespace-nowrap">Model Relasi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-if="!selectedRowRelations.length">
+                                            <td colspan="4" class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-2 text-center text-emerald-700 dark:text-emerald-200">
+                                                Belum ada relasi
+                                            </td>
+                                        </tr>
+                                        <tr v-for="relation in selectedRowRelations" :key="relation.id" class="hover:bg-emerald-50/50 dark:hover:bg-emerald-900/15">
+                                            <td class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-emerald-900 dark:text-emerald-100 whitespace-normal break-words">{{ relation.predecessorLabel }}</td>
+                                            <td class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-emerald-900 dark:text-emerald-100 whitespace-normal break-words">{{ relation.successorLabel }}</td>
+                                            <td class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-emerald-900 dark:text-emerald-100 whitespace-normal break-words">{{ relation.justifikasi }}</td>
+                                            <td class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-emerald-900 dark:text-emerald-100 whitespace-nowrap">{{ relation.modelRelasi }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
 
@@ -71,7 +115,7 @@
                         <label class="mb-3 block text-sm font-semibold text-slate-700 dark:text-slate-300">Work Package 2</label>
                         <select
                             v-model="form.initiative_code_column"
-                            class="h-12 w-full rounded-md border-slate-300 bg-white px-4 text-base shadow-sm focus:border-slate-400 focus:ring-slate-300 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-200"
+                            class="h-12 w-full rounded-md border-slate-300 bg-white px-4 text-sm shadow-sm focus:border-slate-400 focus:ring-slate-300 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-200"
                         >
                             <option value="">Pilih work package</option>
                             <option v-for="initiative in initiativeOptions" :key="initiative.id" :value="initiative.id">
@@ -84,7 +128,15 @@
                     <!-- Work Package 2 Details -->
                     <div v-if="selectedInitiativeColumn" class="rounded-lg border border-blue-200 bg-blue-50 overflow-hidden dark:border-blue-900/30 dark:bg-blue-900/10">
                         <div class="overflow-x-auto">
-                            <table class="w-full border-collapse text-xs">
+                            <table class="w-full table-fixed border-collapse text-xs">
+                                <colgroup>
+                                    <col class="w-[6%]">
+                                    <col class="w-[22%]">
+                                    <col class="w-[44%]">
+                                    <col class="w-[12%]">
+                                    <col class="w-[6%]">
+                                    <col class="w-[10%]">
+                                </colgroup>
                                 <thead>
                                     <tr class="bg-blue-100/70 dark:bg-blue-900/30">
                                         <th class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-left font-semibold text-blue-900 dark:text-blue-200 whitespace-nowrap">Code</th>
@@ -98,14 +150,50 @@
                                 <tbody>
                                     <tr class="hover:bg-blue-50/50 dark:hover:bg-blue-900/15">
                                         <td class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-blue-900 dark:text-blue-100 whitespace-nowrap">{{ selectedInitiativeColumn.code || '-' }}</td>
-                                        <td class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-blue-900 dark:text-blue-100 max-w-xs truncate">{{ selectedInitiativeColumn.name || '-' }}</td>
+                                        <td class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-blue-900 dark:text-blue-100 whitespace-normal break-words">{{ selectedInitiativeColumn.name || '-' }}</td>
                                         <td class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-blue-900 dark:text-blue-100 whitespace-normal break-words">{{ selectedInitiativeColumn.description || '-' }}</td>
-                                        <td class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-blue-900 dark:text-blue-100 whitespace-nowrap">{{ selectedInitiativeColumn.status || '-' }}</td>
+                                        <td class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-blue-900 dark:text-blue-100 whitespace-normal break-words">{{ selectedInitiativeColumn.status || '-' }}</td>
                                         <td class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-blue-900 dark:text-blue-100 whitespace-nowrap">{{ formatInitiativeType(selectedInitiativeColumn.tipe_initiative) }}</td>
-                                        <td class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-blue-900 dark:text-blue-100 whitespace-nowrap">{{ selectedInitiativeColumn.business_unit || '-' }}</td>
+                                        <td class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-blue-900 dark:text-blue-100 whitespace-nowrap">{{ selectedInitiativeColumn.business_unit_name || selectedInitiativeColumn.business_unit || '-' }}</td>
                                     </tr>
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="border-t border-blue-200 dark:border-blue-900/30">
+                            <div class="px-3 py-2 bg-blue-100/70 dark:bg-blue-900/30 text-[11px] font-semibold uppercase tracking-wide text-blue-900 dark:text-blue-200">
+                                Relasi Initiative
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full table-fixed border-collapse text-[11px]">
+                                    <colgroup>
+                                        <col class="w-[22%]">
+                                        <col class="w-[22%]">
+                                        <col class="w-[34%]">
+                                        <col class="w-[22%]">
+                                    </colgroup>
+                                    <thead>
+                                        <tr class="bg-blue-100/70 dark:bg-blue-900/30">
+                                            <th class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-left font-semibold text-blue-900 dark:text-blue-200 whitespace-nowrap">Predecessor</th>
+                                            <th class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-left font-semibold text-blue-900 dark:text-blue-200 whitespace-nowrap">Successor</th>
+                                            <th class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-left font-semibold text-blue-900 dark:text-blue-200 whitespace-nowrap">Justifikasi</th>
+                                            <th class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-left font-semibold text-blue-900 dark:text-blue-200 whitespace-nowrap">Model Relasi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-if="!selectedColumnRelations.length">
+                                            <td colspan="4" class="border border-blue-200 dark:border-blue-900/30 px-2 py-2 text-center text-blue-700 dark:text-blue-200">
+                                                Belum ada relasi
+                                            </td>
+                                        </tr>
+                                        <tr v-for="relation in selectedColumnRelations" :key="relation.id" class="hover:bg-blue-50/50 dark:hover:bg-blue-900/15">
+                                            <td class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-blue-900 dark:text-blue-100 whitespace-normal break-words">{{ relation.predecessorLabel }}</td>
+                                            <td class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-blue-900 dark:text-blue-100 whitespace-normal break-words">{{ relation.successorLabel }}</td>
+                                            <td class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-blue-900 dark:text-blue-100 whitespace-normal break-words">{{ relation.justifikasi }}</td>
+                                            <td class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-blue-900 dark:text-blue-100 whitespace-nowrap">{{ relation.modelRelasi }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
 
@@ -205,6 +293,10 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
+    initiativeRelations: {
+        type: Array,
+        default: () => [],
+    },
     typeRelationOptions: {
         type: Array,
         default: () => [],
@@ -242,6 +334,35 @@ const initiativeLabel = (initiative) => {
     const name = initiative?.name ?? '';
     return name ? `${code} - ${name}` : code;
 };
+
+const buildRelations = (initiativeId) => {
+    if (!initiativeId) return [];
+    const id = Number(initiativeId);
+
+    return props.initiativeRelations
+        .filter(relation => (
+            Number(relation.initiative_code_row) === id
+            || Number(relation.initiative_code_column) === id
+        ))
+        .map((relation) => {
+            const rowInitiative = relation.initiative_row;
+            const columnInitiative = relation.initiative_column;
+            const rowFallback = relation.initiative_code_row;
+            const columnFallback = relation.initiative_code_column;
+            const justifikasi = relation.justifikasi ?? relation.description ?? '-';
+
+            return {
+                id: relation.id ?? `${relation.initiative_code_row}-${relation.initiative_code_column}-${relation.type_relation}-${relation.model_relasi}`,
+                predecessorLabel: rowInitiative ? initiativeLabel(rowInitiative) : (rowFallback ?? '-'),
+                successorLabel: columnInitiative ? initiativeLabel(columnInitiative) : (columnFallback ?? '-'),
+                modelRelasi: relation.model_relasi ?? '-',
+                justifikasi,
+            };
+        });
+};
+
+const selectedRowRelations = computed(() => buildRelations(form.initiative_code_row));
+const selectedColumnRelations = computed(() => buildRelations(form.initiative_code_column));
 
 const getSelectedLabel = (type) => {
     const initiativeId = type === 'row' ? form.initiative_code_row : form.initiative_code_column;

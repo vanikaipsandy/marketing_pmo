@@ -60,6 +60,7 @@ class InitiativeRelationController extends Controller
         if ($request->wantsJson()) {
             return response()->json([
                 'initiativeOptions' => $this->initiativeOptions(),
+                'initiativeRelations' => $this->initiativeRelations(),
                 'typeRelationOptions' => $this->typeRelationOptions(),
                 'modelRelationOptions' => $this->modelRelationOptions(),
             ]);
@@ -67,6 +68,7 @@ class InitiativeRelationController extends Controller
 
         return Inertia::render('InitiativeRelation/Create', [
             'initiativeOptions' => $this->initiativeOptions(),
+            'initiativeRelations' => $this->initiativeRelations(),
             'typeRelationOptions' => $this->typeRelationOptions(),
             'modelRelationOptions' => $this->modelRelationOptions(),
         ]);
@@ -129,6 +131,7 @@ class InitiativeRelationController extends Controller
             return response()->json([
                 'data' => $this->serializeRelation($initiativeRelation),
                 'initiativeOptions' => $this->initiativeOptions(),
+                'initiativeRelations' => $this->initiativeRelations(),
                 'typeRelationOptions' => $this->typeRelationOptions(),
                 'modelRelationOptions' => $this->modelRelationOptions(),
             ]);
@@ -137,6 +140,7 @@ class InitiativeRelationController extends Controller
         return Inertia::render('InitiativeRelation/Edit', [
             'initiativeRelation' => $this->serializeRelation($initiativeRelation),
             'initiativeOptions' => $this->initiativeOptions(),
+            'initiativeRelations' => $this->initiativeRelations(),
             'typeRelationOptions' => $this->typeRelationOptions(),
             'modelRelationOptions' => $this->modelRelationOptions(),
         ]);
@@ -267,6 +271,7 @@ class InitiativeRelationController extends Controller
                 'status',
                 'business_unit',
             ])
+            ->with(['organization:id,name'])
             ->orderBy('code')
             ->orderBy('name')
             ->get()
@@ -278,7 +283,22 @@ class InitiativeRelationController extends Controller
                 'description' => $initiative->description,
                 'status' => $initiative->status,
                 'business_unit' => $initiative->business_unit,
+                'business_unit_name' => $initiative->organization?->name,
             ])
+            ->values()
+            ->all();
+    }
+
+    private function initiativeRelations(): array
+    {
+        return MstInitiativeRelation::query()
+            ->with([
+                'initiativeRow:id,code,name',
+                'initiativeColumn:id,code,name',
+            ])
+            ->orderByDesc('id')
+            ->get()
+            ->map(fn (MstInitiativeRelation $relation) => $this->serializeRelation($relation))
             ->values()
             ->all();
     }
@@ -286,12 +306,8 @@ class InitiativeRelationController extends Controller
     private function typeRelationOptions(): array
     {
         return [
-            ['value' => 1, 'label' => 'TBC'],
-            ['value' => 2, 'label' => 'Composition Relation'],
-            ['value' => 3, 'label' => 'Aggregation Relation'],
-            ['value' => 4, 'label' => 'Flow Relation'],
-            ['value' => 5, 'label' => 'Specialization Relation'],
-            ['value' => 6, 'label' => 'Association Relation'],
+            ['value' => 1, 'label' => 'Predecessor'],
+            ['value' => 2, 'label' => 'Successor'],
         ];
     }
 
