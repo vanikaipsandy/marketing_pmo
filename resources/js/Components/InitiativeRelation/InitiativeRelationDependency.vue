@@ -86,16 +86,17 @@
                             class="border border-slate-200 px-4 py-3 text-center align-middle text-sm text-slate-800 dark:border-white/10 dark:text-slate-200">
                             {{ row.initiative.code ?? row.initiative.id ?? '-' }}
                         </td>
-                        <td
-                            class="border border-slate-200 px-4 py-3 text-sm text-slate-800 dark:border-white/10 dark:text-slate-200">
+                        <td v-if="row.isFirst" :rowspan="row.rowspan"
+                            class="border border-slate-200 px-4 py-3 align-middle text-sm text-slate-800 dark:border-white/10 dark:text-slate-200">
                             {{ row.initiative.name ?? '-' }}
                         </td>
                         <td
                             class="border border-slate-200 px-4 py-3 text-center align-middle dark:border-white/10">
                             <div v-if="row.relation" class="flex flex-col items-center gap-1">
-                                <div class="text-2xl">
-                                    {{ getRelationIcon(row.relation.type_relation) }}
-                                </div>
+                                <component
+                                    :is="getRelationIconComponent(row.relation.type_relation)"
+                                    class="h-6 w-6 text-slate-600 dark:text-slate-400"
+                                />
                                 <span class="text-xs text-slate-600 dark:text-slate-400">
                                     {{ getRelationLabel(row.relation.type_relation) }}
                                 </span>
@@ -143,6 +144,14 @@
 
 <script setup>
 import { computed, ref } from 'vue';
+import {
+    QuestionMarkCircleIcon,
+    CubeIcon,
+    CircleStackIcon,
+    ArrowTrendingUpIcon,
+    ArrowUpIcon,
+    LinkIcon,
+} from '@heroicons/vue/24/outline';
 
 const props = defineProps({
     mstInitiatives: {
@@ -169,12 +178,12 @@ const handleEditRelation = (initiative, relation) => {
 };
 
 const relationTypeConfig = {
-    1: { label: 'TBC', icon: '❓' },
-    2: { label: 'Composition', icon: '◆→' },
-    3: { label: 'Aggregation', icon: '◇→' },
-    4: { label: 'Flow', icon: '↗' },
-    5: { label: 'Specialization', icon: '⬆' },
-    6: { label: 'Association', icon: '↔' },
+    1: { label: 'TBC', icon: QuestionMarkCircleIcon },
+    2: { label: 'Composition', icon: CubeIcon },
+    3: { label: 'Aggregation', icon: CircleStackIcon },
+    4: { label: 'Flow', icon: ArrowTrendingUpIcon },
+    5: { label: 'Specialization', icon: ArrowUpIcon },
+    6: { label: 'Association', icon: LinkIcon },
 };
 
 const getRelationLabel = (typeRelation) => {
@@ -182,9 +191,9 @@ const getRelationLabel = (typeRelation) => {
     return relationTypeConfig[key]?.label ?? 'Unknown';
 };
 
-const getRelationIcon = (typeRelation) => {
+const getRelationIconComponent = (typeRelation) => {
     const key = typeRelation != null ? Number(typeRelation) : null;
-    return relationTypeConfig[key]?.icon ?? '?';
+    return relationTypeConfig[key]?.icon ?? QuestionMarkCircleIcon;
 };
 
 const modelRelasiOptions = computed(() => {
