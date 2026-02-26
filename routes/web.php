@@ -54,14 +54,22 @@ Route::middleware(['auth', 'approved'])->group(function () {
     Route::get('/dashboard-monitoring', PlanningDashboardController::class)->name('dashboard-monitoring');
     Route::get('/program-planning/rsti-sub-holding', [ProgramPlanningController::class, 'rstiSubHolding'])->name('program-planning.rsti-sub-holding');
     Route::get('/program-planning/program-definition', [ProgramPlanningController::class, 'programDefinition'])->name('program-planning.program-definition');
-    Route::get('/program-planning/initiative-relation', [InitiativeRelationController::class, 'index'])->name('program-implementation.initiative-relation');
+    Route::get('/program-planning/initiative-relation', fn () => redirect()->route('initiative-relations.index'))
+        ->name('program-planning.initiative-relation');
     Route::redirect('/program-planning/initiative', '/program-planning/initiative-relation');
     Route::get('/program-implementation', ProgramImplementationController::class)->name('program-implementation.index');
     
     Route::get('/program-implementation/budgeting', fn () => Inertia::render('Placeholder/Index', [
         'title' => 'Budgeting',
     ]))->name('program-implementation.budgeting');
-    Route::get('/program-implementation/initiative-relation', [InitiativeRelationController::class, 'index'])->name('program-implementation.initiative-relation');
+    Route::prefix('/program-implementation/initiative-relation')->name('initiative-relations.')->group(function () {
+        Route::get('/', [InitiativeRelationController::class, 'index'])->name('index');
+        Route::get('/create', [InitiativeRelationController::class, 'create'])->name('create');
+        Route::post('/', [InitiativeRelationController::class, 'store'])->name('store');
+        Route::get('/{initiativeRelation}/edit', [InitiativeRelationController::class, 'edit'])->name('edit');
+        Route::put('/{initiativeRelation}', [InitiativeRelationController::class, 'update'])->name('update');
+        Route::delete('/{initiativeRelation}', [InitiativeRelationController::class, 'destroy'])->name('destroy');
+    });
     Route::get('/architecture', fn () => Inertia::render('Placeholder/Index', [
         'title' => 'Architecture',
     ]))->name('architecture.index');

@@ -3,19 +3,39 @@
         class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717]">
         <div
             class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 px-5 py-4 dark:border-white/10">
-            <div>
-                <h2 class="text-base font-semibold text-slate-900 dark:text-white">Initiative Relation Dependency</h2>
-            </div>
-
             <div
-                class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                <label for="initiative-type-filter" class="text-[11px]">Filter Type</label>
-                <select id="initiative-type-filter" v-model="selectedType"
-                    class="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 shadow-sm transition focus:border-slate-300 focus:outline-none dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-200">
-                    <option value="all">All</option>
-                    <option value="digital">Digital</option>
-                    <option value="it">IT</option>
-                </select>
+                class="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                <div class="flex items-center gap-2">
+                    <label for="initiative-type-filter" class="text-[11px]">Filter Type</label>
+                    <select id="initiative-type-filter" v-model="selectedType"
+                        class="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 shadow-sm transition focus:border-slate-300 focus:outline-none dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-200">
+                        <option value="all">All</option>
+                        <option value="digital">Digital</option>
+                        <option value="it">IT</option>
+                    </select>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <label for="model-relasi-filter" class="text-[11px]">Model Relasi</label>
+                    <select id="model-relasi-filter" v-model="selectedModelRelasi"
+                        class="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 shadow-sm transition focus:border-slate-300 focus:outline-none dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-200">
+                        <option value="all">All</option>
+                        <option v-for="option in modelRelasiOptions" :key="option" :value="option">
+                            {{ option }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <label for="initiative-filter" class="text-[11px]">Initiative</label>
+                    <select id="initiative-filter" v-model="selectedInitiative"
+                        class="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 shadow-sm transition focus:border-slate-300 focus:outline-none dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-200">
+                        <option value="all">All</option>
+                        <option v-for="option in initiativeOptions" :key="option.id" :value="option.id">
+                            {{ option.code }} - {{ option.name }}
+                        </option>
+                    </select>
+                </div>
             </div>
         </div>
 
@@ -32,6 +52,10 @@
                             Initiative
                         </th>
                         <th
+                            class="sticky top-0 z-20 w-32 border border-slate-200 bg-slate-50 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-400">
+                            Relation Type
+                        </th>
+                        <th
                             class="sticky top-0 z-20 w-56 border border-slate-200 bg-slate-50 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-400">
                             Predecessor
                         </th>
@@ -42,6 +66,10 @@
                         <th
                             class="sticky top-0 z-20 border border-slate-200 bg-slate-50 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-400">
                             Justifikasi
+                        </th>
+                        <th
+                            class="sticky top-0 z-20 w-20 border border-slate-200 bg-slate-50 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-400">
+                            Action
                         </th>
                     </tr>
                 </thead>
@@ -58,9 +86,21 @@
                             class="border border-slate-200 px-4 py-3 text-center align-middle text-sm text-slate-800 dark:border-white/10 dark:text-slate-200">
                             {{ row.initiative.code ?? row.initiative.id ?? '-' }}
                         </td>
-                        <td v-if="row.isFirst" :rowspan="row.rowspan"
-                            class="w-56 border border-slate-200 px-4 py-3 text-left align-middle text-sm text-slate-800 dark:border-white/10 dark:text-slate-200">
+                        <td
+                            class="border border-slate-200 px-4 py-3 text-sm text-slate-800 dark:border-white/10 dark:text-slate-200">
                             {{ row.initiative.name ?? '-' }}
+                        </td>
+                        <td
+                            class="border border-slate-200 px-4 py-3 text-center align-middle dark:border-white/10">
+                            <div v-if="row.relation" class="flex flex-col items-center gap-1">
+                                <div class="text-2xl">
+                                    {{ getRelationIcon(row.relation.type_relation) }}
+                                </div>
+                                <span class="text-xs text-slate-600 dark:text-slate-400">
+                                    {{ getRelationLabel(row.relation.type_relation) }}
+                                </span>
+                            </div>
+                            <span v-else class="text-slate-300 dark:text-slate-600">-</span>
                         </td>
                         <td
                             class="border border-slate-200 px-4 py-3 text-sm text-slate-800 dark:border-white/10 dark:text-slate-200">
@@ -82,6 +122,18 @@
                             class="border border-slate-200 px-4 py-3 text-sm text-slate-800 dark:border-white/10 dark:text-slate-200">
                             {{ row.relation?.justifikasi ?? '-' }}
                         </td>
+                        <td
+                            class="border border-slate-200 px-4 py-3 text-center align-middle dark:border-white/10">
+                            <button
+                                v-if="row.relation"
+                                type="button"
+                                class="relative z-10 cursor-pointer rounded-full border border-blue-300 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-600 transition hover:bg-blue-100 dark:border-blue-800 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50"
+                                @click="handleEditRelation(row.initiative, row.relation)"
+                            >
+                                Edit
+                            </button>
+                            <span v-else class="text-slate-300 dark:text-slate-600">-</span>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -97,17 +149,80 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
+    modelRelationOptions: {
+        type: Array,
+        default: () => [],
+    },
 });
 
-const selectedType = ref('all');
+const emit = defineEmits(['edit-relation']);
 
-const filteredInitiatives = computed(() => {
-    if (selectedType.value === 'all') {
-        return props.mstInitiatives;
+const selectedType = ref('all');
+const selectedModelRelasi = ref('all');
+const selectedInitiative = ref('all');
+
+const handleEditRelation = (initiative, relation) => {
+    emit('edit-relation', {
+        initiative,
+        relation,
+    });
+};
+
+const relationTypeConfig = {
+    1: { label: 'TBC', icon: '❓' },
+    2: { label: 'Composition', icon: '◆→' },
+    3: { label: 'Aggregation', icon: '◇→' },
+    4: { label: 'Flow', icon: '↗' },
+    5: { label: 'Specialization', icon: '⬆' },
+    6: { label: 'Association', icon: '↔' },
+};
+
+const getRelationLabel = (typeRelation) => {
+    const key = typeRelation != null ? Number(typeRelation) : null;
+    return relationTypeConfig[key]?.label ?? 'Unknown';
+};
+
+const getRelationIcon = (typeRelation) => {
+    const key = typeRelation != null ? Number(typeRelation) : null;
+    return relationTypeConfig[key]?.icon ?? '?';
+};
+
+const modelRelasiOptions = computed(() => {
+    if (!props.modelRelationOptions?.length) {
+        return [];
     }
 
-    const expectedType = selectedType.value === 'digital' ? 1 : 2;
-    return props.mstInitiatives.filter((initiative) => Number(initiative.tipe_initiative) === expectedType);
+    return props.modelRelationOptions.filter((option) => option);
+});
+
+const initiativeOptions = computed(() => {
+    return props.mstInitiatives.map((initiative) => ({
+        id: initiative.id,
+        code: initiative.code ?? initiative.id ?? '-',
+        name: initiative.name ?? '-',
+    }));
+});
+
+const filteredInitiatives = computed(() => {
+    let initiatives = props.mstInitiatives;
+
+    // Filter by initiative selection
+    if (selectedInitiative.value !== 'all') {
+        initiatives = initiatives.filter((initiative) => Number(initiative.id) === Number(selectedInitiative.value));
+    }
+
+    // Filter by type
+    if (selectedType.value !== 'all') {
+        const expectedType = selectedType.value === 'digital' ? 1 : 2;
+        initiatives = initiatives.filter((initiative) => Number(initiative.tipe_initiative) === expectedType);
+    }
+
+    // Filter by model relasi if selected
+    if (selectedModelRelasi.value !== 'all') {
+        initiatives = initiatives.filter((initiative) => extractRelations(initiative).length > 0);
+    }
+
+    return initiatives;
 });
 
 const initiativeById = computed(() => {
@@ -138,6 +253,13 @@ const extractRelations = (initiative) => {
         ?? [];
 
     const justifikasiValue = (relation) => relation.justifikasi ?? relation.description ?? '-';
+    const shouldIncludeRelation = (relation) => {
+        if (selectedModelRelasi.value === 'all') {
+            return true;
+        }
+
+        return relation?.model_relasi === selectedModelRelasi.value;
+    };
     const rows = [];
     const seen = new Set();
 
@@ -150,6 +272,10 @@ const extractRelations = (initiative) => {
     };
 
     initiativeRelationsRow.forEach((relation) => {
+        if (!shouldIncludeRelation(relation)) {
+            return;
+        }
+
         const key = relationKey(relation);
         if (seen.has(key)) {
             return;
@@ -157,16 +283,23 @@ const extractRelations = (initiative) => {
         seen.add(key);
 
         rows.push({
+            id: relation.id,
             predecessor: formatInitiative(initiative, relation.initiative_code_row),
             successor: formatInitiative(
                 findInitiativeById(relation.initiative_code_column),
                 relation.initiative_code_column,
             ),
             justifikasi: justifikasiValue(relation),
+            model_relasi: relation.model_relasi ?? '-',
+            type_relation: relation.type_relation != null ? Number(relation.type_relation) : null,
         });
     });
 
     initiativeRelationsColumn.forEach((relation) => {
+        if (!shouldIncludeRelation(relation)) {
+            return;
+        }
+
         const key = relationKey(relation);
         if (seen.has(key)) {
             return;
@@ -174,12 +307,15 @@ const extractRelations = (initiative) => {
         seen.add(key);
 
         rows.push({
+            id: relation.id,
             predecessor: formatInitiative(
                 findInitiativeById(relation.initiative_code_row),
                 relation.initiative_code_row,
             ),
             successor: formatInitiative(initiative, relation.initiative_code_column),
             justifikasi: justifikasiValue(relation),
+            model_relasi: relation.model_relasi ?? '-',
+            type_relation: relation.type_relation != null ? Number(relation.type_relation) : null,
         });
     });
 
