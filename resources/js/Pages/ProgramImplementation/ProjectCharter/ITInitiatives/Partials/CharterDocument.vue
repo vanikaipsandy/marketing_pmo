@@ -1,6 +1,4 @@
 <script setup>
-import { ClockIcon, DocumentTextIcon, Squares2X2Icon } from '@heroicons/vue/24/outline';
-
 const props = defineProps({
     itInitiative: { type: Object, required: true },
     form: { type: Object, required: true },
@@ -16,75 +14,55 @@ const showScope = () => props.editable || Boolean(String(props.form.scope || '')
 </script>
 
 <template>
-    <article class="charter-sheet mx-auto w-full max-w-[1200px] border border-slate-300 bg-[#e9e9e9] p-5 text-slate-900 shadow-sm dark:border-white/20 dark:bg-[#d7d7d7]">
-        <header class="charter-block border-b-2 border-[#2e6ea2] pb-3">
-            <h1 class="text-xl font-extrabold leading-tight tracking-tight text-[#0f63b5]">
-                IT Initiative Charter: {{ itInitiative.name || '-' }}
+    <article class="charter-sheet mx-auto w-full max-w-[1200px] bg-white text-slate-900 shadow-sm print:shadow-none">
+
+        <!-- Title -->
+        <div class="px-5 pt-5 pb-3 border-b border-slate-200">
+            <h1 class="text-[18px] font-extrabold leading-tight text-slate-900">
+                Project Charter:
+                {{ itInitiative.name || '-' }}
             </h1>
-            <p class="mt-1 text-xs font-semibold text-slate-700">
-                Version: {{ form.version_label || 'Draft' }}
+            <p class="mt-1 text-[13px] text-slate-600">
+                <template v-if="form.objectives">{{ lineItems(form.objectives)[0] || '' }}</template>
+                <template v-else>{{ itInitiative.description || '' }}</template>
             </p>
-        </header>
+        </div>
 
-        <section class="charter-block mt-4 grid gap-5 lg:grid-cols-3">
-            <div class="meta-item">
-                <span class="meta-icon">
-                    <Squares2X2Icon class="h-5 w-5" />
+        <!-- Info Bar: Kategori | Durasi | Project Owner -->
+        <div class="info-bar">
+            <div class="info-cell">
+                <span class="info-label">Kategori</span>
+                <span class="info-sep"></span>
+                <span class="info-value">
+                    <input v-if="editable" v-model="form.category" type="text" class="info-input" placeholder="e.g. Integration and Automation" />
+                    <template v-else>{{ form.category || '-' }}</template>
                 </span>
-                <div class="meta-label">Category</div>
-                <div class="meta-value">
-                    <input
-                        v-if="editable"
-                        v-model="form.category"
-                        type="text"
-                        class="meta-input"
-                        placeholder="User Interface and Experience"
-                    />
-                    <span v-else class="font-semibold">{{ form.category || '-' }}</span>
-                </div>
             </div>
-
-            <div class="meta-item">
-                <span class="meta-icon">
-                    <ClockIcon class="h-5 w-5" />
+            <div class="info-cell">
+                <span class="info-label">Durasi</span>
+                <span class="info-sep"></span>
+                <span class="info-value">
+                    <input v-if="editable" v-model="form.duration" type="text" class="info-input" placeholder="e.g. 2 tahun (2026-2027)" />
+                    <template v-else>{{ form.duration || '-' }}</template>
                 </span>
-                <div class="meta-label">Duration</div>
-                <div class="meta-value">
-                    <input
-                        v-if="editable"
-                        v-model="form.duration"
-                        type="text"
-                        class="meta-input"
-                        placeholder="2 Years (2025-2026)"
-                    />
-                    <span v-else class="font-semibold">{{ form.duration || '-' }}</span>
-                </div>
             </div>
-
-            <div class="meta-item">
-                <span class="meta-icon">
-                    <DocumentTextIcon class="h-5 w-5" />
-                </span>
-                <div class="meta-label">Company Owner</div>
-                <div class="meta-value font-semibold">
-                    {{ itInitiative.owner_name || itInitiative.owner?.name || '-' }}
-                </div>
+            <div class="info-cell info-cell-last">
+                <span class="info-label info-label-dark">Project Owner</span>
+                <span class="info-sep"></span>
+                <span class="info-value font-semibold">{{ itInitiative.owner_name || itInitiative.owner?.name || '-' }}</span>
             </div>
-        </section>
+        </div>
 
-        <section class="charter-block mt-4">
-            <div class="bar-main">IT Initiative Information</div>
+        <!-- Informasi Proyek -->
+        <div class="charter-section">
+            <div class="bar-main">Informasi proyek</div>
 
-            <div class="mt-2 grid gap-3 lg:grid-cols-2">
+            <div class="grid-2col">
+                <!-- Background -->
                 <article class="panel">
-                    <div class="bar-sub">Background - Current gap / opportunities</div>
+                    <div class="bar-sub">Latar belakang - Gap/peluang saat ini</div>
                     <div class="panel-body">
-                        <textarea
-                            v-if="editable"
-                            v-model="form.background"
-                            class="field-area"
-                            placeholder="One point per line..."
-                        ></textarea>
+                        <textarea v-if="editable" v-model="form.background" class="field-area" placeholder="Satu poin per baris..."></textarea>
                         <ul v-else-if="lineItems(form.background).length" class="bullet-list">
                             <li v-for="(line, idx) in lineItems(form.background)" :key="`bg-${idx}`">{{ line }}</li>
                         </ul>
@@ -92,15 +70,11 @@ const showScope = () => props.editable || Boolean(String(props.form.scope || '')
                     </div>
                 </article>
 
+                <!-- Tujuan -->
                 <article class="panel">
-                    <div class="bar-sub">Objectives</div>
+                    <div class="bar-sub">Tujuan</div>
                     <div class="panel-body">
-                        <textarea
-                            v-if="editable"
-                            v-model="form.objectives"
-                            class="field-area"
-                            placeholder="One point per line..."
-                        ></textarea>
+                        <textarea v-if="editable" v-model="form.objectives" class="field-area" placeholder="Satu poin per baris..."></textarea>
                         <ul v-else-if="lineItems(form.objectives).length" class="bullet-list">
                             <li v-for="(line, idx) in lineItems(form.objectives)" :key="`obj-${idx}`">{{ line }}</li>
                         </ul>
@@ -109,33 +83,26 @@ const showScope = () => props.editable || Boolean(String(props.form.scope || '')
                 </article>
             </div>
 
-            <article v-if="showScope()" class="panel mt-3">
+            <!-- Scope (optional) -->
+            <article v-if="showScope()" class="panel mt-0 border-t-0">
                 <div class="bar-sub">Scope</div>
                 <div class="panel-body">
-                    <textarea
-                        v-if="editable"
-                        v-model="form.scope"
-                        class="field-area"
-                        placeholder="One point per line..."
-                    ></textarea>
+                    <textarea v-if="editable" v-model="form.scope" class="field-area" placeholder="Satu poin per baris..."></textarea>
                     <ul v-else-if="lineItems(form.scope).length" class="bullet-list">
                         <li v-for="(line, idx) in lineItems(form.scope)" :key="`scope-${idx}`">{{ line }}</li>
                     </ul>
                     <p v-else class="empty">-</p>
                 </div>
             </article>
-        </section>
+        </div>
 
-        <section class="charter-block mt-4 grid gap-3 lg:grid-cols-[49%_50%] items-start">
+        <!-- Dampak & Kebutuhan Sumber Daya -->
+        <div class="charter-section grid-2col-impact">
+            <!-- Dampak -->
             <article class="panel">
-                <div class="bar-sub h-10 !text-lg !font-bold leading-[1.2]">Impact and value</div>
+                <div class="bar-sub bar-sub-lg">Dampak dan nilai bagi Pertamina</div>
                 <div class="panel-body min-h-[140px]">
-                    <textarea
-                        v-if="editable"
-                        v-model="form.impact_value"
-                        class="field-area"
-                        placeholder="One point per line..."
-                    ></textarea>
+                    <textarea v-if="editable" v-model="form.impact_value" class="field-area" placeholder="Satu poin per baris..."></textarea>
                     <ul v-else-if="lineItems(form.impact_value).length" class="bullet-list">
                         <li v-for="(line, idx) in lineItems(form.impact_value)" :key="`impact-${idx}`">{{ line }}</li>
                     </ul>
@@ -143,18 +110,14 @@ const showScope = () => props.editable || Boolean(String(props.form.scope || '')
                 </div>
             </article>
 
-            <article>
-                <div class="bar-main">Required resources</div>
-                <div class="mt-2 grid gap-2 md:grid-cols-3">
+            <!-- Kebutuhan Sumber Daya -->
+            <div>
+                <div class="bar-main mb-0">Kebutuhan sumber daya</div>
+                <div class="grid-3col">
                     <div class="panel">
-                        <div class="bar-sub !py-1 !px-2 !text-[12px]">Key Personnel</div>
-                        <div class="panel-body min-h-[40px] !p-1.5">
-                            <textarea
-                                v-if="editable"
-                                v-model="form.key_personnel"
-                                class="field-area field-area-sm"
-                                placeholder="One point per line..."
-                            ></textarea>
+                        <div class="bar-sub bar-sub-sm">Personel utama</div>
+                        <div class="panel-body panel-body-sm">
+                            <textarea v-if="editable" v-model="form.key_personnel" class="field-area field-area-sm" placeholder="Satu poin per baris..."></textarea>
                             <ul v-else-if="lineItems(form.key_personnel).length" class="bullet-list">
                                 <li v-for="(line, idx) in lineItems(form.key_personnel)" :key="`kp-${idx}`">{{ line }}</li>
                             </ul>
@@ -163,14 +126,9 @@ const showScope = () => props.editable || Boolean(String(props.form.scope || '')
                     </div>
 
                     <div class="panel">
-                        <div class="bar-sub !py-1 !px-2 !text-[12px]">Key Items</div>
-                        <div class="panel-body min-h-[40px] !p-1.5">
-                            <textarea
-                                v-if="editable"
-                                v-model="form.key_items"
-                                class="field-area field-area-sm"
-                                placeholder="One point per line..."
-                            ></textarea>
+                        <div class="bar-sub bar-sub-sm">Item utama</div>
+                        <div class="panel-body panel-body-sm">
+                            <textarea v-if="editable" v-model="form.key_items" class="field-area field-area-sm" placeholder="Satu poin per baris..."></textarea>
                             <ul v-else-if="lineItems(form.key_items).length" class="bullet-list">
                                 <li v-for="(line, idx) in lineItems(form.key_items)" :key="`ki-${idx}`">{{ line }}</li>
                             </ul>
@@ -179,35 +137,25 @@ const showScope = () => props.editable || Boolean(String(props.form.scope || '')
                     </div>
 
                     <div class="panel">
-                        <div class="bar-sub !py-1 !px-2 !text-[px]">Indicative budget requirement</div>
-                        <div class="panel-body min-h-[40px] !p-1.5">
-                            <input
-                                v-if="editable"
-                                v-model="form.budget"
-                                type="text"
-                                class="field-input"
-                                placeholder="~ 3 - 8 mn USD"
-                            />
-                            <p v-else class="text-[12px] font-semibold text-slate-900">{{ form.budget || '-' }}</p>
+                        <div class="bar-sub bar-sub-sm">Indikatif kebutuhan budget</div>
+                        <div class="panel-body panel-body-sm">
+                            <input v-if="editable" v-model="form.budget" type="text" class="field-input" placeholder="~ 3 - 8 mn USD" />
+                            <p v-else class="text-[12px] text-slate-900">{{ form.budget || '-' }}</p>
                         </div>
                     </div>
                 </div>
-            </article>
-        </section>
+            </div>
+        </div>
 
-        <section class="charter-block mt-4">
-            <div class="bar-main">Potential risks</div>
+        <!-- Potensi Risiko -->
+        <div class="charter-section">
+            <div class="bar-main">Potensi risiko</div>
 
-            <div class="mt-2 grid gap-3 lg:grid-cols-2">
+            <div class="grid-2col">
                 <article class="panel">
-                    <div class="bar-sub">Risk identified</div>
-                    <div class="panel-body min-h-[130px]">
-                        <textarea
-                            v-if="editable"
-                            v-model="form.risks_identified"
-                            class="field-area"
-                            placeholder="One point per line..."
-                        ></textarea>
+                    <div class="bar-sub">Risiko teridentifikasi</div>
+                    <div class="panel-body min-h-[120px]">
+                        <textarea v-if="editable" v-model="form.risks_identified" class="field-area" placeholder="Satu poin per baris..."></textarea>
                         <ul v-else-if="lineItems(form.risks_identified).length" class="bullet-list">
                             <li v-for="(line, idx) in lineItems(form.risks_identified)" :key="`risk-${idx}`">{{ line }}</li>
                         </ul>
@@ -216,14 +164,9 @@ const showScope = () => props.editable || Boolean(String(props.form.scope || '')
                 </article>
 
                 <article class="panel">
-                    <div class="bar-sub">Risk mitigation</div>
-                    <div class="panel-body min-h-[130px]">
-                        <textarea
-                            v-if="editable"
-                            v-model="form.risk_mitigation"
-                            class="field-area"
-                            placeholder="One point per line..."
-                        ></textarea>
+                    <div class="bar-sub">Mitigasi risiko</div>
+                    <div class="panel-body min-h-[120px]">
+                        <textarea v-if="editable" v-model="form.risk_mitigation" class="field-area" placeholder="Satu poin per baris..."></textarea>
                         <ul v-else-if="lineItems(form.risk_mitigation).length" class="bullet-list">
                             <li v-for="(line, idx) in lineItems(form.risk_mitigation)" :key="`mit-${idx}`">{{ line }}</li>
                         </ul>
@@ -231,111 +174,161 @@ const showScope = () => props.editable || Boolean(String(props.form.scope || '')
                     </div>
                 </article>
             </div>
-        </section>
+        </div>
+
     </article>
 </template>
 
 <style scoped>
 .charter-sheet {
-    font-family: "Segoe UI", Inter, Arial, sans-serif;
-    border-radius: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 13px;
+    color: #1a1a1a;
+    border: 1px solid #ccc;
 }
 
-.charter-block {
-    break-inside: avoid;
-    page-break-inside: avoid;
+/* --- INFO BAR --- */
+.info-bar {
+    display: flex;
+    border-bottom: 1px solid #ccc;
+    background: #f8f8f8;
 }
-
-.meta-item {
+.info-cell {
+    display: flex;
+    align-items: stretch;
+    border-right: 1px solid #ccc;
+    flex: 1;
+}
+.info-cell-last {
+    border-right: none;
+}
+.info-label {
+    background: #2563a8;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 12px;
     display: flex;
     align-items: center;
-}
-
-.meta-icon {
-    display: inline-flex;
-    height: 48px;
-    width: 48px;
-    align-items: center;
-    justify-content: center;
-    border-radius: 9999px;
-    background: #0f63b5;
-    color: #fff;
-    border: 3px solid #fff;
-    box-shadow: 0 0 0 1px #e2e8f0;
-    z-index: 10;
+    white-space: nowrap;
     flex-shrink: 0;
 }
-
-.meta-label {
-    height: 32px;
-    display: flex;
-    align-items: center;
-    padding: 0 12px 0 24px;
-    margin-left: -18px;
-    background: #0f63b5;
-    color: #fff;
-    font-size: 13px;
-    font-weight: 700;
-    border-radius: 0 4px 4px 0;
-    z-index: 1;
+.info-label-dark {
+    background: #1e4f8f;
 }
-
-.meta-value {
-    flex: 1;
-    margin-left: 12px;
-    font-size: 13px;
-    line-height: 1.25;
-    font-weight: 600;
+.info-sep {
+    width: 0;
+    border-right: 1px solid #aac4e0;
 }
-
-.meta-input {
-    width: 100%;
-    border: 1px solid #2e6ea2;
-    border-radius: 0;
-    padding: 4px 8px;
-    font-size: 12px;
-    font-weight: 600;
-    background: #fff;
-    outline: none;
-}
-
-.bar-main {
-    background: #0f63b5;
-    color: #fff;
-    padding: 8px 12px;
-    font-size: 16px;
-    font-weight: 700;
-    line-height: 1.2;
-}
-
-.bar-sub {
-    background: #3f6f9f;
-    color: #fff;
+.info-value {
     padding: 6px 12px;
     font-size: 13px;
-    font-weight: 700;
-    line-height: 1.2;
+    display: flex;
+    align-items: center;
+    flex: 1;
 }
-
-.panel {
-    border: 2px solid #2e6ea2;
-    border-radius: 0;
+.info-input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 13px;
     background: transparent;
 }
 
+/* --- SECTION --- */
+.charter-section {
+    padding: 0;
+    border-top: 1px solid #ddd;
+}
+
+/* --- BARS --- */
+.bar-main {
+    background: #1e4f8f;
+    color: #fff;
+    padding: 7px 12px;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+.bar-sub {
+    background: #2e6ea2;
+    color: #fff;
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+.bar-sub-lg {
+    font-size: 13px;
+    font-weight: 700;
+    padding: 7px 10px;
+}
+.bar-sub-sm {
+    font-size: 11px;
+    padding: 4px 8px;
+}
+
+/* --- PANEL --- */
+.panel {
+    border: 1px solid #2e6ea2;
+    border-radius: 0;
+    background: transparent;
+}
 .panel-body {
     padding: 10px;
-    background: #e9e9e9;
+    background: #fff;
+    font-size: 12px;
+}
+.panel-body-sm {
+    padding: 7px;
 }
 
+/* --- GRIDS --- */
+.grid-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-top: 1px solid #2e6ea2;
+    gap: 0;
+}
+.grid-2col > * {
+    border-right: 1px solid #2e6ea2;
+}
+.grid-2col > *:last-child {
+    border-right: none;
+}
+
+.grid-2col-impact {
+    display: grid;
+    grid-template-columns: 48% 52%;
+    gap: 0;
+    border-top: 1px solid #2e6ea2;
+}
+.grid-2col-impact > *:first-child {
+    border-right: 1px solid #2e6ea2;
+}
+
+.grid-3col {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+    border-top: none;
+}
+.grid-3col > * {
+    border-right: 1px solid #2e6ea2;
+}
+.grid-3col > *:last-child {
+    border-right: none;
+}
+
+/* --- CONTENT --- */
 .bullet-list {
     margin: 0;
-    padding-left: 0;
-    list-style: none;
+    padding-left: 14px;
+    list-style: disc;
     font-size: 12px;
-    line-height: 1.4;
+    line-height: 1.55;
+    color: #1a1a1a;
 }
-
 .bullet-list li + li {
     margin-top: 2px;
 }
@@ -351,54 +344,43 @@ const showScope = () => props.editable || Boolean(String(props.form.scope || '')
     font-size: 12px;
     line-height: 1.4;
     outline: none;
+    font-family: inherit;
 }
-
 .field-area-sm {
-    min-height: 40px;
+    min-height: 60px;
     font-size: 11px;
-    line-height: 1.25;
 }
-
 .field-input {
     width: 100%;
     border: 1px solid #2e6ea2;
     border-radius: 0;
-    padding: 6px 8px;
+    padding: 4px 8px;
     font-size: 12px;
     font-weight: 600;
     background: #fff;
     outline: none;
+    font-family: inherit;
 }
 
 .empty {
-    color: #6b7280;
+    color: #9ca3af;
     font-size: 12px;
 }
 
+/* --- PRINT --- */
 @media print {
     @page {
         size: A4 landscape;
         margin: 8mm;
     }
-
     .charter-sheet {
         width: 100%;
         max-width: none;
-        margin: 0;
-        padding: 0;
-        border: 0;
-        background: #ffffff !important;
+        border: none;
         box-shadow: none;
     }
-
     .panel-body {
-        background: #ffffff !important;
-    }
-
-    .field-area,
-    .field-input,
-    .meta-input {
-        border: 1px solid #2e6ea2;
+        background: #fff !important;
     }
 }
 </style>
