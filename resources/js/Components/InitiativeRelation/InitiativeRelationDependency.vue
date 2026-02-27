@@ -29,9 +29,9 @@
                 <div class="flex items-center gap-2">
                     <label for="initiative-filter" class="text-[11px]">Initiative</label>
                     <select id="initiative-filter" v-model="selectedInitiative"
-                        class="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 shadow-sm transition focus:border-slate-300 focus:outline-none dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-200">
+                        class="w-48 max-w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 shadow-sm transition focus:border-slate-300 focus:outline-none dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-200">
                         <option value="all">All</option>
-                        <option v-for="option in initiativeOptions" :key="option.id" :value="option.id">
+                        <option v-for="option in filteredInitiativeOptions" :key="option.id" :value="option.id">
                             {{ option.code }} - {{ option.name }}
                         </option>
                     </select>
@@ -205,21 +205,32 @@ const initiativeOptions = computed(() => {
         id: initiative.id,
         code: initiative.code ?? initiative.id ?? '-',
         name: initiative.name ?? '-',
+        type: initiative.tipe_initiative != null ? Number(initiative.tipe_initiative) : null,
     }));
+});
+
+const filteredInitiativeOptions = computed(() => {
+    if (selectedType.value === 'digital') {
+        return initiativeOptions.value.filter((initiative) => initiative.type === 1);
+    }
+    if (selectedType.value === 'it') {
+        return initiativeOptions.value.filter((initiative) => initiative.type === 2);
+    }
+    return initiativeOptions.value;
 });
 
 const filteredInitiatives = computed(() => {
     let initiatives = props.mstInitiatives;
 
-    // Filter by initiative selection
-    if (selectedInitiative.value !== 'all') {
-        initiatives = initiatives.filter((initiative) => Number(initiative.id) === Number(selectedInitiative.value));
-    }
-
-    // Filter by type
     if (selectedType.value !== 'all') {
         const expectedType = selectedType.value === 'digital' ? 1 : 2;
         initiatives = initiatives.filter((initiative) => Number(initiative.tipe_initiative) === expectedType);
+    }
+
+    if (selectedInitiative.value !== 'all') {
+        initiatives = initiatives.filter((initiative) => (
+            Number(initiative.id) === Number(selectedInitiative.value)
+        ));
     }
 
     // Filter by model relasi if selected

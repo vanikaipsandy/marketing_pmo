@@ -57,15 +57,6 @@ class InitiativeRelationController extends Controller
      */
     public function create(Request $request): Response|JsonResponse
     {
-        if ($request->wantsJson()) {
-            return response()->json([
-                'initiativeOptions' => $this->initiativeOptions(),
-                'initiativeRelations' => $this->initiativeRelations(),
-                'typeRelationOptions' => $this->typeRelationOptions(),
-                'modelRelationOptions' => $this->modelRelationOptions(),
-            ]);
-        }
-
         return Inertia::render('InitiativeRelation/Create', [
             'initiativeOptions' => $this->initiativeOptions(),
             'initiativeRelations' => $this->initiativeRelations(),
@@ -89,13 +80,6 @@ class InitiativeRelationController extends Controller
             'initiativeRow:id,code,name',
             'initiativeColumn:id,code,name',
         ]);
-
-        if ($request->wantsJson()) {
-            return response()->json([
-                'message' => 'Initiative relation created successfully.',
-                'data' => $this->serializeRelation($initiativeRelation),
-            ], 201);
-        }
 
         return redirect()
             ->route('initiative-relations.index')
@@ -127,16 +111,6 @@ class InitiativeRelationController extends Controller
             'initiativeColumn:id,code,name',
         ]);
 
-        if ($request->wantsJson()) {
-            return response()->json([
-                'data' => $this->serializeRelation($initiativeRelation),
-                'initiativeOptions' => $this->initiativeOptions(),
-                'initiativeRelations' => $this->initiativeRelations(),
-                'typeRelationOptions' => $this->typeRelationOptions(),
-                'modelRelationOptions' => $this->modelRelationOptions(),
-            ]);
-        }
-
         return Inertia::render('InitiativeRelation/Edit', [
             'initiativeRelation' => $this->serializeRelation($initiativeRelation),
             'initiativeOptions' => $this->initiativeOptions(),
@@ -160,13 +134,6 @@ class InitiativeRelationController extends Controller
             'initiativeColumn:id,code,name',
         ]);
 
-        if ($request->wantsJson()) {
-            return response()->json([
-                'message' => 'Initiative relation updated successfully.',
-                'data' => $this->serializeRelation($initiativeRelation),
-            ]);
-        }
-
         return redirect()
             ->route('initiative-relations.index')
             ->with('success', 'Initiative relation updated successfully.');
@@ -178,12 +145,6 @@ class InitiativeRelationController extends Controller
     public function destroy(Request $request, MstInitiativeRelation $initiativeRelation): RedirectResponse|JsonResponse
     {
         $initiativeRelation->delete();
-
-        if ($request->wantsJson()) {
-            return response()->json([
-                'message' => 'Initiative relation deleted successfully.',
-            ]);
-        }
 
         return back()->with('success', 'Initiative relation deleted successfully.');
     }
@@ -272,8 +233,7 @@ class InitiativeRelationController extends Controller
                 'business_unit',
             ])
             ->with(['organization:id,name'])
-            ->orderBy('code')
-            ->orderBy('name')
+            ->orderBy('id')
             ->get()
             ->map(fn (MstInitiative $initiative) => [
                 'id' => (int) $initiative->id,
