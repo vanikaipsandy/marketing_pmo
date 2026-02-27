@@ -16,7 +16,7 @@ class TrsReviewPCController extends Controller
         $trsReviewPCs = TrsReviewPC::with('initiative')->get();
 
         // dd($trsReviewPCs->toArray());
-        return inertia('ReviewPC/Index', [
+        return inertia('ProgramEvaluation/ReviewPC/Index', [
             'trsReviewPCs' => $trsReviewPCs
         ]);
     }
@@ -44,7 +44,7 @@ class TrsReviewPCController extends Controller
     {
         $trsReviewPC->load('initiative');
 
-        return inertia('ReviewPC/Show', [
+        return inertia('ProgramEvaluation/ReviewPC/Show', [
             'trsReviewPC' => $trsReviewPC,
         ]);
     }
