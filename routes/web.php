@@ -102,6 +102,7 @@ Route::middleware(['auth', 'approved'])->group(function () {
     Route::resource('it-initiatives', ITInitiativeController::class)
         ->parameters(['it-initiatives' => 'project']);
     Route::post('/it-initiatives/{project}/charter', [CharterController::class, 'store'])->name('it-initiatives.charter.store');
+    Route::post('/it-initiatives/{project}/milestones/versions', [MilestoneController::class, 'createVersion'])->name('it-initiatives.milestones.versions.store');
     Route::post('/it-initiatives/{project}/milestones', [MilestoneController::class, 'store'])->name('it-initiatives.milestones.store');
     Route::put('/it-initiatives/{project}/milestones/{milestone}', [MilestoneController::class, 'update'])->name('it-initiatives.milestones.update');
     Route::delete('/it-initiatives/{project}/milestones/{milestone}', [MilestoneController::class, 'destroy'])->name('it-initiatives.milestones.destroy');
