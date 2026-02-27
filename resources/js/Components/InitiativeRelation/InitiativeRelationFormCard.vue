@@ -366,7 +366,11 @@ const selectedInitiativeColumn = computed(() => {
 const initiativeLabel = (initiative) => {
     const code = initiative?.code ?? initiative?.id ?? '-';
     const name = initiative?.name ?? '';
-    return name ? `${code} - ${name}` : code;
+    const typeLabel = formatInitiativeType(initiative?.tipe_initiative);
+    const baseLabel = name ? `${code} - ${name}` : code;
+    const coeName = initiative?.coe_name ?? initiative?.coe?.name ?? '';
+    const labelWithType = typeLabel && typeLabel !== '-' ? `${typeLabel} ${baseLabel}` : baseLabel;
+    return coeName ? `${labelWithType} (CoE: ${coeName})` : labelWithType;
 };
 
 const buildRelations = (initiativeId) => {

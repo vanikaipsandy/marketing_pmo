@@ -21,6 +21,12 @@ class RoadmapController extends Controller
         return Inertia::render('ProgramImplementation/RoadMap/Index', $this->buildRoadmapOverviewPayload());
     }
 
+
+    public function add(): Response
+    {
+        return Inertia::render('ProgramImplementation/RoadMap/Add', $this->buildRoadmapEditorPayload(request()));
+    }
+
     /**
      * Input/edit roadmap process page.
      */

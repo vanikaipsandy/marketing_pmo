@@ -32,7 +32,7 @@
                         class="w-48 max-w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 shadow-sm transition focus:border-slate-300 focus:outline-none dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-200">
                         <option value="all">All</option>
                         <option v-for="option in filteredInitiativeOptions" :key="option.id" :value="option.id">
-                            {{ option.code }} - {{ option.name }}
+                            {{ option.label }}
                         </option>
                     </select>
                 </div>
@@ -201,12 +201,21 @@ const modelRelasiOptions = computed(() => {
 });
 
 const initiativeOptions = computed(() => {
-    return props.mstInitiatives.map((initiative) => ({
-        id: initiative.id,
-        code: initiative.code ?? initiative.id ?? '-',
-        name: initiative.name ?? '-',
-        type: initiative.tipe_initiative != null ? Number(initiative.tipe_initiative) : null,
-    }));
+    return props.mstInitiatives.map((initiative) => {
+        const code = initiative.code ?? initiative.id ?? '-';
+        const name = initiative.name ?? '-';
+        const coeName = initiative?.coe?.name ?? initiative?.coe_name ?? '';
+        const baseLabel = `${code} - ${name}`;
+        const label = coeName ? `${baseLabel} (CoE: ${coeName})` : baseLabel;
+
+        return {
+            id: initiative.id,
+            code,
+            name,
+            label,
+            type: initiative.tipe_initiative != null ? Number(initiative.tipe_initiative) : null,
+        };
+    });
 });
 
 const filteredInitiativeOptions = computed(() => {

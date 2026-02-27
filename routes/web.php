@@ -11,16 +11,16 @@ use App\Http\Controllers\ITInitiative\CharterController;
 use App\Http\Controllers\ITInitiative\ITInitiativeController;
 use App\Http\Controllers\ITInitiative\MilestoneController;
 use App\Http\Controllers\MasterData\MasterDataController;
+use App\Http\Controllers\ProgramEvaluation\TrsReviewPCController;
 use App\Http\Controllers\ProgramImplementation\DashboardController;
 use App\Http\Controllers\ProgramImplementation\ProgramImplementationController;
 use App\Http\Controllers\ProgramPlanning\DashboardController as PlanningDashboardController;
 use App\Http\Controllers\ProgramPlanning\ProgramDefinition\DigitalInitiatives\IndexController as ProgramDefinitionDigitalInitiativesController;
+use App\Http\Controllers\ProgramPlanning\ProgramDefinition\IndexController as ProgramDefinitionController;
 use App\Http\Controllers\ProgramPlanning\ProgramDefinition\ITInitiatives\IndexController as ProgramDefinitionITInitiativesController;
 use App\Http\Controllers\ProgramPlanning\ProgramPlanningController;
-use App\Http\Controllers\ProgramPlanning\ProgramDefinition\IndexController as ProgramDefinitionController;
 use App\Http\Controllers\Roadmap\RoadmapController;
 use App\Http\Controllers\StrategicPillar\StrategicPillarController;
-use App\Http\Controllers\ProgramEvaluation\TrsReviewPCController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -63,7 +63,7 @@ Route::middleware(['auth', 'approved'])->group(function () {
     Route::get('/program-planning/initiative-relation', [InitiativeRelationController::class, 'index'])->name('program-implementation.initiative-relation');
     Route::redirect('/program-planning/initiative', '/program-planning/initiative-relation');
     Route::get('/program-implementation', ProgramImplementationController::class)->name('program-implementation.index');
-    
+
     Route::get('/program-implementation/budgeting', fn () => Inertia::render('Placeholder/Index', [
         'title' => 'Budgeting',
     ]))->name('program-implementation.budgeting');
@@ -96,6 +96,7 @@ Route::middleware(['auth', 'approved'])->group(function () {
     // IT Initiatives & Charters
     // Roadmap — dedicated controller (all programs & per-program views)
     Route::get('/roadmap', [RoadmapController::class, 'index'])->name('roadmap.index');
+    Route::get('/roadmap/add', [RoadmapController::class, 'edit'])->name('roadmap.edit');
     Route::get('/roadmap/edit', [RoadmapController::class, 'edit'])->name('roadmap.edit');
     Route::get('/roadmap/{program}', [RoadmapController::class, 'show'])->name('roadmap.show');
     Route::resource('it-initiatives', ITInitiativeController::class)

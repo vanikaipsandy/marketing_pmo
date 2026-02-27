@@ -23,6 +23,7 @@ class InitiativeRelationController extends Controller
         $mstInitiatives = MstInitiative::with([
             'initiativeRelationsRow',
             'initiativeRelationsColumn',
+            'coe:id,name',
         ])
             ->get();
         $initiativeRelations = MstInitiativeRelation::query()
@@ -232,7 +233,7 @@ class InitiativeRelationController extends Controller
                 'status',
                 'business_unit',
             ])
-            ->with(['organization:id,name'])
+            ->with(['organization:id,name', 'coe:id,name'])
             ->orderBy('id')
             ->get()
             ->map(fn (MstInitiative $initiative) => [
@@ -244,6 +245,7 @@ class InitiativeRelationController extends Controller
                 'status' => $initiative->status,
                 'business_unit' => $initiative->business_unit,
                 'business_unit_name' => $initiative->organization?->name,
+                'coe_name' => $initiative->coe?->name,
             ])
             ->values()
             ->all();
