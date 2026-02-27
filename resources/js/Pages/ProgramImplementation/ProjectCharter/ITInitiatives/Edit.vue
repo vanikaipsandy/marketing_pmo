@@ -183,6 +183,71 @@
                 </div>
             </article>
 
+            <!-- Mapping IT Definition (Planning) -->
+            <article class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717]">
+                <div class="border-b border-slate-200 px-5 py-4 dark:border-white/10">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-base font-semibold text-slate-900 dark:text-white">Mapping IT Definition (Planning)</h3>
+                        <div class="flex items-center gap-3">
+                            <span class="text-xs font-medium text-slate-500 dark:text-slate-400">Terpilih: {{ mappingForm.initiative_ids.length }}</span>
+                            <button
+                                type="button"
+                                :disabled="mappingForm.processing"
+                                class="inline-flex items-center rounded-full bg-sky-100 px-2 py-0.5 text-[9px] font-semibold text-sky-700 disabled:opacity-50 dark:bg-sky-500/20 dark:text-sky-300"
+                                @click="saveMapping"
+                            >
+                                Save Mapping
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="max-h-72 overflow-y-auto">
+                    <table class="w-full table-fixed divide-y divide-slate-200 text-[11px] dark:divide-white/5">
+                        <colgroup>
+                            <col class="w-[5%]">
+                            <col class="w-[15%]">
+                            <col class="w-[35%]">
+                            <col class="w-[45%]">
+                        </colgroup>
+                        <thead class="bg-slate-50 dark:bg-white/5 sticky top-0">
+                            <tr>
+                                <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400"></th>
+                                <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Code</th>
+                                <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Nama Inisiatif</th>
+                                <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Deskripsi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 bg-white dark:divide-white/5 dark:bg-[#1a1a1a]">
+                            <tr
+                                v-for="initiative in planningDefinitions"
+                                :key="`mapping-it-${initiative.id}`"
+                                class="cursor-pointer"
+                                @click="toggleMapping(initiative.id)"
+                            >
+                                <td class="px-3 py-2 text-center">
+                                    <input
+                                        v-model="mappingForm.initiative_ids"
+                                        type="checkbox"
+                                        :value="Number(initiative.id)"
+                                        class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 dark:border-white/20"
+                                        @click.stop
+                                    />
+                                </td>
+                                <td class="px-3 py-2 text-[11px] font-medium text-slate-700 dark:text-slate-200">{{ initiative.code || '-' }}</td>
+                                <td class="px-3 py-2 text-[11px] font-medium text-slate-700 dark:text-slate-200">{{ initiative.name || '-' }}</td>
+                                <td class="px-3 py-2 text-[11px] text-slate-500 dark:text-slate-400">{{ initiative.description || '-' }}</td>
+                            </tr>
+                            <tr v-if="planningDefinitions.length === 0">
+                                <td colspan="4" class="px-6 py-8 text-center text-xs text-slate-500 dark:text-slate-400">
+                                    Belum ada data IT Definition (tipe 2) di mst_initiative.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+
             <StatusModal
                 :show="showDeleteModal"
                 mode="confirm"
@@ -217,6 +282,14 @@ const props = defineProps({
     defaultStatusId: {
         type: Number,
         default: 1,
+    },
+    planningItDefinitions: {
+        type: Array,
+        default: () => [],
+    },
+    mappedInitiativeIds: {
+        type: Array,
+        default: () => [],
     },
 });
 
@@ -350,6 +423,31 @@ const openDeleteModal = (id) => {
 const closeDeleteModal = () => {
     showDeleteModal.value = false;
     pendingDeleteId.value = null;
+};
+
+// --- Mapping ---
+const planningDefinitions = Array.isArray(props.planningItDefinitions) ? props.planningItDefinitions : [];
+
+const mappingForm = useForm({
+    initiative_ids: Array.isArray(props.mappedInitiativeIds)
+        ? props.mappedInitiativeIds.map((id) => Number(id))
+        : [],
+});
+
+const toggleMapping = (id) => {
+    const numId = Number(id);
+    const idx = mappingForm.initiative_ids.indexOf(numId);
+    if (idx >= 0) {
+        mappingForm.initiative_ids.splice(idx, 1);
+    } else {
+        mappingForm.initiative_ids.push(numId);
+    }
+};
+
+const saveMapping = () => {
+    mappingForm.put(`/it-initiatives/${props.itInitiative.id}/mapping`, {
+        preserveScroll: true,
+    });
 };
 
 const confirmDeleteHistory = () => {

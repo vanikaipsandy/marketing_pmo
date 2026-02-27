@@ -85,7 +85,17 @@ class Project extends Model
 
     public function mappedInitiatives(): BelongsToMany
     {
-        return $this->belongsToMany(MstInitiative::class, 'trs_pc_initiative', 'project_id', 'initiative_id');
+        $tableColumns = \Illuminate\Support\Facades\Schema::getColumnListing('trs_pc_initiative');
+
+        $projectColumn = collect(['project_id', 'trs_project_id', 'pc_id'])->first(
+            static fn ($col) => in_array($col, $tableColumns, true)
+        ) ?? 'project_id';
+
+        $initiativeColumn = collect(['initiative_id', 'mst_initiative_id', 'useCase_id', 'use_case_id'])->first(
+            static fn ($col) => in_array($col, $tableColumns, true)
+        ) ?? 'initiative_id';
+
+        return $this->belongsToMany(MstInitiative::class, 'trs_pc_initiative', $projectColumn, $initiativeColumn);
     }
 
     /* ── Scopes ────────────────────────────────────── */

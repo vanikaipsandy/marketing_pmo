@@ -59,6 +59,7 @@ class DashboardController extends Controller
                 'statusRef:id,name',
                 'latestPcStatusImplementation',
                 'pcStatusImplementations',
+                'mappedInitiatives:id,code,name',
             ])
             ->where(static function ($query) use ($baselineStatusId): void {
                 $query

@@ -14,14 +14,15 @@
         <div class="overflow-x-hidden">
             <table class="w-full table-fixed divide-y divide-slate-200 text-[11px] dark:divide-white/5">
                 <colgroup>
-                    <col class="w-[4%]">
-                    <col class="w-[7%]">
+                    <col class="w-[3%]">
+                    <col class="w-[6%]">
+                    <col class="w-[12%]">
                     <col class="w-[14%]">
-                    <col class="w-[17%]">
-                    <col class="w-[10%]">
-                    <col class="w-[10%]">
-                    <col class="w-[11%]">
-                    <col class="w-[16%]">
+                    <col class="w-[14%]">
+                    <col class="w-[8%]">
+                    <col class="w-[9%]">
+                    <col class="w-[9%]">
+                    <col class="w-[14%]">
                     <col class="w-[11%]">
                 </colgroup>
                 <thead class="bg-slate-50 dark:bg-white/5">
@@ -30,6 +31,7 @@
                         <th scope="col" class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Code</th>
                         <th scope="col" class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">IT Arsitektur Building Blok</th>
                         <th scope="col" class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Daftar Inisiatif</th>
+                        <th scope="col" class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Mapping</th>
                         <th scope="col" class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Usulan</th>
                         <th scope="col" class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Bulan / Tahun</th>
                         <th scope="col" class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Review</th>
@@ -49,6 +51,16 @@
                             </td>
                             <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">
                                 <span class="font-medium break-words text-slate-700 dark:text-slate-200">{{ item.name || '-' }}</span>
+                            </td>
+                            <td class="px-3 py-3 text-[11px] text-slate-600 dark:text-slate-300">
+                                <template v-if="itemMappings(item).length > 0">
+                                    <span
+                                        v-for="(mapping, mIdx) in itemMappings(item)"
+                                        :key="`mapping-${item.id}-${mapping.id}`"
+                                        class="inline-flex rounded-full bg-violet-100 px-2 py-0.5 text-[9px] font-medium text-violet-700 dark:bg-violet-500/20 dark:text-violet-300 mr-1 mb-0.5"
+                                    >{{ mapping.code || mapping.name }}</span>
+                                </template>
+                                <span v-else class="text-[10px] italic text-slate-400">-</span>
                             </td>
                             <td class="px-3 py-3">
                                 <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium capitalize" :class="statusBadgeClassById(item.status)">
@@ -101,7 +113,7 @@
                     </template>
 
                     <tr v-if="sortedItems.length === 0">
-                        <td colspan="9" class="px-6 py-8 text-center text-xs text-slate-500 dark:text-slate-400">
+                        <td colspan="10" class="px-6 py-8 text-center text-xs text-slate-500 dark:text-slate-400">
                             Semua IT initiatives sudah {{ lowerCompletedStatusLabel }}.
                         </td>
                     </tr>
@@ -155,6 +167,11 @@ const sortedItems = computed(() => {
         return aId - bId;
     });
 });
+
+const itemMappings = (item) => {
+    const source = item?.mapped_initiatives ?? item?.mappedInitiatives ?? [];
+    return Array.isArray(source) ? source : [];
+};
 
 const latestItStatus = (item) => {
     const rawStatus = item?.latest_implementation_status

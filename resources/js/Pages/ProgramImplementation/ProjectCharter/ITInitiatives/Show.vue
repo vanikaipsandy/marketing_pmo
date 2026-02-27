@@ -16,14 +16,18 @@
 
                     <span class="text-slate-300 dark:text-slate-600">|</span>
 
-                    <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">{{ itInitiative.code || '-' }}</span>
-                    <h1 class="text-sm font-bold text-slate-900 dark:text-white truncate max-w-xs lg:max-w-md">{{ itInitiative.name }}</h1>
-                    <span
-                        class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium capitalize"
-                        :class="statusBadgeClassById(itInitiative.status)"
+                    <select
+                        v-model="selectedProjectId"
+                        class="max-w-xs rounded-md border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 focus:border-[#1C75BC] focus:outline-none dark:border-white/10 dark:bg-[#101826] dark:text-slate-100 lg:max-w-md"
                     >
-                        {{ statusLabelFromOptions(itInitiative.status, statusOptions) }}
-                    </span>
+                        <option
+                            v-for="option in projectSelectOptions"
+                            :key="`bar-${option.id}`"
+                            :value="String(option.id)"
+                        >
+                            {{ projectOptionLabel(option) }}
+                        </option>
+                    </select>
 
                     <div class="ml-auto flex items-center gap-1.5">
                         <button
@@ -42,24 +46,6 @@
                 <!-- Detail panel (Status Implementation) -->
                 <div v-if="activeTab === 'detail'" class="border-t border-slate-100 dark:border-white/5">
                     <div class="px-3 py-3">
-                        <div class="mb-3 max-w-[600px]">
-                            <label class="mb-1 block text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
-                                Ganti Project Charter
-                            </label>
-                            <select
-                                v-model="selectedProjectId"
-                                class="w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-700 focus:border-[#1C75BC] focus:outline-none focus:ring-2 focus:ring-[#1C75BC]/20 dark:border-white/10 dark:bg-[#101826] dark:text-slate-100"
-                            >
-                                <option
-                                    v-for="option in projectSelectOptions"
-                                    :key="`pc-filter-${option.id}`"
-                                    :value="String(option.id)"
-                                >
-                                    {{ projectOptionLabel(option) }}
-                                </option>
-                            </select>
-                        </div>
-
                         <div class="overflow-x-auto rounded-lg border border-slate-100 dark:border-white/5">
                             <table class="w-full table-fixed divide-y divide-slate-200 text-[11px] dark:divide-white/5">
                                 <colgroup>
@@ -183,7 +169,7 @@
 
 <script setup>
 import { computed, ref, watch } from 'vue';
-import { Link, router, useForm } from '@inertiajs/vue3';
+import { Link, router, useForm, usePage } from '@inertiajs/vue3';
 import UserLayout from '@/Layouts/UserLayout.vue';
 import CharterDocument from './Partials/CharterDocument.vue';
 import ProjectRoadmap from '@/Components/Roadmap/ProjectRoadmap.vue';
@@ -196,6 +182,7 @@ const props = defineProps({
         default: () => [],
     },
 });
+const page = usePage();
 
 // --- Tabs ---
 const tabs = [
@@ -203,7 +190,27 @@ const tabs = [
     { key: 'charter', label: 'Project Charter' },
     { key: 'roadmap', label: 'Roadmap' },
 ];
-const activeTab = ref(null);
+const parseTabFromUrl = () => {
+    const query = String(page.url ?? '').split('?')[1] ?? '';
+    const params = new URLSearchParams(query);
+    const tab = String(params.get('tab') ?? '').trim().toLowerCase();
+
+    if (['detail', 'scope', 'scope-charter', 'scope_charter'].includes(tab)) {
+        return 'detail';
+    }
+
+    if (['charter', 'project-charter', 'project_charter'].includes(tab)) {
+        return 'charter';
+    }
+
+    if (tab === 'roadmap') {
+        return 'roadmap';
+    }
+
+    return 'charter';
+};
+
+const activeTab = ref(parseTabFromUrl());
 const toggleTab = (key) => {
     activeTab.value = activeTab.value === key ? null : key;
 };
@@ -302,7 +309,10 @@ watch(selectedProjectId, (nextValue, previousValue) => {
     if (!nextValue || nextValue === previousValue) return;
     const selectedId = Number(nextValue);
     if (!Number.isFinite(selectedId) || selectedId <= 0 || selectedId === Number(props.itInitiative?.id)) return;
-    router.get(`/it-initiatives/${selectedId}`, {}, { preserveScroll: true });
+
+    const payload = activeTab.value ? { tab: activeTab.value } : {};
+
+    router.get(`/it-initiatives/${selectedId}`, payload, { preserveScroll: true });
 });
 
 watch(

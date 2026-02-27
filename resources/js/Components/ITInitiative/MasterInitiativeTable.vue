@@ -131,12 +131,12 @@ const hasLinkedProject = (item) => Boolean(Number(item?.project_id));
 
 const scopeCharterHref = (item) => {
     const projectId = Number(item?.project_id);
-    return projectId > 0 ? `/it-initiatives/${projectId}` : '/it-initiatives';
+    return projectId > 0 ? `/it-initiatives/${projectId}?tab=detail` : '/it-initiatives';
 };
 
 const projectCharterHref = (item) => {
     const projectId = Number(item?.project_id);
-    return projectId > 0 ? `/it-initiatives/${projectId}?open_charter=1` : '/it-initiatives';
+    return projectId > 0 ? `/it-initiatives/${projectId}?tab=charter` : '/it-initiatives';
 };
 
 const roadmapHref = (item) => {

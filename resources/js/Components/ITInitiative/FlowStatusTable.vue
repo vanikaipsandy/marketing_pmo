@@ -81,14 +81,14 @@
                         <td class="px-3 py-3 text-[10px] font-medium">
                             <div class="flex flex-col items-start gap-1">
                                 <Link
-                                    :href="`/it-initiatives/${project.id}`"
+                                    :href="`/it-initiatives/${project.id}?tab=detail`"
                                     :class="actionCellClass(hasScopeCharter(project))"
                                     title="View Scope Charter"
                                 >
                                     Scope Charter
                                 </Link>
                                 <Link
-                                    :href="`/it-initiatives/${project.id}`"
+                                    :href="`/it-initiatives/${project.id}?tab=charter`"
                                     :class="actionCellClass(hasProjectCharter(project))"
                                     title="View Project Charter"
                                 >

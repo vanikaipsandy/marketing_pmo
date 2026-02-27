@@ -1,126 +1,144 @@
 <template>
     <UserLayout title="Create IT Initiative">
-        <div class="max-w-2xl mx-auto animate-fade-in">
-            <div class="mb-8">
-                <Link href="/it-initiatives" class="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 text-sm flex items-center gap-1 mb-2">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div class="mx-auto max-w-[1860px] animate-fade-in space-y-6">
+            <div>
+                <Link
+                    href="/it-initiatives"
+                    class="mb-2 flex items-center gap-1 text-sm text-slate-500 dark:text-slate-400"
+                >
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                     </svg>
                     Back to IT Initiatives
                 </Link>
                 <h2 class="text-2xl font-bold text-slate-900 dark:text-white">New IT Initiative</h2>
-                <p class="text-slate-500 dark:text-slate-400 text-sm">Create a new IT initiative entry to start drafting its charter.</p>
             </div>
 
-            <div class="bg-white dark:bg-[#1a1a1a] rounded-xl border border-slate-200 dark:border-white/5 p-6 shadow-sm">
-                <form @submit.prevent="submit" class="space-y-6">
-                    <!-- Code & Name -->
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                        <div class="md:col-span-1">
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">IT Initiative Code</label>
-                            <input
-                                v-model="form.code"
-                                type="text"
-                                class="w-full rounded-lg border-slate-300 dark:border-white/10 bg-white dark:bg-[#131313] text-slate-900 dark:text-slate-100 focus:ring-indigo-500 focus:border-indigo-500"
-                                placeholder="PRJ-001"
-                            />
-                            <p v-if="form.errors.code" class="text-red-500 text-xs mt-1">{{ form.errors.code }}</p>
-                        </div>
-                        <div class="md:col-span-3">
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">IT Initiative Name</label>
-                            <input
-                                v-model="form.name"
-                                type="text"
-                                class="w-full rounded-lg border-slate-300 dark:border-white/10 bg-white dark:bg-[#131313] text-slate-900 dark:text-slate-100 focus:ring-indigo-500 focus:border-indigo-500"
-                                placeholder="e.g., UI/UX Standardization"
-                            />
-                            <p v-if="form.errors.name" class="text-red-500 text-xs mt-1">{{ form.errors.name }}</p>
+            <form @submit.prevent="submit">
+                <!-- Data Utama Table -->
+                <article class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717]">
+                    <div class="border-b border-slate-200 px-5 py-4 dark:border-white/10">
+                        <h3 class="text-base font-semibold text-slate-900 dark:text-white">Data Utama</h3>
+                    </div>
+
+                    <div class="overflow-x-hidden">
+                        <table class="w-full table-fixed divide-y divide-slate-200 text-[11px] dark:divide-white/5">
+                            <colgroup>
+                                <col class="w-[10%]">
+                                <col class="w-[25%]">
+                                <col class="w-[20%]">
+                                <col class="w-[15%]">
+                                <col class="w-[15%]">
+                                <col class="w-[15%]">
+                            </colgroup>
+                            <thead class="bg-slate-50 dark:bg-white/5">
+                                <tr>
+                                    <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Code</th>
+                                    <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Nama Inisiatif</th>
+                                    <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Company Owner</th>
+                                    <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">IT Arsitektur Building Blok</th>
+                                    <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status</th>
+                                    <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200 bg-white dark:divide-white/5 dark:bg-[#1a1a1a]">
+                                <tr class="bg-slate-50/50 dark:bg-white/[0.03]">
+                                    <td class="px-3 py-3 align-top">
+                                        <input v-model="form.code" type="text" class="table-input" placeholder="PRJ-001">
+                                        <p v-if="form.errors.code" class="mt-1 text-[10px] text-rose-600">{{ form.errors.code }}</p>
+                                    </td>
+                                    <td class="px-3 py-3 align-top">
+                                        <input v-model="form.name" type="text" class="table-input" placeholder="e.g., UI/UX Standardization">
+                                        <p v-if="form.errors.name" class="mt-1 text-[10px] text-rose-600">{{ form.errors.name }}</p>
+                                    </td>
+                                    <td class="px-3 py-3 align-top">
+                                        <input v-model="form.owner_name" type="text" class="table-input" placeholder="e.g., PT Example Indonesia">
+                                        <p v-if="form.errors.owner_name" class="mt-1 text-[10px] text-rose-600">{{ form.errors.owner_name }}</p>
+                                    </td>
+                                    <td class="px-3 py-3 align-top">
+                                        <input v-model="form.charter_category" type="text" class="table-input" placeholder="e.g., Integration">
+                                        <p v-if="form.errors.charter_category" class="mt-1 text-[10px] text-rose-600">{{ form.errors.charter_category }}</p>
+                                    </td>
+                                    <td class="px-3 py-3 align-top">
+                                        <select v-model="form.status" class="table-input">
+                                            <option v-for="statusOption in statusOptions" :key="statusOption.id" :value="statusOption.id">
+                                                {{ statusOption.label }}
+                                            </option>
+                                        </select>
+                                    </td>
+                                    <td class="px-3 py-3 align-top">
+                                        <button
+                                            type="submit"
+                                            :disabled="form.processing"
+                                            class="inline-flex items-center rounded-full bg-indigo-100 px-2 py-0.5 text-[9px] font-semibold text-indigo-700 disabled:opacity-50 dark:bg-indigo-500/20 dark:text-indigo-300"
+                                        >
+                                            Create
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </article>
+
+                <!-- Mapping IT Definition (Planning) -->
+                <article class="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717]">
+                    <div class="border-b border-slate-200 px-5 py-4 dark:border-white/10">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-base font-semibold text-slate-900 dark:text-white">Mapping IT Definition (Planning)</h3>
+                            <span class="text-xs font-medium text-slate-500 dark:text-slate-400">Terpilih: {{ form.initiative_ids.length }}</span>
                         </div>
                     </div>
 
-                    <!-- Owner & Status -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Company Owner</label>
-                            <input
-                                v-model="form.owner_name"
-                                type="text"
-                                class="w-full rounded-lg border-slate-300 dark:border-white/10 bg-white dark:bg-[#131313] text-slate-900 dark:text-slate-100 focus:ring-indigo-500 focus:border-indigo-500"
-                                placeholder="e.g., PT Example Indonesia"
-                            />
-                            <p v-if="form.errors.owner_name" class="text-red-500 text-xs mt-1">{{ form.errors.owner_name }}</p>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Status</label>
-                            <select v-model="form.status" class="w-full rounded-lg border-slate-300 dark:border-white/10 bg-white dark:bg-[#131313] text-slate-700 dark:text-slate-200 focus:ring-indigo-500 focus:border-indigo-500">
-                                <option v-for="statusOption in statusOptions" :key="statusOption.id" :value="statusOption.id">
-                                    {{ statusOption.label }}
-                                </option>
-                            </select>
-                        </div>
+                    <div class="max-h-72 overflow-y-auto">
+                        <table class="w-full table-fixed divide-y divide-slate-200 text-[11px] dark:divide-white/5">
+                            <colgroup>
+                                <col class="w-[5%]">
+                                <col class="w-[15%]">
+                                <col class="w-[35%]">
+                                <col class="w-[45%]">
+                            </colgroup>
+                            <thead class="bg-slate-50 dark:bg-white/5 sticky top-0">
+                                <tr>
+                                    <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400"></th>
+                                    <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Code</th>
+                                    <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Nama Inisiatif</th>
+                                    <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Deskripsi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200 bg-white dark:divide-white/5 dark:bg-[#1a1a1a]">
+                                <tr
+                                    v-for="initiative in planningDefinitions"
+                                    :key="`planning-it-${initiative.id}`"
+                                    class="cursor-pointer"
+                                    @click="toggleInitiative(initiative.id)"
+                                >
+                                    <td class="px-3 py-2 text-center">
+                                        <input
+                                            v-model="form.initiative_ids"
+                                            type="checkbox"
+                                            :value="Number(initiative.id)"
+                                            class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 dark:border-white/20"
+                                            @click.stop
+                                        />
+                                    </td>
+                                    <td class="px-3 py-2 text-[11px] font-medium text-slate-700 dark:text-slate-200">{{ initiative.code || '-' }}</td>
+                                    <td class="px-3 py-2 text-[11px] font-medium text-slate-700 dark:text-slate-200">{{ initiative.name || '-' }}</td>
+                                    <td class="px-3 py-2 text-[11px] text-slate-500 dark:text-slate-400">{{ initiative.description || '-' }}</td>
+                                </tr>
+                                <tr v-if="planningDefinitions.length === 0">
+                                    <td colspan="4" class="px-6 py-8 text-center text-xs text-slate-500 dark:text-slate-400">
+                                        Belum ada data IT Definition (tipe 2) di mst_initiative.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
 
-                    <!-- Mapping Planning IT Definition -->
-                    <div>
-                        <div class="mb-2 flex items-center justify-between">
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">
-                                Mapping IT Definition (Planning)
-                            </label>
-                            <span class="text-xs font-medium text-slate-500 dark:text-slate-400">
-                                Terpilih: {{ form.initiative_ids.length }}
-                            </span>
-                        </div>
-                        <p class="mb-2 text-xs text-slate-500 dark:text-slate-400">
-                            Checklist inisiatif dari master data `Program Planning / IT Definition` untuk dimapping ke project ini.
-                        </p>
-
-                        <div class="max-h-64 overflow-y-auto rounded-lg border border-slate-200 dark:border-white/10">
-                            <label
-                                v-for="initiative in planningDefinitions"
-                                :key="`planning-it-${initiative.id}`"
-                                class="flex cursor-pointer items-start gap-3 border-b border-slate-100 px-3 py-2 last:border-b-0 hover:bg-slate-50 dark:border-white/5 dark:hover:bg-white/5"
-                            >
-                                <input
-                                    v-model="form.initiative_ids"
-                                    type="checkbox"
-                                    :value="Number(initiative.id)"
-                                    class="mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 dark:border-white/20"
-                                />
-                                <span class="min-w-0">
-                                    <span class="block text-sm font-medium text-slate-800 dark:text-slate-100">
-                                        {{ initiativeLabel(initiative) }}
-                                    </span>
-                                    <span class="block text-xs text-slate-500 dark:text-slate-400">
-                                        {{ initiative.description || '-' }}
-                                    </span>
-                                </span>
-                            </label>
-
-                            <div
-                                v-if="planningDefinitions.length === 0"
-                                class="px-3 py-5 text-center text-xs text-slate-500 dark:text-slate-400"
-                            >
-                                Belum ada data IT Definition (tipe 2) di `mst_initiative`.
-                            </div>
-                        </div>
-
-                        <p v-if="form.errors.initiative_ids" class="text-red-500 text-xs mt-1">{{ form.errors.initiative_ids }}</p>
-                        <p v-else-if="form.errors['initiative_ids.0']" class="text-red-500 text-xs mt-1">{{ form.errors['initiative_ids.0'] }}</p>
-                    </div>
-
-                    <!-- Actions -->
-                    <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-white/5">
-                        <Link href="/it-initiatives" class="px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 rounded-lg">Cancel</Link>
-                        <button
-                            type="submit"
-                            :disabled="form.processing"
-                            class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg disabled:opacity-50"
-                        >
-                            Create IT Initiative
-                        </button>
-                    </div>
-                </form>
-            </div>
+                    <p v-if="form.errors.initiative_ids" class="px-5 py-2 text-xs text-rose-600">{{ form.errors.initiative_ids }}</p>
+                    <p v-else-if="form.errors['initiative_ids.0']" class="px-5 py-2 text-xs text-rose-600">{{ form.errors['initiative_ids.0'] }}</p>
+                </article>
+            </form>
         </div>
     </UserLayout>
 </template>
@@ -153,24 +171,48 @@ const form = useForm({
     code: '',
     name: '',
     owner_name: '',
+    charter_category: '',
     status: statusOptions.some((statusOption) => statusOption.id === props.defaultStatusId)
         ? props.defaultStatusId
         : statusOptions[0].id,
     initiative_ids: [],
 });
 
-const initiativeLabel = (initiative) => {
-    const code = String(initiative?.code ?? '').trim();
-    const name = String(initiative?.name ?? '').trim();
-
-    if (code && name) {
-        return `${code} - ${name}`;
+const toggleInitiative = (id) => {
+    const numId = Number(id);
+    const idx = form.initiative_ids.indexOf(numId);
+    if (idx >= 0) {
+        form.initiative_ids.splice(idx, 1);
+    } else {
+        form.initiative_ids.push(numId);
     }
-
-    return name || code || '-';
 };
 
 const submit = () => {
     form.post('/it-initiatives');
 };
 </script>
+
+<style scoped>
+.table-input {
+    width: 100%;
+    border-radius: 0.375rem;
+    border: 1px solid rgb(203 213 225);
+    background-color: rgb(255 255 255);
+    padding: 0.25rem 0.5rem;
+    font-size: 11px;
+    color: rgb(15 23 42);
+}
+
+.table-input:focus {
+    border-color: rgb(99 102 241);
+    outline: none;
+    box-shadow: 0 0 0 1px rgb(99 102 241 / 0.35);
+}
+
+:global(.dark) .table-input {
+    border-color: rgb(255 255 255 / 0.1);
+    background-color: rgb(19 19 19);
+    color: rgb(226 232 240);
+}
+</style>

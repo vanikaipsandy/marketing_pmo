@@ -199,7 +199,7 @@ class ITInitiativeController extends Controller
         }
 
         $tableColumns = Schema::getColumnListing('trs_pc_initiative');
-        $projectColumn = collect(['project_id', 'trs_project_id'])->first(
+        $projectColumn = collect(['project_id', 'trs_project_id', 'pc_id'])->first(
             static fn ($column) => in_array($column, $tableColumns, true)
         );
         $initiativeColumn = collect(['initiative_id', 'mst_initiative_id', 'useCase_id', 'use_case_id'])->first(
@@ -290,7 +290,36 @@ class ITInitiativeController extends Controller
     public function edit(Project $project): Response
     {
         $project->load(['pcStatusImplementations', 'charter']);
-        
+
+        $planningItDefinitions = MstInitiative::query()
+            ->select(['id', 'code', 'name', 'description', 'status'])
+            ->where('tipe_initiative', 2)
+            ->orderByRaw('CASE WHEN code IS NULL OR code = "" THEN 1 ELSE 0 END')
+            ->orderBy('code')
+            ->orderBy('id')
+            ->get()
+            ->values();
+
+        $mappedIds = [];
+        if (Schema::hasTable('trs_pc_initiative')) {
+            $tableColumns = Schema::getColumnListing('trs_pc_initiative');
+            $projectColumn = collect(['project_id', 'trs_project_id'])->first(
+                static fn ($col) => in_array($col, $tableColumns, true)
+            );
+            $initiativeColumn = collect(['initiative_id', 'mst_initiative_id', 'useCase_id', 'use_case_id'])->first(
+                static fn ($col) => in_array($col, $tableColumns, true)
+            );
+
+            if ($projectColumn && $initiativeColumn) {
+                $mappedIds = DB::table('trs_pc_initiative')
+                    ->where($projectColumn, $project->id)
+                    ->pluck($initiativeColumn)
+                    ->map(fn ($id) => (int) $id)
+                    ->values()
+                    ->all();
+            }
+        }
+
         return Inertia::render('ProgramImplementation/ProjectCharter/ITInitiatives/Edit', [
             'itInitiative' => $project,
             'statusOptions' => InitiativeStatus::ordered()
@@ -301,6 +330,8 @@ class ITInitiativeController extends Controller
                 ])
                 ->values(),
             'defaultStatusId' => InitiativeStatus::DRAFTING,
+            'planningItDefinitions' => $planningItDefinitions,
+            'mappedInitiativeIds' => $mappedIds,
         ]);
     }
 
@@ -391,5 +422,24 @@ class ITInitiativeController extends Controller
         $status->delete();
 
         return redirect()->back()->with('success', 'Status deleted successfully.');
+    }
+
+    public function updateMapping(Request $request, Project $project): RedirectResponse
+    {
+        $validated = $request->validate([
+            'initiative_ids' => 'nullable|array',
+            'initiative_ids.*' => 'integer|exists:mst_initiative,id',
+        ]);
+
+        $initiativeIds = collect($validated['initiative_ids'] ?? [])
+            ->map(static fn ($id) => (int) $id)
+            ->filter(static fn ($id) => $id > 0)
+            ->unique()
+            ->values()
+            ->all();
+
+        $this->syncProjectInitiativeMappings($project, $initiativeIds);
+
+        return redirect()->back()->with('success', 'Mapping updated successfully.');
     }
 }
