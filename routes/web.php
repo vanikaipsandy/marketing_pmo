@@ -99,6 +99,7 @@ Route::middleware(['auth', 'approved'])->group(function () {
     Route::get('/roadmap/add', [RoadmapController::class, 'add'])->name('roadmap.add');
     Route::get('/roadmap/edit', [RoadmapController::class, 'edit'])->name('roadmap.edit');
     Route::get('/roadmap/{program}', [RoadmapController::class, 'show'])->name('roadmap.show');
+    
     Route::resource('it-initiatives', ITInitiativeController::class)
         ->parameters(['it-initiatives' => 'project']);
     Route::post('/it-initiatives/{project}/charter', [CharterController::class, 'store'])->name('it-initiatives.charter.store');
@@ -106,6 +107,7 @@ Route::middleware(['auth', 'approved'])->group(function () {
     Route::put('/it-initiatives/{project}/milestones/{milestone}', [MilestoneController::class, 'update'])->name('it-initiatives.milestones.update');
     Route::delete('/it-initiatives/{project}/milestones/{milestone}', [MilestoneController::class, 'destroy'])->name('it-initiatives.milestones.destroy');
     Route::post('/it-initiatives/{project}/implementation-status', [ITInitiativeController::class, 'storeImplementationStatus'])->name('it-initiatives.implementation-status.store');
+    
     Route::put('/implementation-status/{id}', [ITInitiativeController::class, 'updateImplementationStatus'])->name('it-initiatives.implementation-status.update');
     Route::delete('/implementation-status/{id}', [ITInitiativeController::class, 'destroyImplementationStatus'])->name('it-initiatives.implementation-status.destroy');
     Route::put('/it-initiatives/{project}/mapping', [ITInitiativeController::class, 'updateMapping'])->name('it-initiatives.mapping.update');

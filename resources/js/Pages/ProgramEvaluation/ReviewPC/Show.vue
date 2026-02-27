@@ -1,21 +1,50 @@
 <template>
     <UserLayout title="Detail Review PC">
         <div class="animate-fade-in-up">
-            <div class="mx-auto mb-3 flex w-full max-w-[1080px] flex-wrap items-center gap-2 print:hidden">
-                <Link
-                    href="/program-evalution"
-                    class="inline-flex items-center rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:border-sky-300 hover:bg-sky-50 hover:text-sky-700 dark:border-white/20 dark:bg-[#1f1f1f] dark:text-slate-200 dark:hover:border-sky-500/60 dark:hover:bg-sky-900/30 dark:hover:text-sky-200"
-                >
-                    Kembali
-                </Link>
-                <button
-                    type="button"
-                    class="inline-flex items-center rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:border-sky-300 hover:bg-sky-50 hover:text-sky-700 dark:border-white/20 dark:bg-[#1f1f1f] dark:text-slate-200 dark:hover:border-sky-500/60 dark:hover:bg-sky-900/30 dark:hover:text-sky-200"
-                    @click="printPage"
-                >
-                    Print
-                </button>
-            </div>
+            <section class="mx-auto mb-3 w-full max-w-[1080px] rounded-2xl border border-slate-200 bg-white p-3 shadow-sm print:hidden dark:border-white/10 dark:bg-[#171717]">
+                <div class="flex flex-wrap items-center gap-2">
+                    <Link
+                        href="/program-evalution"
+                        class="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-2.5 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/5"
+                    >
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7" />
+                        </svg>
+                        Kembali
+                    </Link>
+                    <span class="text-slate-300 dark:text-slate-600">|</span>
+                    <div class="ml-auto flex flex-wrap items-center gap-1.5">
+                        <a
+                            href="#status-implementation"
+                            class="rounded-md px-2.5 py-1 text-[10px] font-semibold text-slate-500 transition hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100"
+                        >
+                            Status Implementation
+                        </a>
+                        <a
+                            href="#project-charter"
+                            class="rounded-md px-2.5 py-1 text-[10px] font-semibold text-slate-500 transition hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100"
+                        >
+                            Project Charter
+                        </a>
+                        <a
+                            href="#roadmap"
+                            class="rounded-md px-2.5 py-1 text-[10px] font-semibold text-slate-500 transition hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100"
+                        >
+                            Roadmap
+                        </a>
+                    </div>
+                    <button
+                        type="button"
+                        class="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-slate-50 dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/5"
+                        @click="printPage"
+                    >
+                        <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 9V4h12v5M6 17h12v3H6v-3Zm-2-2h16a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2Z" />
+                        </svg>
+                        Print
+                    </button>
+                </div>
+            </section>
             <div class="mx-auto w-full max-w-[1080px] space-y-5 border border-slate-300 bg-[#e9e9e9] p-5 text-slate-900 shadow-sm dark:border-white/20 dark:bg-[#d7d7d7]">
                 <header class="space-y-2">
                     <h1 class="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
@@ -24,7 +53,7 @@
                     <div class="mt-3 h-[2px] w-full bg-sky-400/70"></div>
                 </header>
 
-                <section class="space-y-0">
+                <section id="status-implementation" class="space-y-0">
                     <div class="bg-[#1661ad] px-4 py-1.5 text-[11px] font-semibold text-white">
                         Kesimpulan / Hasil Review
                     </div>
@@ -44,7 +73,7 @@
                     </article>
                 </section>
 
-                <section class="space-y-1">
+                <section id="project-charter" class="space-y-1">
                     <div class="bg-[#1661ad] px-4 py-1.5 text-[11px] font-semibold text-white">
                         Informasi Proyek
                     </div>
@@ -130,6 +159,17 @@
                                 {{ review.risk_impact || '-' }}
                             </p>
                         </article>
+                    </div>
+                </section>
+
+                <section id="roadmap" class="space-y-0">
+                    <div class="bg-[#1661ad] px-4 py-1.5 text-[11px] font-semibold text-white">
+                        Roadmap
+                    </div>
+                    <div class="border border-dashed border-slate-300 bg-white px-4 py-4 text-center dark:border-white/15 dark:bg-[#171717]">
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-300">
+                            Belum ada data roadmap.
+                        </p>
                     </div>
                 </section>
             </div>
