@@ -29,6 +29,7 @@ class MilestoneStoreRequest extends FormRequest
             'output' => ['nullable', 'string'],
             'type' => ['required', 'string', 'max:255'],
             'milestone_type' => ['nullable', 'integer', Rule::in(Milestone::roadmapTypeCodes())],
+            'version' => ['nullable', 'string', 'max:20', 'regex:/^(v\\d+)$/i'],
             'start_date' => ['nullable', 'date', 'required_with:end_date'],
             'end_date' => ['nullable', 'date', 'required_with:start_date', 'after_or_equal:start_date'],
         ];

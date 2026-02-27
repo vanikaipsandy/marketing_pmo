@@ -7,6 +7,7 @@ const props = defineProps({
     sequence:  { type: [Number, String], default: null },
     yearStart: { type: Number, default: 2025 },
     yearEnd:   { type: Number, default: 2029 },
+    selectedRoadmapVersionId: { type: [Number, String], default: null },
     milestoneTypeOptions: { type: Array, default: () => [] },
 });
 
@@ -67,8 +68,44 @@ const objectives = computed(() =>
     String(props.form?.objectives || '').split(/\r?\n/).map((l) => l.trim()).filter(Boolean)
 );
 
+const normalizeVersionLabel = (value) => {
+    const raw = String(value ?? '').trim().toLowerCase();
+
+    if (!raw || raw === 'v') {
+        return 'v1';
+    }
+
+    if (/^v\d+$/.test(raw)) {
+        return `v${Math.max(Number(raw.slice(1)) || 1, 1)}`;
+    }
+
+    if (/^\d+$/.test(raw)) {
+        return `v${Math.max(Number(raw) || 1, 1)}`;
+    }
+
+    return raw;
+};
+
+const selectedRoadmapVersionIdNormalized = computed(() => {
+    if (props.selectedRoadmapVersionId === null || props.selectedRoadmapVersionId === undefined || String(props.selectedRoadmapVersionId).trim() === '') {
+        return null;
+    }
+
+    return normalizeVersionLabel(props.selectedRoadmapVersionId);
+});
+
 const sortedMilestones = computed(() =>
-    [...(props.project?.milestones ?? [])].sort((a, b) => {
+    [...(props.project?.milestones ?? [])]
+        .filter((item) => {
+            const selectedVersionId = selectedRoadmapVersionIdNormalized.value;
+
+            if (!selectedVersionId) {
+                return true;
+            }
+
+            return normalizeVersionLabel(item.version) === selectedVersionId;
+        })
+        .sort((a, b) => {
         const od = (Number(a.order ?? 0)) - (Number(b.order ?? 0));
         return od !== 0 ? od : String(a.start_date ?? '').localeCompare(String(b.start_date ?? ''));
     })

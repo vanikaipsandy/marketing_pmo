@@ -55,6 +55,7 @@
                     :sequence="projectIndex + 1"
                     :year-start="yearStart"
                     :year-end="yearEnd"
+                    :selected-roadmap-version-id="project.active_roadmap_version ?? null"
                     :milestone-type-options="milestoneTypeOptions"
                 />
             </section>

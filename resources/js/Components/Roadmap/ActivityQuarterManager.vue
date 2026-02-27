@@ -2,6 +2,9 @@
     <section class="print:hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-white/10 dark:bg-[#171717]">
         <div class="mb-4">
             <h2 class="text-base font-semibold text-slate-900 dark:text-white">Roadmap Activity & Quarter</h2>
+            <p class="mt-1 text-xs font-medium text-slate-500 dark:text-slate-400">
+                Versi aktif: {{ selectedVersionLabel }}
+            </p>
         </div>
 
         <form v-if="project" class="grid grid-cols-1 gap-3 lg:grid-cols-12" @submit.prevent="submitForm">
@@ -207,6 +210,10 @@ const props = defineProps({
         type: Object,
         default: null,
     },
+    selectedRoadmapVersionId: {
+        type: [Number, String],
+        default: null,
+    },
     milestoneTypeOptions: {
         type: Array,
         default: () => [],
@@ -232,6 +239,7 @@ const milestoneForm = useForm({
     output: '',
     type: '',
     milestone_type: defaultMilestoneType,
+    version: null,
     start_date: '',
     end_date: '',
 });
@@ -317,19 +325,65 @@ const resetForm = () => {
     milestoneForm.clearErrors();
     milestoneForm.type = '';
     milestoneForm.milestone_type = defaultMilestoneType;
+    milestoneForm.version = selectedRoadmapVersionLabel.value;
     editingMilestoneId.value = null;
     useQuarterRange.value = false;
     resetMilestoneRange();
 };
 
+const normalizeVersionLabel = (value) => {
+    const raw = String(value ?? '').trim().toLowerCase();
+
+    if (!raw || raw === 'v') {
+        return 'v1';
+    }
+
+    if (/^v\d+$/.test(raw)) {
+        return `v${Math.max(Number(raw.slice(1)) || 1, 1)}`;
+    }
+
+    if (/^\d+$/.test(raw)) {
+        return `v${Math.max(Number(raw) || 1, 1)}`;
+    }
+
+    return raw;
+};
+
+const selectedRoadmapVersionLabel = computed(() => {
+    if (props.selectedRoadmapVersionId === null || props.selectedRoadmapVersionId === undefined || String(props.selectedRoadmapVersionId).trim() === '') {
+        return null;
+    }
+
+    return normalizeVersionLabel(props.selectedRoadmapVersionId);
+});
+
+const selectedVersionLabel = computed(() => {
+    const versions = Array.isArray(props.project?.roadmap_versions) ? props.project.roadmap_versions : [];
+    const selectedId = selectedRoadmapVersionLabel.value;
+
+    if (!selectedId) {
+        return versions[0]?.version_label || 'v1 (otomatis saat simpan pertama)';
+    }
+
+    const selected = versions.find((item) => normalizeVersionLabel(item.id) === selectedId);
+    return selected?.version_label || selectedId;
+});
+
 watch(
-    () => props.project?.id,
+    () => [props.project?.id, props.selectedRoadmapVersionId],
     () => resetForm(),
     { immediate: true }
 );
 
 const roadmapMilestones = computed(() => {
-    return [...(props.project?.milestones || [])].sort((left, right) => {
+    let milestones = [...(props.project?.milestones || [])];
+    const selectedVersionId = selectedRoadmapVersionLabel.value;
+
+    if (selectedVersionId) {
+        milestones = milestones.filter((item) => normalizeVersionLabel(item.version) === selectedVersionId);
+    }
+
+    return milestones.sort((left, right) => {
         const leftOrder = Number(left.order || 0);
         const rightOrder = Number(right.order || 0);
 
@@ -398,6 +452,7 @@ const startEdit = (item) => {
     milestoneForm.title = item.title || '';
     milestoneForm.type = item.type || '';
     milestoneForm.milestone_type = normalizeMilestoneType(item.milestone_type ?? item.type);
+    milestoneForm.version = selectedRoadmapVersionLabel.value;
     milestoneForm.output = item.output || '';
     milestoneForm.start_date = item.start_date || '';
     milestoneForm.end_date = item.end_date || '';
@@ -457,6 +512,7 @@ const submitForm = () => {
 
     milestoneForm.clearErrors();
     milestoneForm.milestone_type = normalizeMilestoneType(milestoneForm.milestone_type);
+    milestoneForm.version = selectedRoadmapVersionLabel.value;
 
     if (!buildDates()) {
         return;
