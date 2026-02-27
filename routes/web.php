@@ -96,7 +96,7 @@ Route::middleware(['auth', 'approved'])->group(function () {
     // IT Initiatives & Charters
     // Roadmap — dedicated controller (all programs & per-program views)
     Route::get('/roadmap', [RoadmapController::class, 'index'])->name('roadmap.index');
-    Route::get('/roadmap/add', [RoadmapController::class, 'edit'])->name('roadmap.edit');
+    Route::get('/roadmap/add', [RoadmapController::class, 'add'])->name('roadmap.add');
     Route::get('/roadmap/edit', [RoadmapController::class, 'edit'])->name('roadmap.edit');
     Route::get('/roadmap/{program}', [RoadmapController::class, 'show'])->name('roadmap.show');
     Route::resource('it-initiatives', ITInitiativeController::class)

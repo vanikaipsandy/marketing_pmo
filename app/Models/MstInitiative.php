@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class MstInitiative extends Model
@@ -39,5 +40,15 @@ class MstInitiative extends Model
     public function initiativeRelationsColumn(): HasMany
     {
         return $this->hasMany(MstInitiativeRelation::class, 'initiative_code_column');
+    }
+
+    public function pcInitiatives(): HasMany
+    {
+        return $this->hasMany(PcInitiative::class, 'initiative_id');
+    }
+
+    public function mappedProjects(): BelongsToMany
+    {
+        return $this->belongsToMany(Project::class, 'trs_pc_initiative', 'initiative_id', 'project_id');
     }
 }

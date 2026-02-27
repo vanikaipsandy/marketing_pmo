@@ -60,6 +60,54 @@
                         </div>
                     </div>
 
+                    <!-- Mapping Planning IT Definition -->
+                    <div>
+                        <div class="mb-2 flex items-center justify-between">
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                                Mapping IT Definition (Planning)
+                            </label>
+                            <span class="text-xs font-medium text-slate-500 dark:text-slate-400">
+                                Terpilih: {{ form.initiative_ids.length }}
+                            </span>
+                        </div>
+                        <p class="mb-2 text-xs text-slate-500 dark:text-slate-400">
+                            Checklist inisiatif dari master data `Program Planning / IT Definition` untuk dimapping ke project ini.
+                        </p>
+
+                        <div class="max-h-64 overflow-y-auto rounded-lg border border-slate-200 dark:border-white/10">
+                            <label
+                                v-for="initiative in planningDefinitions"
+                                :key="`planning-it-${initiative.id}`"
+                                class="flex cursor-pointer items-start gap-3 border-b border-slate-100 px-3 py-2 last:border-b-0 hover:bg-slate-50 dark:border-white/5 dark:hover:bg-white/5"
+                            >
+                                <input
+                                    v-model="form.initiative_ids"
+                                    type="checkbox"
+                                    :value="Number(initiative.id)"
+                                    class="mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 dark:border-white/20"
+                                />
+                                <span class="min-w-0">
+                                    <span class="block text-sm font-medium text-slate-800 dark:text-slate-100">
+                                        {{ initiativeLabel(initiative) }}
+                                    </span>
+                                    <span class="block text-xs text-slate-500 dark:text-slate-400">
+                                        {{ initiative.description || '-' }}
+                                    </span>
+                                </span>
+                            </label>
+
+                            <div
+                                v-if="planningDefinitions.length === 0"
+                                class="px-3 py-5 text-center text-xs text-slate-500 dark:text-slate-400"
+                            >
+                                Belum ada data IT Definition (tipe 2) di `mst_initiative`.
+                            </div>
+                        </div>
+
+                        <p v-if="form.errors.initiative_ids" class="text-red-500 text-xs mt-1">{{ form.errors.initiative_ids }}</p>
+                        <p v-else-if="form.errors['initiative_ids.0']" class="text-red-500 text-xs mt-1">{{ form.errors['initiative_ids.0'] }}</p>
+                    </div>
+
                     <!-- Actions -->
                     <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-white/5">
                         <Link href="/it-initiatives" class="px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 rounded-lg">Cancel</Link>
@@ -90,11 +138,16 @@ const props = defineProps({
         type: Number,
         default: 1,
     },
+    planningItDefinitions: {
+        type: Array,
+        default: () => [],
+    },
 });
 
 const statusOptions = props.statusOptions.length > 0
     ? props.statusOptions
     : [{ id: 1, label: 'Drafting' }];
+const planningDefinitions = Array.isArray(props.planningItDefinitions) ? props.planningItDefinitions : [];
 
 const form = useForm({
     code: '',
@@ -103,7 +156,19 @@ const form = useForm({
     status: statusOptions.some((statusOption) => statusOption.id === props.defaultStatusId)
         ? props.defaultStatusId
         : statusOptions[0].id,
+    initiative_ids: [],
 });
+
+const initiativeLabel = (initiative) => {
+    const code = String(initiative?.code ?? '').trim();
+    const name = String(initiative?.name ?? '').trim();
+
+    if (code && name) {
+        return `${code} - ${name}`;
+    }
+
+    return name || code || '-';
+};
 
 const submit = () => {
     form.post('/it-initiatives');

@@ -22,9 +22,9 @@ class RoadmapController extends Controller
     }
 
 
-    public function add(): Response
+    public function add(Request $request): Response
     {
-        return Inertia::render('ProgramImplementation/RoadMap/Add', $this->buildRoadmapEditorPayload(request()));
+        return Inertia::render('ProgramImplementation/RoadMap/Create', $this->buildRoadmapEditorPayload($request));
     }
 
     /**

@@ -19,6 +19,11 @@ class ITInitiativeStoreRequest extends FormRequest
             'code' => ['required', 'string', Rule::unique('trs_projects', 'code')],
             'status' => ['required', 'integer', Rule::exists('trs_status_initiative', 'id')],
             'owner_name' => ['nullable', 'string', 'max:255'],
+            'initiative_ids' => ['nullable', 'array'],
+            'initiative_ids.*' => [
+                'integer',
+                Rule::exists('mst_initiative', 'id')->where(static fn ($query) => $query->where('tipe_initiative', 2)),
+            ],
         ];
     }
 }

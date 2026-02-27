@@ -2,9 +2,6 @@
     <section class="print:hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-white/10 dark:bg-[#171717]">
         <div class="mb-4">
             <h2 class="text-base font-semibold text-slate-900 dark:text-white">Roadmap Activity & Quarter</h2>
-            <p class="text-sm text-slate-500 dark:text-slate-400">
-                Tambahkan activity dan rentang quarter (Q1-Q4) untuk project terpilih.
-            </p>
         </div>
 
         <form v-if="project" class="grid grid-cols-1 gap-3 lg:grid-cols-12" @submit.prevent="submitForm">

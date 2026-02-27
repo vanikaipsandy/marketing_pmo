@@ -15,13 +15,13 @@
                         >
                             Scope Charter
                         </a>
-                        <a
-                            href="#project-charter-it-section"
+                        <button
+                            type="button"
                             class="inline-flex items-center rounded-full border border-[#1C75BC]/45 bg-[#1C75BC]/10 px-3 py-1.5 text-xs font-semibold text-[#1C75BC] transition hover:bg-[#1C75BC]/20 dark:text-[#7FC0F2]"
-                            @click="activateFlowMode"
+                            @click="showAllProjectCharter"
                         >
                             Project Charter
-                        </a>
+                        </button>
                         <button
                             type="button"
                             class="inline-flex items-center rounded-full border px-3 py-1.5 text-xs font-semibold transition"
@@ -165,23 +165,31 @@
                             </h3>
                         </div>
 
-                        <div class="w-full sm:w-72">
-                            <label class="mb-1 block text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
-                                Filter Project
-                            </label>
-                            <select
-                                v-model="selectedRoadmapProjectId"
-                                class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs text-slate-700 focus:border-[#1C75BC] focus:outline-none focus:ring-2 focus:ring-[#1C75BC]/20 dark:border-white/10 dark:bg-[#101826] dark:text-slate-100"
-                            >
-                                <option value="all">Semua Project</option>
-                                <option
-                                    v-for="project in roadmapSourceItems"
-                                    :key="`roadmap-filter-${project.id}`"
-                                    :value="String(project.id)"
+                        <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-end">
+                            <div class="w-full sm:w-72">
+                                <label class="mb-1 block text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
+                                    Filter Project
+                                </label>
+                                <select
+                                    v-model="selectedRoadmapProjectId"
+                                    class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs text-slate-700 focus:border-[#1C75BC] focus:outline-none focus:ring-2 focus:ring-[#1C75BC]/20 dark:border-white/10 dark:bg-[#101826] dark:text-slate-100"
                                 >
-                                    {{ project.code ? `${project.code} - ${project.name}` : project.name }}
-                                </option>
-                            </select>
+                                    <option value="all">Semua Project</option>
+                                    <option
+                                        v-for="project in roadmapSourceItems"
+                                        :key="`roadmap-filter-${project.id}`"
+                                        :value="String(project.id)"
+                                    >
+                                        {{ project.code ? `${project.code} - ${project.name}` : project.name }}
+                                    </option>
+                                </select>
+                            </div>
+                            <Link
+                                :href="addRoadmapHref"
+                                class="inline-flex items-center justify-center rounded-lg bg-[#0B2A8A] px-3 py-2 text-xs font-semibold text-white transition hover:bg-[#102f95]"
+                            >
+                                Add Roadmap
+                            </Link>
                         </div>
                     </div>
                 </div>
@@ -214,6 +222,7 @@
 
 <script setup>
 import { computed, ref } from 'vue';
+import { Link } from '@inertiajs/vue3';
 import UserLayout from '@/Layouts/UserLayout.vue';
 import { statusFlowClassByIndex } from '@/Composables/initiativeStatus';
 import { useFlowFilter } from '@/Composables/useFlowFilter';
@@ -273,6 +282,7 @@ const TABLE_MODE = {
 
 const tableMode = ref(TABLE_MODE.FLOW);
 const hasTableSelection = ref(false);
+const showAllCharter = ref(false);
 const selectedRoadmapProjectId = ref('all');
 const roadmapYearStart = 2025;
 const roadmapYearEnd = 2029;
@@ -280,6 +290,13 @@ const roadmapYearEnd = 2029;
 const activateFlowMode = () => {
     hasTableSelection.value = true;
     tableMode.value = TABLE_MODE.FLOW;
+};
+
+const showAllProjectCharter = () => {
+    hasTableSelection.value = true;
+    tableMode.value = TABLE_MODE.FLOW;
+    activeFlowFilter.value = null;
+    showAllCharter.value = true;
 };
 
 const showMasterItInitiatives = () => {
@@ -297,10 +314,16 @@ const showRoadmapView = () => {
 const handleFlowFilter = (statusId) => {
     hasTableSelection.value = true;
     tableMode.value = TABLE_MODE.FLOW;
+    showAllCharter.value = false;
     toggleFilter(statusId);
 };
 
-const flowItems = computed(() => filteredItems.value);
+const flowItems = computed(() => {
+    if (showAllCharter.value && activeFlowFilter.value === null) {
+        return asList(props.itInitiatives);
+    }
+    return filteredItems.value;
+});
 
 const masterItems = computed(() => {
     return asList(props.masterItInitiatives);
@@ -318,6 +341,16 @@ const roadmapItems = computed(() => {
     const selectedId = Number(selectedRoadmapProjectId.value);
 
     return projects.filter((project) => Number(project.id) === selectedId);
+});
+
+const addRoadmapHref = computed(() => {
+    if (selectedRoadmapProjectId.value === 'all') {
+        return '/roadmap/add';
+    }
+
+    const projectId = Number(selectedRoadmapProjectId.value);
+
+    return projectId > 0 ? `/roadmap/add?project_id=${projectId}` : '/roadmap/add';
 });
 
 const statusOptions = computed(() => {

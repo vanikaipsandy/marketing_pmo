@@ -11,6 +11,7 @@ use App\Models\MstInitiative;
 use App\Models\Project;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -138,6 +139,15 @@ class ITInitiativeController extends Controller
 
     public function create(): Response
     {
+        $planningItDefinitions = MstInitiative::query()
+            ->select(['id', 'code', 'name', 'description', 'status'])
+            ->where('tipe_initiative', 2)
+            ->orderByRaw('CASE WHEN code IS NULL OR code = "" THEN 1 ELSE 0 END')
+            ->orderBy('code')
+            ->orderBy('id')
+            ->get()
+            ->values();
+
         return Inertia::render('ProgramImplementation/ProjectCharter/ITInitiatives/Create', [
             'statusOptions' => InitiativeStatus::ordered()
                 ->map(fn (InitiativeStatus $status) => [
@@ -147,12 +157,24 @@ class ITInitiativeController extends Controller
                 ])
                 ->values(),
             'defaultStatusId' => InitiativeStatus::DRAFTING,
+            'planningItDefinitions' => $planningItDefinitions,
         ]);
     }
 
     public function store(ITInitiativeStoreRequest $request): RedirectResponse
     {
-        $project = Project::create($request->validated());
+        $validated = $request->validated();
+        $initiativeIds = collect($validated['initiative_ids'] ?? [])
+            ->map(static fn ($id) => (int) $id)
+            ->filter(static fn ($id) => $id > 0)
+            ->unique()
+            ->values()
+            ->all();
+
+        unset($validated['initiative_ids']);
+
+        $project = Project::create($validated);
+        $this->syncProjectInitiativeMappings($project, $initiativeIds);
 
         if ($project->status) {
             $statusModel = InitiativeStatus::find($project->status);
@@ -170,6 +192,63 @@ class ITInitiativeController extends Controller
         return redirect()->route('it-initiatives.index')->with('success', 'Project created successfully.');
     }
 
+    private function syncProjectInitiativeMappings(Project $project, array $initiativeIds): void
+    {
+        if (empty($initiativeIds) || !Schema::hasTable('trs_pc_initiative')) {
+            return;
+        }
+
+        $tableColumns = Schema::getColumnListing('trs_pc_initiative');
+        $projectColumn = collect(['project_id', 'trs_project_id'])->first(
+            static fn ($column) => in_array($column, $tableColumns, true)
+        );
+        $initiativeColumn = collect(['initiative_id', 'mst_initiative_id', 'useCase_id', 'use_case_id'])->first(
+            static fn ($column) => in_array($column, $tableColumns, true)
+        );
+
+        if ($projectColumn === null || $initiativeColumn === null) {
+            return;
+        }
+
+        DB::table('trs_pc_initiative')
+            ->where($projectColumn, $project->id)
+            ->delete();
+
+        $hasCreatedAt = in_array('created_at', $tableColumns, true);
+        $hasUpdatedAt = in_array('updated_at', $tableColumns, true);
+        $now = now();
+
+        $rows = collect($initiativeIds)
+            ->map(static function (int $initiativeId) use ($project, $projectColumn, $initiativeColumn, $hasCreatedAt, $hasUpdatedAt, $now): array {
+                $row = [
+                    $projectColumn => $project->id,
+                    $initiativeColumn => $initiativeId,
+                ];
+
+                if ($hasCreatedAt) {
+                    $row['created_at'] = $now;
+                }
+
+                if ($hasUpdatedAt) {
+                    $row['updated_at'] = $now;
+                }
+
+                return $row;
+            })
+            ->values()
+            ->all();
+
+        if (!empty($rows)) {
+            DB::table('trs_pc_initiative')->insert($rows);
+        }
+
+        if (Schema::hasColumn('mst_initiative', 'project_id')) {
+            MstInitiative::query()
+                ->whereIn('id', $initiativeIds)
+                ->update(['project_id' => $project->id]);
+        }
+    }
+
     public function show(Project $project): Response
     {
         $project->load([
@@ -180,10 +259,31 @@ class ITInitiativeController extends Controller
             'goals',
             'owner',
             'statusRef:id,name',
+            'pcStatusImplementations',
         ]);
+
+        $projectOptions = Project::query()
+            ->select(['id', 'code', 'name'])
+            ->with([
+                'charter' => static fn ($query) => $query->select(
+                    'trs_project_charters.id',
+                    'trs_project_charters.project_id',
+                    'trs_project_charters.category',
+                ),
+            ])
+            ->orderBy('id')
+            ->get()
+            ->map(static fn (Project $item): array => [
+                'id' => (int) $item->id,
+                'code' => $item->code,
+                'name' => $item->name,
+                'category' => $item->charter?->category,
+            ])
+            ->values();
 
         return Inertia::render('ProgramImplementation/ProjectCharter/ITInitiatives/Show', [
             'itInitiative' => $project,
+            'projectOptions' => $projectOptions,
         ]);
     }
 

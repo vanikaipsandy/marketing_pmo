@@ -1,46 +1,97 @@
 <template>
     <UserLayout title="Create Roadmap">
-        <div class="space-y-5 print:space-y-0 max-w-7xl mx-auto">
+        <div class="space-y-5 print:space-y-0">
             <section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-white/10 dark:bg-[#171717]">
-                <div class="mb-4">
-                    <Link href="/roadmap" class="text-sm text-indigo-600 dark:text-indigo-400 font-medium hover:underline mb-2 block">
-                        &larr; Back to Roadmap List
-                    </Link>
-                    <h1 class="text-xl font-bold text-slate-900 dark:text-white">Create New Roadmap</h1>
-                    <p class="text-sm text-slate-500 dark:text-slate-400">
-                        Add a new roadmap entry.
-                    </p>
-                </div>
-
-                <div class="max-w-2xl rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-[#111827]">
-                    <h3 class="mb-2 text-sm font-semibold text-slate-800 dark:text-slate-100">
-                        Tipe Milestone
-                    </h3>
-                    <p class="mb-3 text-xs text-slate-500 dark:text-slate-400">
-                        Tampilan menggunakan nama: Blok dan Garis.
-                    </p>
-
-                    <div class="grid grid-cols-2 gap-2 sm:grid-cols-2">
-                        <div
-                            v-for="option in milestoneTypeOptionsDisplay"
-                            :key="`create-type-${option.value}`"
-                            class="rounded-md border border-slate-200 bg-white px-3 py-2 text-center text-xs font-semibold text-slate-700 dark:border-white/10 dark:bg-[#1f2937] dark:text-slate-200"
-                        >
-                            {{ option.label }}
-                        </div>
+                <div class="mb-4 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+                    <div>
+                        <Link href="/roadmap" class="mb-2 inline-flex text-sm font-medium text-[#0B2A8A] hover:underline dark:text-[#53BDE6]">
+                            &larr; Kembali ke Roadmap
+                        </Link>
+                        <h1 class="text-xl font-bold text-slate-900 dark:text-white">Create Roadmap</h1>
                     </div>
+
+                    <Link
+                        href="/roadmap"
+                        class="inline-flex items-center rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-white/10 dark:bg-transparent dark:text-slate-200 dark:hover:bg-white/5"
+                    >
+                        Lihat Roadmap
+                    </Link>
                 </div>
+
+                <div class="max-w-sm">
+                    <label class="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
+                        Pilih Project
+                    </label>
+                    <select
+                        v-model="selectedProjectIdLocal"
+                        class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-white/10 dark:bg-[#101826] dark:text-slate-100"
+                    >
+                        <option :value="null">-- Pilih Project --</option>
+                        <option v-for="proj in projects" :key="proj.id" :value="proj.id">
+                            {{ proj.code ? `${proj.code} - ${proj.name}` : proj.name }}
+                        </option>
+                    </select>
+                </div>
+            </section>
+
+            <main v-if="activeProject" class="space-y-5">
+                <ActivityQuarterManager
+                    :project="activeProject"
+                    :milestone-type-options="milestoneTypeOptionsDisplay"
+                />
+            </main>
+
+            <section
+                v-else
+                class="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center dark:border-white/15 dark:bg-[#171717]"
+            >
+                <p class="text-sm font-medium text-slate-600 dark:text-slate-300">
+                    <template v-if="projects.length">
+                        Pilih project di atas untuk mulai tambah activity roadmap.
+                    </template>
+                    <template v-else>
+                        Belum ada data project untuk proses roadmap.
+                    </template>
+                </p>
             </section>
         </div>
     </UserLayout>
 </template>
 
 <script setup>
-import { Link } from '@inertiajs/vue3';
+import { computed, ref, watch } from 'vue';
+import { Link, router } from '@inertiajs/vue3';
 import UserLayout from '@/Layouts/UserLayout.vue';
+import ActivityQuarterManager from '@/Components/Roadmap/ActivityQuarterManager.vue';
+
+const props = defineProps({
+    projects: { type: Array, default: () => [] },
+    selectedProject: { type: Object, default: null },
+    selectedProjectId: { type: Number, default: null },
+});
+
+const selectedProjectIdLocal = ref(props.selectedProjectId ?? null);
 
 const milestoneTypeOptionsDisplay = [
-    { value: 1, label: 'Blok' },
-    { value: 2, label: 'Garis' },
+    { value: 1, label: 'Blok', timeline_style: 'block' },
+    { value: 2, label: 'Garis', timeline_style: 'dashed' },
 ];
+
+watch(selectedProjectIdLocal, (nextProjectId, previousProjectId) => {
+    if (nextProjectId === previousProjectId) {
+        return;
+    }
+
+    router.get('/roadmap/add', {
+        project_id: nextProjectId || undefined,
+    }, {
+        preserveState: true,
+        preserveScroll: true,
+        replace: true,
+    });
+});
+
+const activeProject = computed(() =>
+    props.projects.find((project) => project.id === selectedProjectIdLocal.value) ?? null
+);
 </script>

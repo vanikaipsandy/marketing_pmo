@@ -35,7 +35,7 @@ export function useNavigation() {
                 active: (url) => url.startsWith('/program-planning/rsti-sub-holding'),
             },
             {
-                label: 'Program Definition Digital Initiatives',
+                label: 'Digital Initiative Definition',
                 href: '/program-planning/program-definition/digital-initiatives',
                 icon: DocumentTextIcon,
                 active: (url) =>
@@ -43,7 +43,7 @@ export function useNavigation() {
                     || url === '/program-planning/program-definition',
             },
             {
-                label: 'Program Definition IT Initiatives',
+                label: 'IT Initiative Definition',
                 href: '/program-planning/program-definition/it-initiatives',
                 icon: DocumentTextIcon,
                 active: (url) => url.startsWith('/program-planning/program-definition/it-initiatives'),

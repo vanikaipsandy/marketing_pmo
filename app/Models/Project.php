@@ -78,6 +78,16 @@ class Project extends Model
         return $this->hasMany(MstInitiative::class, 'project_id');
     }
 
+    public function pcInitiatives(): HasMany
+    {
+        return $this->hasMany(PcInitiative::class, 'project_id');
+    }
+
+    public function mappedInitiatives(): BelongsToMany
+    {
+        return $this->belongsToMany(MstInitiative::class, 'trs_pc_initiative', 'project_id', 'initiative_id');
+    }
+
     /* ── Scopes ────────────────────────────────────── */
 
     public function scopeStatus($query, int $status)
