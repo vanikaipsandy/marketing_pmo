@@ -36,16 +36,7 @@ class InitiativeRelationController extends Controller
             ->map(fn (MstInitiativeRelation $relation) => $this->serializeRelation($relation))
             ->values();
 
-        if ($request->wantsJson()) {
-            return response()->json([
-                'mstInitiatives' => $mstInitiatives,
-                'initiativeRelations' => $initiativeRelations,
-                'typeRelationOptions' => $this->typeRelationOptions(),
-                'modelRelationOptions' => $this->modelRelationOptions(),
-            ]);
-        }
-
-        return Inertia::render('InitiativeRelation/InitiativeRelation', [
+        return Inertia::render('ProgramImplementation/InitiativeRelation/InitiativeRelation', [
             'mstInitiatives' => $mstInitiatives,
             'initiativeRelations' => $initiativeRelations,
             'typeRelationOptions' => $this->typeRelationOptions(),
@@ -58,7 +49,7 @@ class InitiativeRelationController extends Controller
      */
     public function create(Request $request): Response|JsonResponse
     {
-        return Inertia::render('InitiativeRelation/Create', [
+        return Inertia::render('ProgramImplementation/InitiativeRelation/Create', [
             'initiativeOptions' => $this->initiativeOptions(),
             'initiativeRelations' => $this->initiativeRelations(),
             'typeRelationOptions' => $this->typeRelationOptions(),
@@ -112,7 +103,7 @@ class InitiativeRelationController extends Controller
             'initiativeColumn:id,code,name',
         ]);
 
-        return Inertia::render('InitiativeRelation/Edit', [
+        return Inertia::render('ProgramImplementation/InitiativeRelation/Edit', [
             'initiativeRelation' => $this->serializeRelation($initiativeRelation),
             'initiativeOptions' => $this->initiativeOptions(),
             'initiativeRelations' => $this->initiativeRelations(),

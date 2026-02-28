@@ -11,6 +11,10 @@ const lineItems = (value) => String(value || '')
     .filter(Boolean);
 
 const showScope = () => props.editable || Boolean(String(props.form.scope || '').trim());
+
+const stripBulletPrefix = (value) => String(value || '')
+    .replace(/^[\u2022\u2023\u25E6\u2043\u2219â€¢\-\*\u00B7\u2013\u2014]+\s*/u, '')
+    .trim();
 </script>
 
 <template>
@@ -23,7 +27,7 @@ const showScope = () => props.editable || Boolean(String(props.form.scope || '')
                 {{ itInitiative.name || '-' }}
             </h1>
             <p class="mt-1 text-[13px] text-slate-600">
-                <template v-if="form.objectives">{{ lineItems(form.objectives)[0] || '' }}</template>
+                <template v-if="form.objectives">{{ stripBulletPrefix(lineItems(form.objectives)[0] || '') }}</template>
                 <template v-else>{{ itInitiative.description || '' }}</template>
             </p>
         </div>
@@ -100,7 +104,7 @@ const showScope = () => props.editable || Boolean(String(props.form.scope || '')
         <div class="charter-section grid-2col-impact">
             <!-- Dampak -->
             <article class="panel">
-                <div class="bar-sub bar-sub-lg">Dampak dan nilai bagi Pertamina</div>
+                <div class="bar-main bar-sub-lg">Dampak dan nilai bagi Pertamina</div>
                 <div class="panel-body min-h-[140px]">
                     <textarea v-if="editable" v-model="form.impact_value" class="field-area" placeholder="Satu poin per baris..."></textarea>
                     <ul v-else-if="lineItems(form.impact_value).length" class="bullet-list">
@@ -111,7 +115,7 @@ const showScope = () => props.editable || Boolean(String(props.form.scope || '')
             </article>
 
             <!-- Kebutuhan Sumber Daya -->
-            <div>
+            <div class="impact-resources">
                 <div class="bar-main mb-0">Kebutuhan sumber daya</div>
                 <div class="grid-3col">
                     <div class="panel">
@@ -270,7 +274,7 @@ const showScope = () => props.editable || Boolean(String(props.form.scope || '')
 
 /* --- PANEL --- */
 .panel {
-    border: 1px solid #2e6ea2;
+    border: 1px solid #1e4f8f;
     border-radius: 0;
     background: transparent;
 }
@@ -287,24 +291,25 @@ const showScope = () => props.editable || Boolean(String(props.form.scope || '')
 .grid-2col {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    border-top: 1px solid #2e6ea2;
+    border-top: 1px solid #1e4f8f;
     gap: 0;
 }
 .grid-2col > * {
-    border-right: 1px solid #2e6ea2;
+    border-right: 1px solid #1e4f8f;
 }
 .grid-2col > *:last-child {
-    border-right: none;
+    border-right: 1px solid #1e4f8f;
 }
 
 .grid-2col-impact {
     display: grid;
-    grid-template-columns: 48% 52%;
+    grid-template-columns: 1fr 1fr;
     gap: 0;
-    border-top: 1px solid #2e6ea2;
+    border-top: 1px solid #1e4f8f;
+    align-items: stretch;
 }
 .grid-2col-impact > *:first-child {
-    border-right: 1px solid #2e6ea2;
+    border-right: 1px solid #1e4f8f;
 }
 
 .grid-3col {
@@ -314,17 +319,34 @@ const showScope = () => props.editable || Boolean(String(props.form.scope || '')
     border-top: none;
 }
 .grid-3col > * {
-    border-right: 1px solid #2e6ea2;
+    border-right: 1px solid #1e4f8f;
 }
 .grid-3col > *:last-child {
-    border-right: none;
+    border-right: 1px solid #1e4f8f;
+}
+
+.impact-resources {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+.impact-resources .grid-3col {
+    flex: 1;
+    align-items: stretch;
+}
+.impact-resources .grid-3col > .panel {
+    display: flex;
+    flex-direction: column;
+}
+.impact-resources .grid-3col .panel-body {
+    flex: 1;
 }
 
 /* --- CONTENT --- */
 .bullet-list {
     margin: 0;
-    padding-left: 14px;
-    list-style: disc;
+    padding-left: 0;
+    list-style: none;
     font-size: 12px;
     line-height: 1.55;
     color: #1a1a1a;

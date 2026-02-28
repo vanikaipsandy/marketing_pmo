@@ -5,7 +5,7 @@
                 <div class="mb-4 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
                     <div>
                         <Link href="/roadmap" class="mb-2 inline-flex text-sm font-medium text-[#0B2A8A] hover:underline dark:text-[#53BDE6]">
-                            &larr; Kembali ke Roadmap
+                            Kembali
                         </Link>
                         <h1 class="text-xl font-bold text-slate-900 dark:text-white">Roadmap Input & Edit</h1>
                     </div>

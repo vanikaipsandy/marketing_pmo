@@ -11,7 +11,7 @@
                         <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7" />
                         </svg>
-                        Back
+                        Kembali
                     </Link>
 
                     <span class="text-slate-300 dark:text-slate-600">|</span>
@@ -171,7 +171,7 @@
 import { computed, ref, watch } from 'vue';
 import { Link, router, useForm, usePage } from '@inertiajs/vue3';
 import UserLayout from '@/Layouts/UserLayout.vue';
-import CharterDocument from './Partials/CharterDocument.vue';
+import CharterDocument from '@/Components/ProjectCharter/ItCharterDocument.vue';
 import ProjectRoadmap from '@/Components/Roadmap/ProjectRoadmap.vue';
 import { statusBadgeClassById, statusLabelFromOptions } from '@/Composables/initiativeStatus';
 

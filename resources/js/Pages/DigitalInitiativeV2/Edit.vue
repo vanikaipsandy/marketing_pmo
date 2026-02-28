@@ -3,7 +3,7 @@
         <div class="mx-auto max-w-6xl animate-fade-in">
             <div class="mb-6 flex items-center justify-between">
                 <Link href="/digital-initiatives" class="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white">
-                    ← Back to Digital Initiatives
+                    Kembali
                 </Link>
             </div>
 

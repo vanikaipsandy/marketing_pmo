@@ -6,7 +6,7 @@
                 <div class="rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-[#131313]">
                     <div class="grid grid-cols-1 gap-3 sm:grid-cols-[120px_1fr] sm:items-end">
                         <div>
-                            <label class="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">Tipe Initiative</label>
+                            <label class="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">Tipe Initiative</label>
                             <select
                                 v-model.number="selectedRowType"
                                 class="h-10 w-full rounded-md border-slate-300 bg-white px-3 text-sm shadow-sm focus:border-slate-400 focus:ring-slate-300 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-200"
@@ -17,7 +17,7 @@
                             </select>
                         </div>
                         <div>
-                            <label class="mb-3 block text-sm font-semibold text-slate-700 dark:text-slate-300">{{ resolvedLabels.rowSelectLabel }}</label>
+                            <label class="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">{{ resolvedLabels.rowSelectLabel }}</label>
                             <select
                                 v-model="form.initiative_code_row"
                                 class="h-10 w-full rounded-md border-slate-300 bg-white px-4 text-sm shadow-sm focus:border-slate-400 focus:ring-slate-300 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-200"
@@ -112,7 +112,7 @@
                 <div class="rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-[#131313]">
                     <div class="grid grid-cols-1 gap-3 sm:grid-cols-[120px_1fr] sm:items-end">
                         <div>
-                            <label class="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">Tipe Initiative</label>
+                            <label class="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">Tipe Initiative</label>
                             <select
                                 v-model.number="selectedColumnType"
                                 class="h-10 w-full rounded-md border-slate-300 bg-white px-3 text-sm shadow-sm focus:border-slate-400 focus:ring-slate-300 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-200"
@@ -123,7 +123,7 @@
                             </select>
                         </div>
                         <div>
-                            <label class="mb-3 block text-sm font-semibold text-slate-700 dark:text-slate-300">{{ resolvedLabels.columnSelectLabel }}</label>
+                            <label class="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">{{ resolvedLabels.columnSelectLabel }}</label>
                             <select
                                 v-model="form.initiative_code_column"
                                 class="h-10 w-full rounded-md border-slate-300 bg-white px-4 text-sm shadow-sm focus:border-slate-400 focus:ring-slate-300 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-200"

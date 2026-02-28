@@ -302,7 +302,7 @@ class ITInitiativeController extends Controller
         $mappedIds = [];
         if (Schema::hasTable('trs_pc_initiative')) {
             $tableColumns = Schema::getColumnListing('trs_pc_initiative');
-            $projectColumn = collect(['project_id', 'trs_project_id'])->first(
+            $projectColumn = collect(['project_id', 'trs_project_id', 'pc_id'])->first(
                 static fn ($col) => in_array($col, $tableColumns, true)
             );
             $initiativeColumn = collect(['initiative_id', 'mst_initiative_id', 'useCase_id', 'use_case_id'])->first(
