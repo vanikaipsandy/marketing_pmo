@@ -256,7 +256,6 @@ class ITInitiativeController extends Controller
             'charters' => static fn ($query) => $query->latest(),
             'milestones',
             'programs',
-            'goals',
             'owner',
             'statusRef:id,name',
             'pcStatusImplementations',

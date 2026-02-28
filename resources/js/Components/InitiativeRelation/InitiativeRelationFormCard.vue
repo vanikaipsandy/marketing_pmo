@@ -4,16 +4,31 @@
             <div class="space-y-6 p-6">
                 <!-- Work Package 1 Section -->
                 <div class="rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-[#131313]">
-                    <label class="mb-3 block text-sm font-semibold text-slate-700 dark:text-slate-300">{{ resolvedLabels.rowSelectLabel }}</label>
-                    <select
-                        v-model="form.initiative_code_row"
-                        class="h-12 w-full rounded-md border-slate-300 bg-white px-4 text-sm shadow-sm focus:border-slate-400 focus:ring-slate-300 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-200"
-                    >
-                        <option value="">{{ resolvedLabels.rowSelectPlaceholder }}</option>
-                        <option v-for="initiative in initiativeOptions" :key="initiative.id" :value="initiative.id">
-                            {{ initiativeLabel(initiative) }}
-                        </option>
-                    </select>
+                    <div class="grid grid-cols-1 gap-3 sm:grid-cols-[120px_1fr] sm:items-end">
+                        <div>
+                            <label class="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">Tipe Initiative</label>
+                            <select
+                                v-model.number="selectedRowType"
+                                class="h-10 w-full rounded-md border-slate-300 bg-white px-3 text-sm shadow-sm focus:border-slate-400 focus:ring-slate-300 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-200"
+                            >
+                                <option :value="null">Semua</option>
+                                <option :value="1">Digital</option>
+                                <option :value="2">IT</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="mb-3 block text-sm font-semibold text-slate-700 dark:text-slate-300">{{ resolvedLabels.rowSelectLabel }}</label>
+                            <select
+                                v-model="form.initiative_code_row"
+                                class="h-10 w-full rounded-md border-slate-300 bg-white px-4 text-sm shadow-sm focus:border-slate-400 focus:ring-slate-300 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-200"
+                            >
+                                <option value="">{{ resolvedLabels.rowSelectPlaceholder }}</option>
+                                <option v-for="initiative in filteredRowInitiatives" :key="initiative.id" :value="initiative.id">
+                                    {{ initiativeLabel(initiative) }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
                     <p v-if="form.errors.initiative_code_row" class="mt-2 text-xs text-red-500">{{ form.errors.initiative_code_row }}</p>
                 </div>
 
@@ -95,16 +110,31 @@
             <div class="space-y-6 p-6">
                 <!-- Work Package 2 Section -->
                 <div class="rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-[#131313]">
-                    <label class="mb-3 block text-sm font-semibold text-slate-700 dark:text-slate-300">{{ resolvedLabels.columnSelectLabel }}</label>
-                    <select
-                        v-model="form.initiative_code_column"
-                        class="h-12 w-full rounded-md border-slate-300 bg-white px-4 text-sm shadow-sm focus:border-slate-400 focus:ring-slate-300 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-200"
-                    >
-                        <option value="">{{ resolvedLabels.columnSelectPlaceholder }}</option>
-                        <option v-for="initiative in initiativeOptions" :key="initiative.id" :value="initiative.id">
-                            {{ initiativeLabel(initiative) }}
-                        </option>
-                    </select>
+                    <div class="grid grid-cols-1 gap-3 sm:grid-cols-[120px_1fr] sm:items-end">
+                        <div>
+                            <label class="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">Tipe Initiative</label>
+                            <select
+                                v-model.number="selectedColumnType"
+                                class="h-10 w-full rounded-md border-slate-300 bg-white px-3 text-sm shadow-sm focus:border-slate-400 focus:ring-slate-300 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-200"
+                            >
+                                <option :value="null">Semua</option>
+                                <option :value="1">Digital</option>
+                                <option :value="2">IT</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="mb-3 block text-sm font-semibold text-slate-700 dark:text-slate-300">{{ resolvedLabels.columnSelectLabel }}</label>
+                            <select
+                                v-model="form.initiative_code_column"
+                                class="h-10 w-full rounded-md border-slate-300 bg-white px-4 text-sm shadow-sm focus:border-slate-400 focus:ring-slate-300 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-200"
+                            >
+                                <option value="">{{ resolvedLabels.columnSelectPlaceholder }}</option>
+                                <option v-for="initiative in filteredColumnInitiatives" :key="initiative.id" :value="initiative.id">
+                                    {{ initiativeLabel(initiative) }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
                     <p v-if="form.errors.initiative_code_column" class="mt-2 text-xs text-red-500">{{ form.errors.initiative_code_column }}</p>
                 </div>
 
@@ -191,7 +221,7 @@
             <div class="space-y-6 p-6">
                 <!-- Relation Type and Display Row -->
                 <div class="rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-[#131313]">
-                    <div class="grid grid-cols-3 gap-4 items-end">
+                    <div class="grid grid-cols-1 gap-4 items-end sm:grid-cols-[1fr_160px_1fr]">
                         <div>
                             <label class="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">{{ resolvedLabels.rowSelectedLabel }}</label>
                             <div class="flex items-center justify-center h-10 rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-700 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-300">
@@ -271,7 +301,7 @@
 </template>
 
 <script setup>
-import { computed, toRef } from 'vue';
+import { computed, ref, toRef, watch } from 'vue';
 import { Link } from '@inertiajs/vue3';
 
 const props = defineProps({
@@ -312,6 +342,8 @@ const props = defineProps({
 const emit = defineEmits(['submit']);
 
 const form = toRef(props, 'form');
+const selectedRowType = ref(null);
+const selectedColumnType = ref(null);
 
 const labelPresets = {
     create: {
@@ -363,14 +395,59 @@ const selectedInitiativeColumn = computed(() => {
     return props.initiativeOptions.find(opt => opt.id == form.value.initiative_code_column);
 });
 
+const filterInitiativesByType = (initiatives, typeValue) => {
+    if (!typeValue) return initiatives;
+    return initiatives.filter((initiative) => Number(initiative?.tipe_initiative) === Number(typeValue));
+};
+
+const filteredRowInitiatives = computed(() => (
+    filterInitiativesByType(props.initiativeOptions, selectedRowType.value)
+));
+
+const filteredColumnInitiatives = computed(() => (
+    filterInitiativesByType(props.initiativeOptions, selectedColumnType.value)
+));
+
+watch(selectedRowType, (nextType) => {
+    if (!form.value.initiative_code_row) return;
+    const selected = props.initiativeOptions.find(opt => opt.id == form.value.initiative_code_row);
+    if (!selected) return;
+    if (nextType && Number(selected?.tipe_initiative) !== Number(nextType)) {
+        form.value.initiative_code_row = '';
+    }
+});
+
+watch(selectedColumnType, (nextType) => {
+    if (!form.value.initiative_code_column) return;
+    const selected = props.initiativeOptions.find(opt => opt.id == form.value.initiative_code_column);
+    if (!selected) return;
+    if (nextType && Number(selected?.tipe_initiative) !== Number(nextType)) {
+        form.value.initiative_code_column = '';
+    }
+});
+
+watch(selectedInitiativeRow, (initiative) => {
+    if (selectedRowType.value != null) return;
+    const typeValue = initiative?.tipe_initiative;
+    if (typeValue != null) {
+        selectedRowType.value = Number(typeValue);
+    }
+}, { immediate: true });
+
+watch(selectedInitiativeColumn, (initiative) => {
+    if (selectedColumnType.value != null) return;
+    const typeValue = initiative?.tipe_initiative;
+    if (typeValue != null) {
+        selectedColumnType.value = Number(typeValue);
+    }
+}, { immediate: true });
+
 const initiativeLabel = (initiative) => {
     const code = initiative?.code ?? initiative?.id ?? '-';
     const name = initiative?.name ?? '';
-    const typeLabel = formatInitiativeType(initiative?.tipe_initiative);
     const baseLabel = name ? `${code} - ${name}` : code;
     const coeName = initiative?.coe_name ?? initiative?.coe?.name ?? '';
-    const labelWithType = typeLabel && typeLabel !== '-' ? `${typeLabel} ${baseLabel}` : baseLabel;
-    return coeName ? `${labelWithType} (CoE: ${coeName})` : labelWithType;
+    return coeName ? `${baseLabel} (CoE: ${coeName})` : baseLabel;
 };
 
 const buildRelations = (initiativeId) => {

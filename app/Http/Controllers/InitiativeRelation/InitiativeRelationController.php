@@ -226,6 +226,7 @@ class InitiativeRelationController extends Controller
         return MstInitiative::query()
             ->select([
                 'id',
+                'coe_id',
                 'code',
                 'name',
                 'tipe_initiative',

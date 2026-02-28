@@ -20,7 +20,6 @@
                 @edit-relation="goToEdit"
             />
 
-            <!-- <InitiativeRelationTable /> -->
         </div>
     </UserLayout>
 </template>
