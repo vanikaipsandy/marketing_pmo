@@ -8,6 +8,7 @@
                     placeholder="Cari initiative / kesimpulan..."
                     class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-sky-400 focus:outline-none dark:border-white/20 dark:bg-[#1f1f1f] dark:text-slate-200 md:w-72"
                 />
+                <label for="type" class="text-xs font-medium text-slate-700 dark:text-slate-200">Tipe Initiative</label>
                 <select
                     v-model="selectedType"
                     class="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-sky-400 focus:outline-none dark:border-white/20 dark:bg-[#1f1f1f] dark:text-slate-200"
@@ -16,6 +17,7 @@
                     <option value="digital">Digital</option>
                     <option value="it">IT</option>
                 </select>
+                <label for="initiative" class="text-xs font-medium text-slate-700 dark:text-slate-200">Initiative</label>
                 <select
                     v-model="selectedInitiativeId"
                     class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-sky-400 focus:outline-none dark:border-white/20 dark:bg-[#1f1f1f] dark:text-slate-200 md:w-72"
@@ -76,7 +78,7 @@
                         </td>
                         <td class="border border-slate-300 px-4 py-3 text-slate-600 dark:border-white/20 dark:text-slate-400">
                             <Link
-                                :href="`/program-evalution/${review.id}`"
+                                :href="`/program-evalution/review/${review.id}`"
                                 class="inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:border-sky-300 hover:bg-sky-50 hover:text-sky-700 dark:border-white/20 dark:bg-[#1f1f1f] dark:text-slate-200 dark:hover:border-sky-500/60 dark:hover:bg-sky-900/30 dark:hover:text-sky-200"
                                 @click.stop
                             >

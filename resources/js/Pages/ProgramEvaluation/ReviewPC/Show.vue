@@ -12,6 +12,7 @@
                         Kembali
                     </Link>
                     <span class="text-slate-300 dark:text-slate-600">|</span>
+                    <label for="review" class="text-xs font-medium text-slate-700 dark:text-slate-200">Review</label>
                     <select v-if="reviewOptions.length" v-model="selectedReviewId"
                         class="max-w-xs rounded-md border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 focus:border-[#1C75BC] focus:outline-none dark:border-white/10 dark:bg-[#101826] dark:text-slate-100">
                         <option v-for="option in reviewOptions" :key="`review-opt-${option.id}`"
@@ -41,6 +42,13 @@
                             Review
                         </button>
                     </div>
+                    <Link
+                        v-if="activeNav === 'review'"
+                        :href="`/program-evalution/review?edit=${trsReviewPC.id}`"
+                        class="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-slate-50 dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/5"
+                    >
+                        Edit
+                    </Link>
                     <button type="button"
                         class="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-slate-50 dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/5"
                         @click="printPage">
@@ -194,7 +202,7 @@ const selectedReviewId = computed({
     get: () => String(props.trsReviewPC?.id ?? ''),
     set: (value) => {
         if (!value || String(value) === String(props.trsReviewPC?.id)) return;
-        router.visit(`/program-evalution/${value}`);
+        router.visit(`/program-evalution/review/${value}`);
     },
 });
 

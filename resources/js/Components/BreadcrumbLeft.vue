@@ -34,13 +34,22 @@ const programImplementationItem = computed(() => {
     return navItems.value.find((item) => item.label === 'Program Implementation') ?? null;
 });
 
+const programImplementationChildren = computed(() => {
+    return navItems.value.filter((item) => implementationChildHrefs.includes(item.href));
+});
+
 const programInformationItem = computed(() => {
     return navItems.value.find((item) => item.label === 'Program Evaluation') ?? null;
 });
 
-const programImplementationChildren = computed(() => {
-    return navItems.value.filter((item) => implementationChildHrefs.includes(item.href));
+const showInformationChildren = computed(() => {
+    if (programInformationItem.value?.active(currentUrl.value)) {
+        return true;
+    }
+
+    return programInformationItem.value?.children?.some((item) => item.active(currentUrl.value));
 });
+
 
 const showPlanningChildren = computed(() => {
     if (programPlanningItem.value?.active(currentUrl.value)) {
@@ -109,7 +118,7 @@ const showImplementationChildren = computed(() => {
                 :href="programInformationItem.href"
                 class="inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-[11.5px] font-medium transition-all duration-150"
                 :class="[
-                    programInformationItem.active(currentUrl)
+                    showInformationChildren
                         ? 'bg-blue-500 text-white shadow-sm'
                         : 'text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-slate-200'
                 ]"
@@ -119,9 +128,9 @@ const showImplementationChildren = computed(() => {
             </Link>
         </div>
 
-        <div v-if="showPlanningChildren || showImplementationChildren" class="ml-2 inline-flex flex-wrap items-center gap-1">
+        <div v-if="showPlanningChildren || showImplementationChildren || showInformationChildren" class="ml-2 inline-flex flex-wrap items-center gap-1">
             <Link
-                v-for="item in showPlanningChildren ? programPlanningChildren : programImplementationChildren"
+                v-for="item in showPlanningChildren ? programPlanningChildren : showImplementationChildren ? programImplementationChildren : programInformationItem?.children || []"
                 :key="'left-child-' + item.label"
                 :href="item.href"
                 class="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-medium transition-all duration-150"

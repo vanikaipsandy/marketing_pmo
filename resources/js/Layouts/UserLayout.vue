@@ -149,19 +149,43 @@ const logout = () => {
 
             <div v-if="mobileMenuOpen" class="border-t border-slate-200 bg-white dark:border-white/10 dark:bg-[#141414] md:hidden">
                 <div class="space-y-1 px-4 py-4">
-                    <Link
-                        v-for="item in navItems"
-                        :key="`mobile-${item.href}`"
-                        :href="item.href"
-                        class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors"
-                        :class="item.active(currentUrl)
-                            ? 'bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400'
-                            : 'text-slate-600 hover:bg-blue-50 hover:text-blue-600 dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-blue-300'"
-                        @click="mobileMenuOpen = false"
-                    >
-                        <component :is="item.icon" class="h-5 w-5" />
-                        {{ item.label }}
-                    </Link>
+                    <template v-for="item in navItems" :key="`mobile-${item.href}`">
+                        <div v-if="item.children && item.children.length > 0">
+                            <!-- Parent menu with children -->
+                            <div class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400">
+                                <component :is="item.icon" class="h-5 w-5" />
+                                {{ item.label }}
+                            </div>
+                            <!-- Submenu items -->
+                            <div class="ml-4 space-y-1">
+                                <Link
+                                    v-for="child in item.children"
+                                    :key="`mobile-sub-${child.href}`"
+                                    :href="child.href"
+                                    class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors"
+                                    :class="child.active(currentUrl)
+                                        ? 'bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400'
+                                        : 'text-slate-600 hover:bg-blue-50 hover:text-blue-600 dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-blue-300'"
+                                    @click="mobileMenuOpen = false"
+                                >
+                                    <component :is="child.icon" v-if="child.icon" class="h-4 w-4 shrink-0" />
+                                    {{ child.label }}
+                                </Link>
+                            </div>
+                        </div>
+                        <Link
+                            v-else
+                            :href="item.href"
+                            class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors"
+                            :class="item.active(currentUrl)
+                                ? 'bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400'
+                                : 'text-slate-600 hover:bg-blue-50 hover:text-blue-600 dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-blue-300'"
+                            @click="mobileMenuOpen = false"
+                        >
+                            <component :is="item.icon" class="h-5 w-5" />
+                            {{ item.label }}
+                        </Link>
+                    </template>
 
                     <div class="my-2 border-t border-slate-200 dark:border-white/5"></div>
 

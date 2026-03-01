@@ -84,8 +84,9 @@ Route::middleware(['auth', 'approved'])->group(function () {
     ]))->name('program-information.index');
 
     // Program Evaluation
-    Route::get('/program-evalution', [TrsReviewPCController::class, 'index'])->name('program-evaluation.index');
-    Route::get('/program-evalution/{trsReviewPC}', [TrsReviewPCController::class, 'show'])->name('program-evaluation.show');
+    Route::redirect('/program-evalution', '/program-evalution/review');
+    Route::get('/program-evalution/review', [TrsReviewPCController::class, 'index'])->name('program-evaluation.index');
+    Route::get('/program-evalution/review/{trsReviewPC}', [TrsReviewPCController::class, 'show'])->name('program-evaluation.show');
 
     // Strategic Pillars
     Route::get('/strategic-pillars/{goal?}', [StrategicPillarController::class, 'index'])->name('strategic-pillars.index');

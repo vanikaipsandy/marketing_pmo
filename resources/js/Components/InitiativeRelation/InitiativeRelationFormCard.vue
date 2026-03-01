@@ -23,6 +23,7 @@
                                 class="h-10 w-full rounded-md border-slate-300 bg-white px-4 text-sm shadow-sm focus:border-slate-400 focus:ring-slate-300 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-200"
                             >
                                 <option value="">{{ resolvedLabels.rowSelectPlaceholder }}</option>
+                                <option :value="null">—</option>
                                 <option v-for="initiative in filteredRowInitiatives" :key="initiative.id" :value="initiative.id">
                                     {{ initiativeLabel(initiative) }}
                                 </option>
@@ -46,22 +47,22 @@
                             </colgroup>
                             <thead>
                                 <tr class="bg-emerald-100/70 dark:bg-emerald-900/30">
-                                    <th class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-left font-semibold text-emerald-900 dark:text-emerald-200 whitespace-nowrap">Code</th>
+                                    <th class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-center font-semibold text-emerald-900 dark:text-emerald-200 whitespace-nowrap">Code</th>
                                     <th class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-left font-semibold text-emerald-900 dark:text-emerald-200 whitespace-nowrap">Name</th>
                                     <th class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-left font-semibold text-emerald-900 dark:text-emerald-200 whitespace-nowrap">Description</th>
                                     <th class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-left font-semibold text-emerald-900 dark:text-emerald-200 whitespace-nowrap">{{ resolvedLabels.statusHeader }}</th>
-                                    <th class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-left font-semibold text-emerald-900 dark:text-emerald-200 whitespace-nowrap">Type</th>
-                                    <th class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-left font-semibold text-emerald-900 dark:text-emerald-200 whitespace-nowrap">BU</th>
+                                    <th class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-center font-semibold text-emerald-900 dark:text-emerald-200 whitespace-nowrap">Type</th>
+                                    <th class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-center font-semibold text-emerald-900 dark:text-emerald-200 whitespace-nowrap">Business Unit</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr class="hover:bg-emerald-50/50 dark:hover:bg-emerald-900/15">
-                                    <td class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-emerald-900 dark:text-emerald-100 whitespace-nowrap">{{ selectedInitiativeRow.code || '-' }}</td>
+                                    <td class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-emerald-900 dark:text-emerald-100 whitespace-nowrap text-center">{{ selectedInitiativeRow.code || '-' }}</td>
                                     <td class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-emerald-900 dark:text-emerald-100 whitespace-normal break-words">{{ selectedInitiativeRow.name || '-' }}</td>
                                     <td class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-emerald-900 dark:text-emerald-100 whitespace-normal break-words">{{ selectedInitiativeRow.description || '-' }}</td>
                                     <td class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-emerald-900 dark:text-emerald-100 whitespace-normal break-words">{{ selectedInitiativeRow.status || '-' }}</td>
-                                    <td class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-emerald-900 dark:text-emerald-100 whitespace-nowrap">{{ formatInitiativeType(selectedInitiativeRow.tipe_initiative) }}</td>
-                                    <td class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-emerald-900 dark:text-emerald-100 whitespace-nowrap">{{ selectedInitiativeRow.business_unit_name || selectedInitiativeRow.business_unit || '-' }}</td>
+                                    <td class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-emerald-900 dark:text-emerald-100 whitespace-nowrap text-center">{{ formatInitiativeType(selectedInitiativeRow.tipe_initiative) }}</td>
+                                    <td class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-emerald-900 dark:text-emerald-100 whitespace-nowrap text-center">{{ selectedInitiativeRow.business_unit_name || selectedInitiativeRow.business_unit || '-' }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -129,6 +130,7 @@
                                 class="h-10 w-full rounded-md border-slate-300 bg-white px-4 text-sm shadow-sm focus:border-slate-400 focus:ring-slate-300 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-200"
                             >
                                 <option value="">{{ resolvedLabels.columnSelectPlaceholder }}</option>
+                                <option :value="null">—</option>
                                 <option v-for="initiative in filteredColumnInitiatives" :key="initiative.id" :value="initiative.id">
                                     {{ initiativeLabel(initiative) }}
                                 </option>
@@ -152,22 +154,22 @@
                             </colgroup>
                             <thead>
                                 <tr class="bg-blue-100/70 dark:bg-blue-900/30">
-                                    <th class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-left font-semibold text-blue-900 dark:text-blue-200 whitespace-nowrap">Code</th>
+                                    <th class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-center font-semibold text-blue-900 dark:text-blue-200 whitespace-nowrap">Code</th>
                                     <th class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-left font-semibold text-blue-900 dark:text-blue-200 whitespace-nowrap">Name</th>
                                     <th class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-left font-semibold text-blue-900 dark:text-blue-200 whitespace-nowrap">Description</th>
                                     <th class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-left font-semibold text-blue-900 dark:text-blue-200 whitespace-nowrap">{{ resolvedLabels.statusHeader }}</th>
-                                    <th class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-left font-semibold text-blue-900 dark:text-blue-200 whitespace-nowrap">Type</th>
-                                    <th class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-left font-semibold text-blue-900 dark:text-blue-200 whitespace-nowrap">BU</th>
+                                    <th class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-center font-semibold text-blue-900 dark:text-blue-200 whitespace-nowrap">Type</th>
+                                    <th class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-center font-semibold text-blue-900 dark:text-blue-200 whitespace-nowrap">Business Unit</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr class="hover:bg-blue-50/50 dark:hover:bg-blue-900/15">
-                                    <td class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-blue-900 dark:text-blue-100 whitespace-nowrap">{{ selectedInitiativeColumn.code || '-' }}</td>
+                                    <td class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-blue-900 dark:text-blue-100 whitespace-nowrap text-center">{{ selectedInitiativeColumn.code || '-' }}</td>
                                     <td class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-blue-900 dark:text-blue-100 whitespace-normal break-words">{{ selectedInitiativeColumn.name || '-' }}</td>
                                     <td class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-blue-900 dark:text-blue-100 whitespace-normal break-words">{{ selectedInitiativeColumn.description || '-' }}</td>
                                     <td class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-blue-900 dark:text-blue-100 whitespace-normal break-words">{{ selectedInitiativeColumn.status || '-' }}</td>
-                                    <td class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-blue-900 dark:text-blue-100 whitespace-nowrap">{{ formatInitiativeType(selectedInitiativeColumn.tipe_initiative) }}</td>
-                                    <td class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-blue-900 dark:text-blue-100 whitespace-nowrap">{{ selectedInitiativeColumn.business_unit_name || selectedInitiativeColumn.business_unit || '-' }}</td>
+                                    <td class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-blue-900 dark:text-blue-100 whitespace-nowrap text-center">{{ formatInitiativeType(selectedInitiativeColumn.tipe_initiative) }}</td>
+                                    <td class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-blue-900 dark:text-blue-100 whitespace-nowrap text-center">{{ selectedInitiativeColumn.business_unit_name || selectedInitiativeColumn.business_unit || '-' }}</td>
                                 </tr>
                             </tbody>
                         </table>

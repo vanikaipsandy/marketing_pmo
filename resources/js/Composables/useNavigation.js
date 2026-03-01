@@ -10,6 +10,7 @@ import {
     CubeIcon,
     DocumentTextIcon,
     TableCellsIcon,
+    ClipboardDocumentCheckIcon,
 } from '@heroicons/vue/24/outline';
 
 export function useNavigation() {
@@ -56,9 +57,17 @@ export function useNavigation() {
             },
             {
                 label: 'Program Evaluation',
-                href: '/program-evalution',
+                href: '/program-evalution/review',
                 icon: DocumentTextIcon,
                 active: (url) => url.startsWith('/program-evalution'),
+                children: [
+                    {
+                        label: 'Review PC',
+                        href: '/program-evalution/review',
+                        icon: ClipboardDocumentCheckIcon,
+                        active: (url) => url.startsWith('/program-evalution/review'),
+                    },
+                ],
             },
             {
                 label: 'Program Implementation',
