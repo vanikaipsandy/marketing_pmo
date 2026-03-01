@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\ProgramEvaluation;
 
 use App\Http\Controllers\Controller;
+use App\Models\Project;
 use App\Models\TrsReviewPC;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class TrsReviewPCController extends Controller
 {
@@ -44,8 +47,55 @@ class TrsReviewPCController extends Controller
     {
         $trsReviewPC->load('initiative');
 
+        $mappedProject = null;
+        $initiativeId = $trsReviewPC->initiative_id;
+
+        if ($initiativeId && Schema::hasTable('trs_pc_initiative')) {
+            $tableColumns = Schema::getColumnListing('trs_pc_initiative');
+            $projectColumn = collect(['project_id', 'trs_project_id', 'pc_id'])->first(
+                static fn ($col) => in_array($col, $tableColumns, true)
+            );
+            $initiativeColumn = collect(['initiative_id', 'mst_initiative_id', 'useCase_id', 'use_case_id'])->first(
+                static fn ($col) => in_array($col, $tableColumns, true)
+            );
+
+            if ($projectColumn && $initiativeColumn) {
+                $query = DB::table('trs_pc_initiative')->where($initiativeColumn, $initiativeId);
+                if (in_array('id', $tableColumns, true)) {
+                    $query->orderByDesc('id');
+                }
+                $mappedProjectId = $query->value($projectColumn);
+
+                if ($mappedProjectId) {
+                    $mappedProject = Project::query()
+                        ->with(['charter', 'owner', 'milestones', 'statusRef:id,name', 'pcStatusImplementations'])
+                        ->find($mappedProjectId);
+                }
+            }
+        }
+
+        $reviewOptions = TrsReviewPC::query()
+            ->select(['id', 'initiative_id'])
+            ->with(['initiative:id,code,name'])
+            ->orderBy('id')
+            ->get()
+            ->map(static fn (TrsReviewPC $item) => [
+                'id' => (int) $item->id,
+                'initiative_id' => $item->initiative_id,
+                'initiative' => $item->initiative
+                    ? [
+                        'id' => (int) $item->initiative->id,
+                        'code' => $item->initiative->code,
+                        'name' => $item->initiative->name,
+                    ]
+                    : null,
+            ])
+            ->values();
+
         return inertia('ProgramEvaluation/ReviewPC/Show', [
             'trsReviewPC' => $trsReviewPC,
+            'reviewOptions' => $reviewOptions,
+            'mappedProject' => $mappedProject,
         ]);
     }
 

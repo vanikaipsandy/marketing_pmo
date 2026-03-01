@@ -32,20 +32,20 @@
             </div>
         </div>
 
-        <div class="max-h-[70vh] overflow-auto">
+        <div>
             <table class="w-full min-w-[760px] border-collapse text-sm">
                 <thead class="bg-slate-100 dark:bg-white/5">
                     <tr>
-                        <th class="sticky top-0 z-20 border border-slate-300 bg-slate-100 px-3 py-3 text-center text-xs font-semibold uppercase tracking-wider text-slate-600 dark:border-white/20 dark:bg-[#1f1f1f] dark:text-slate-300">
+                        <th class="border border-slate-300 bg-slate-100 px-3 py-3 text-center text-xs font-semibold uppercase tracking-wider text-slate-600 dark:border-white/20 dark:bg-[#1f1f1f] dark:text-slate-300">
                             Code
                         </th>
-                        <th class="sticky top-0 z-20 border border-slate-300 bg-slate-100 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600 dark:border-white/20 dark:bg-[#1f1f1f] dark:text-slate-300">
+                        <th class="border border-slate-300 bg-slate-100 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600 dark:border-white/20 dark:bg-[#1f1f1f] dark:text-slate-300">
                             Initiative
                         </th>
-                        <th class="sticky top-0 z-20 border border-slate-300 bg-slate-100 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600 dark:border-white/20 dark:bg-[#1f1f1f] dark:text-slate-300">
+                        <th class="border border-slate-300 bg-slate-100 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600 dark:border-white/20 dark:bg-[#1f1f1f] dark:text-slate-300">
                             Kesimpulan
                         </th>
-                        <th class="sticky top-0 z-20 border border-slate-300 bg-slate-100 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600 dark:border-white/20 dark:bg-[#1f1f1f] dark:text-slate-300">
+                        <th class="border border-slate-300 bg-slate-100 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600 dark:border-white/20 dark:bg-[#1f1f1f] dark:text-slate-300">
                             Action
                         </th>
                     </tr>
