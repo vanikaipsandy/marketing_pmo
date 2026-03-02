@@ -81,8 +81,8 @@
                                 </colgroup>
                                 <thead>
                                     <tr class="bg-emerald-100/70 dark:bg-emerald-900/30">
-                                        <th class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-left font-semibold text-emerald-900 dark:text-emerald-200 whitespace-nowrap">Predecessor</th>
-                                        <th class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-left font-semibold text-emerald-900 dark:text-emerald-200 whitespace-nowrap">Successor</th>
+                                        <th class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-left font-semibold text-emerald-900 dark:text-emerald-200 whitespace-nowrap">Initiative A</th>
+                                        <th class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-left font-semibold text-emerald-900 dark:text-emerald-200 whitespace-nowrap">Initiative B</th>
                                         <th class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-left font-semibold text-emerald-900 dark:text-emerald-200 whitespace-nowrap">Justifikasi</th>
                                         <th class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-center font-semibold text-emerald-900 dark:text-emerald-200 whitespace-nowrap">Sumber</th>
                                     </tr>
@@ -188,8 +188,8 @@
                                 </colgroup>
                                 <thead>
                                     <tr class="bg-blue-100/70 dark:bg-blue-900/30">
-                                        <th class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-left font-semibold text-blue-900 dark:text-blue-200 whitespace-nowrap">Predecessor</th>
-                                        <th class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-left font-semibold text-blue-900 dark:text-blue-200 whitespace-nowrap">Successor</th>
+                                        <th class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-left font-semibold text-blue-900 dark:text-blue-200 whitespace-nowrap">Initiative A</th>
+                                        <th class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-left font-semibold text-blue-900 dark:text-blue-200 whitespace-nowrap">Initiative B</th>
                                         <th class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-left font-semibold text-blue-900 dark:text-blue-200 whitespace-nowrap">Justifikasi</th>
                                         <th class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-center font-semibold text-blue-900 dark:text-blue-200 whitespace-nowrap">Sumber</th>
                                     </tr>
