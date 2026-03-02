@@ -32,6 +32,11 @@
                             Project Charter
                         </button>
                         <button type="button" class="rounded-md px-2.5 py-1 text-[10px] font-semibold"
+                            :class="activeNav === 'initiative-relation' ? 'bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900' : 'text-slate-500 dark:text-slate-400'"
+                            @click="setActiveNav('initiative-relation')">
+                            Initiative Relation
+                        </button>
+                        <button type="button" class="rounded-md px-2.5 py-1 text-[10px] font-semibold"
                             :class="activeNav === 'roadmap' ? 'bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900' : 'text-slate-500 dark:text-slate-400'"
                             @click="setActiveNav('roadmap')">
                             Roadmap
@@ -96,6 +101,24 @@
                     </div>
                 </section>
 
+                <section v-if="activeNav === 'initiative-relation'" id="initiative-relation" class="space-y-0">
+                    <div v-if="mappedProject" class="overflow-hidden border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717] p-6">
+                        <InitiativeDetailsWithRelations
+                            :initiative="mappedProject"
+                            :relations="initiativeRelations"
+                            variant="emerald"
+                            status-label="Source"
+                            relations-title="Initiative Relations"
+                            column-a-label="Predecessor"
+                            column-b-label="Successor"
+                        />
+                    </div>
+                    <div v-else
+                        class="border border-slate-200 bg-white px-4 py-6 text-center text-xs text-slate-500 dark:border-white/10 dark:bg-[#171717] dark:text-slate-400">
+                        Data initiative relation belum tersedia untuk initiative ini.
+                    </div>
+                </section>
+
                 <section v-if="activeNav === 'roadmap'" id="roadmap" class="print:hidden">
                     <ProjectRoadmap v-if="mappedProject" :project="mappedProject"
                         :form="{ objectives: mappedProject?.charter?.objectives ?? '', duration: mappedProject?.charter?.duration ?? '' }"
@@ -118,6 +141,7 @@ import ItCharterDocument from '@/Components/ProjectCharter/ItCharterDocument.vue
 import ProjectRoadmap from '@/Components/Roadmap/ProjectRoadmap.vue';
 import StatusImplementationTable from '@/Components/ITInitiative/StatusImplementationTable.vue';
 import ReviewContent from '@/Components/ReviewPC/ReviewContent.vue';
+import InitiativeDetailsWithRelations from '@/Components/InitiativeRelation/InitiativeDetailsWithRelations.vue';
 
 const props = defineProps({
     trsReviewPC: {
@@ -131,6 +155,10 @@ const props = defineProps({
     mappedProject: {
         type: Object,
         default: null,
+    },
+    mstInitiatives: {
+        type: Array,
+        default: () => [],
     },
 });
 
@@ -228,5 +256,65 @@ const charterForm = computed(() => {
         risk_mitigation: charter?.risk_mitigation ?? '',
     };
 });
+
+const initiativeLabel = (initiative) => {
+    const code = initiative?.code ?? initiative?.id ?? '-';
+    const name = initiative?.name ?? '';
+    const baseLabel = name ? `${code} - ${name}` : code;
+    const coeName = initiative?.coe_name ?? initiative?.coe?.name ?? '';
+    return coeName ? `${baseLabel} (CoE: ${coeName})` : baseLabel;
+};
+
+const findInitiativeById = (initiativeId) => {
+    if (!initiativeId || !props.mstInitiatives.length) return null;
+    return props.mstInitiatives.find(opt => Number(opt.id) === Number(initiativeId));
+};
+
+const buildInitiativeRelations = () => {
+    if (!props.mappedProject) return [];
+    
+    const projectId = Number(props.mappedProject?.id);
+    const rows = [];
+    const seen = new Set();
+
+    // Get all relations from the mapped project
+    const allRelations = [
+        ...(props.mappedProject?.initiativeRelationsRow ?? props.mappedProject?.initiative_relations_row ?? []),
+        ...(props.mappedProject?.initiativeRelationsColumn ?? props.mappedProject?.initiative_relations_column ?? []),
+    ];
+
+    const relationKey = (relation) => {
+        if (relation?.id) {
+            return `id-${relation.id}`;
+        }
+        return `row-${relation?.initiative_code_row}-col-${relation?.initiative_code_column}`;
+    };
+
+    allRelations.forEach((relation) => {
+        const key = relationKey(relation);
+        if (seen.has(key)) {
+            return;
+        }
+        seen.add(key);
+
+        const rowInitiative = relation.initiative_row;
+        const columnInitiative = relation.initiative_column;
+        const rowFallback = relation.initiative_code_row;
+        const columnFallback = relation.initiative_code_column;
+        const justifikasi = relation.justifikasi ?? relation.description ?? '-';
+
+        rows.push({
+            id: relation.id ?? `${relation.initiative_code_row}-${relation.initiative_code_column}`,
+            predecessorLabel: rowInitiative ? initiativeLabel(rowInitiative) : (rowFallback ?? '-'),
+            successorLabel: columnInitiative ? initiativeLabel(columnInitiative) : (columnFallback ?? '-'),
+            modelRelasi: relation.model_relasi ?? '-',
+            justifikasi,
+        });
+    });
+
+    return rows;
+};
+
+const initiativeRelations = computed(() => buildInitiativeRelations());
 
 </script>

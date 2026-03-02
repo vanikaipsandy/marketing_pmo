@@ -45,7 +45,13 @@ class TrsReviewPCController extends Controller
      */
     public function show(TrsReviewPC $trsReviewPC)
     {
-        $trsReviewPC->load('initiative');
+        $trsReviewPC->load([
+            'initiative' => fn ($query) => $query
+                ->with('initiativeRelationsRow.initiativeRow')
+                ->with('initiativeRelationsRow.initiativeColumn')
+                ->with('initiativeRelationsColumn.initiativeRow')
+                ->with('initiativeRelationsColumn.initiativeColumn'),
+        ]);
 
         $mappedProject = null;
         $initiativeId = $trsReviewPC->initiative_id;
