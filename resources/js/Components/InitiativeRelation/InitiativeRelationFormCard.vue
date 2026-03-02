@@ -84,7 +84,7 @@
                                         <th class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-left font-semibold text-emerald-900 dark:text-emerald-200 whitespace-nowrap">Predecessor</th>
                                         <th class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-left font-semibold text-emerald-900 dark:text-emerald-200 whitespace-nowrap">Successor</th>
                                         <th class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-left font-semibold text-emerald-900 dark:text-emerald-200 whitespace-nowrap">Justifikasi</th>
-                                        <th class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-left font-semibold text-emerald-900 dark:text-emerald-200 whitespace-nowrap">Model Relasi</th>
+                                        <th class="border border-emerald-200 dark:border-emerald-900/30 px-2 py-1 text-center font-semibold text-emerald-900 dark:text-emerald-200 whitespace-nowrap">Sumber</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -191,7 +191,7 @@
                                         <th class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-left font-semibold text-blue-900 dark:text-blue-200 whitespace-nowrap">Predecessor</th>
                                         <th class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-left font-semibold text-blue-900 dark:text-blue-200 whitespace-nowrap">Successor</th>
                                         <th class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-left font-semibold text-blue-900 dark:text-blue-200 whitespace-nowrap">Justifikasi</th>
-                                        <th class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-left font-semibold text-blue-900 dark:text-blue-200 whitespace-nowrap">Model Relasi</th>
+                                        <th class="border border-blue-200 dark:border-blue-900/30 px-2 py-1 text-center font-semibold text-blue-900 dark:text-blue-200 whitespace-nowrap">Sumber</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -254,6 +254,23 @@
                     </div>
                 </div>
 
+                <!-- Relation Message -->
+                <div v-if="relationMessage" class="rounded-lg border-2 border-blue-300 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-900/20">
+                    <p class="text-sm font-medium text-blue-800 dark:text-blue-200">{{ relationMessage }}</p>
+                </div>
+
+                <!-- Justifikasi -->
+                <div>
+                    <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Justifikasi</label>
+                    <textarea
+                        v-model="form.justifikasi"
+                        rows="4"
+                        class="w-full rounded-md border-slate-300 bg-slate-50 px-4 py-3 shadow-sm focus:border-slate-400 focus:ring-slate-300 dark:border-white/10 dark:bg-[#131313] dark:text-slate-100 sm:text-sm"
+                        placeholder="Tambahkan justifikasi relasi..."
+                    ></textarea>
+                    <p v-if="form.errors.justifikasi" class="mt-1 text-xs text-red-500">{{ form.errors.justifikasi }}</p>
+                </div>
+                
                 <!-- Model Relasi -->
                 <div>
                     <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Model Relasi</label>
@@ -270,17 +287,6 @@
                     <p v-if="form.errors.model_relasi" class="mt-1 text-xs text-red-500">{{ form.errors.model_relasi }}</p>
                 </div>
 
-                <!-- Justifikasi -->
-                <div>
-                    <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Justifikasi</label>
-                    <textarea
-                        v-model="form.justifikasi"
-                        rows="4"
-                        class="w-full rounded-md border-slate-300 bg-slate-50 px-4 py-3 shadow-sm focus:border-slate-400 focus:ring-slate-300 dark:border-white/10 dark:bg-[#131313] dark:text-slate-100 sm:text-sm"
-                        placeholder="Tambahkan justifikasi relasi..."
-                    ></textarea>
-                    <p v-if="form.errors.justifikasi" class="mt-1 text-xs text-red-500">{{ form.errors.justifikasi }}</p>
-                </div>
 
                 <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-6 dark:border-white/5">
                     <Link
@@ -495,6 +501,24 @@ const formatInitiativeType = (typeValue) => {
     };
     return typeMap[typeValue] || '-';
 };
+
+const relationMessage = computed(() => {
+    const rowLabel = getSelectedLabel('row') || 'Initiative A';
+    const columnLabel = getSelectedLabel('column') || 'Initiative B';
+    const typeRelation = form.value.type_relation;
+
+    if (!typeRelation || !form.value.initiative_code_row || !form.value.initiative_code_column) {
+        return null;
+    }
+
+    if (typeRelation === 1) {
+        return `${rowLabel} mempengaruhi ${columnLabel} sebagai predecessor.`;
+    } else if (typeRelation === 2) {
+        return `${rowLabel} dipengaruhi oleh ${columnLabel} sebagai successor.`;
+    }
+
+    return null;
+});
 
 const handleSubmit = () => {
     emit('submit');

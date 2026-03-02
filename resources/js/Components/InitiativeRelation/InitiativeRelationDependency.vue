@@ -39,11 +39,19 @@
             </div>
         </div>
 
-        <div>
-            <table class="w-full min-w-[1120px] border-collapse text-sm">
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse text-sm">
+                <colgroup>
+                    <col style="width: 16%;">
+                    <col style="width: 5%;">
+                    <col style="width: 16%;">
+                    <col style="width: 30%;">
+                    <col style="width: 5%;">
+                    <col style="width: 5%;">
+                </colgroup>
                 <tbody>
                     <tr v-if="!filteredInitiatives.length">
-                        <td colspan="5"
+                        <td colspan="6"
                             class="border border-slate-200 px-4 py-6 text-center text-sm text-slate-500 dark:border-white/10 dark:text-slate-400">
                             Belum ada data initiative.
                         </td>
@@ -51,7 +59,7 @@
                     <template v-for="initiative in filteredInitiatives" :key="initiative.id">
                         <!-- Initiative Header Row -->
                         <tr class="bg-slate-100 dark:bg-slate-900/30">
-                            <td colspan="5"
+                            <td colspan="6"
                                 class="border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-800 dark:border-white/10 dark:text-slate-200">
                                 <span class="text-slate-600 dark:text-slate-400">Code:</span>
                                 {{ initiative.code ?? initiative.id ?? '-' }}
@@ -64,11 +72,15 @@
                         <tr class="bg-slate-50 dark:bg-white/5">
                             <th
                                 class="border border-slate-200 bg-slate-50 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-400">
-                                Predecessor
+                                Initiative A
+                            </th>
+                            <th
+                                class="border border-slate-200 bg-slate-50 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-400">
+                                Tipe Relasi
                             </th>
                             <th
                                 class="border border-slate-200 bg-slate-50 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-400">
-                                Successor
+                                Initiative B
                             </th>
                             <th
                                 class="border border-slate-200 bg-slate-50 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-400">
@@ -76,10 +88,10 @@
                             </th>
                             <th
                                 class="border border-slate-200 bg-slate-50 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-400">
-                                Model Relasi
+                                Sumber
                             </th>
                             <th
-                                class="w-20 border border-slate-200 bg-slate-50 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-400">
+                                class="border border-slate-200 bg-slate-50 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-400">
                                 Action
                             </th>
                         </tr>
@@ -87,31 +99,38 @@
                         <tr v-for="(relation, index) in relationRowsByInitiative(initiative)" :key="`${initiative.id}-${index}`"
                             class="transition hover:bg-slate-50 dark:hover:bg-white/5">
                             <td
-                                class="border border-slate-200 px-4 py-3 text-sm text-slate-800 dark:border-white/10 dark:text-slate-200">
+                                class="border border-slate-200 px-4 py-3 text-sm text-slate-800 dark:border-white/10 dark:text-slate-200 overflow-hidden">
                                 <span v-if="relation"
-                                    class="inline-block border border-slate-300 bg-slate-100 px-2 py-0.5 rounded text-slate-700 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100">
+                                    class="inline-block break-words border border-slate-300 bg-slate-100 px-2 py-0.5 rounded text-slate-700 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100">
                                     {{ relation.predecessor }}
                                 </span>
                                 <span v-else class="text-slate-400">-</span>
                             </td>
 
                             <td
-                                class="border border-slate-200 px-4 py-3 text-sm text-slate-800 dark:border-white/10 dark:text-slate-200">
-                                <span v-if="relation" class="inline-block border border-emerald-300 bg-emerald-50 px-2 py-0.5 rounded text-emerald-700 dark:border-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200">
+                                class="border border-slate-200 px-4 py-3 text-center text-sm text-slate-800 dark:border-white/10 dark:text-slate-200 overflow-hidden">
+                                <span v-if="relation" class="inline-block border border-blue-300 bg-blue-50 px-2 py-0.5 rounded text-blue-700 dark:border-blue-700 dark:bg-blue-900/30 dark:text-blue-200">
+                                    {{ getRelationPositionLabel(relation.type_relation) }}
+                                </span>
+                                <span v-else class="text-slate-400">-</span>
+                            </td>
+                            <td
+                                class="border border-slate-200 px-4 py-3 text-sm text-slate-800 dark:border-white/10 dark:text-slate-200 overflow-hidden">
+                                <span v-if="relation" class="inline-block break-words border border-emerald-300 bg-emerald-50 px-2 py-0.5 rounded text-emerald-700 dark:border-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200">
                                     {{ relation.successor }}
                                 </span>
                                 <span v-else class="text-slate-400">-</span>
                             </td>
                             <td
-                                class="border border-slate-200 px-4 py-3 text-sm text-slate-800 dark:border-white/10 dark:text-slate-200">
+                                class="border border-slate-200 px-4 py-3 text-sm text-slate-800 dark:border-white/10 dark:text-slate-200 overflow-ellipsis overflow-hidden">
                                 {{ relation?.justifikasi ?? '-' }}
                             </td>
                             <td
-                                class="border border-slate-200 px-4 py-3 text-center text-sm text-slate-800 dark:border-white/10 dark:text-slate-200">
+                                class="border border-slate-200 px-4 py-3 text-center text-sm text-slate-800 dark:border-white/10 dark:text-slate-200 overflow-hidden">
                                 {{ relation?.model_relasi ?? '-' }}
                             </td>
                             <td
-                                class="border border-slate-200 px-4 py-3 text-center align-middle dark:border-white/10">
+                                class="border border-slate-200 px-4 py-3 text-center align-middle dark:border-white/10 overflow-hidden">
                                 <button
                                     v-if="relation"
                                     type="button"
@@ -126,7 +145,7 @@
                         <!-- Empty row if no relations -->
                         <tr v-if="!relationRowsByInitiative(initiative).length"
                             class="transition hover:bg-slate-50 dark:hover:bg-white/5">
-                            <td colspan="5"
+                            <td colspan="6"
                                 class="border border-slate-200 px-4 py-3 text-center text-sm text-slate-400 dark:border-white/10 dark:text-slate-500">
                                 Tidak ada relasi
                             </td>
@@ -185,6 +204,15 @@ const relationTypeConfig = {
 const getRelationLabel = (typeRelation) => {
     const key = typeRelation != null ? Number(typeRelation) : null;
     return relationTypeConfig[key]?.label ?? 'Unknown';
+};
+
+const getRelationPositionLabel = (typeRelation) => {
+    const key = typeRelation != null ? Number(typeRelation) : null;
+    const positionConfig = {
+        1: 'Predecessor',
+        2: 'Successor',
+    };
+    return positionConfig[key] ?? 'Unknown';
 };
 
 const getRelationIconComponent = (typeRelation) => {
