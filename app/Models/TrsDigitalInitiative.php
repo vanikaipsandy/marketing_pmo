@@ -9,13 +9,15 @@ use App\Models\DigitalHistory;
 use App\Models\Organization;
 use App\Models\StatusDigital;
 use App\Models\Theme;
-use App\Models\TrsDigitalInitiative;
+use App\Models\ScStatusImplementation;
 use App\Models\UseCase;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class TrsDigitalInitiative extends Model
 {
-    protected $table = 'trs_digital_initiative';
+    protected $table = 'trs_sc_initiative';
 
     protected $fillable = [
         'category_fase',
@@ -26,6 +28,16 @@ class TrsDigitalInitiative extends Model
         'urgency',
         'source_id',
     ];
+
+    public function scStatusImplementations(): HasMany
+    {
+        return $this->hasMany(ScStatusImplementation::class, 'sc_initiative_id')->orderBy('date', 'desc')->orderBy('time_start', 'desc');
+    }
+
+    public function latestScStatusImplementation(): HasOne
+    {
+        return $this->hasOne(ScStatusImplementation::class, 'sc_initiative_id')->latestOfMany('id');
+    }
 
     public function planningOrImplementation()
     {

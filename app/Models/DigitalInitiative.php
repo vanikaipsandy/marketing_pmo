@@ -42,4 +42,14 @@ class DigitalInitiative extends Model
     {
         return $this->hasMany(UcStatusImplementation::class, 'digital_initiative_id')->orderBy('date', 'desc')->orderBy('time_start', 'desc');
     }
+
+    public function scStatusImplementations()
+    {
+        return $this->hasMany(ScStatusImplementation::class, 'digital_initiative_id')->orderBy('date', 'desc')->orderBy('time_start', 'desc');
+    }
+
+    public function latestScStatusImplementation()
+    {
+        return $this->hasOne(ScStatusImplementation::class, 'digital_initiative_id')->latestOfMany('id');
+    }
 }

@@ -60,6 +60,7 @@ class IndexController extends Controller
 
         $initiativeItems = DigitalInitiative::query()
             ->select(['id', 'no', 'useCase'])
+            ->with(['latestScStatusImplementation'])
             ->get();
 
         return Inertia::render('ProgramPlanning/ProgramDefinition/DigitalInitiatives/Index', [

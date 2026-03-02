@@ -147,6 +147,8 @@ class DigitalInitiativeController extends Controller
 
     public function edit(DigitalInitiative $digitalInitiative): Response
     {
+        $digitalInitiative->load('latestScStatusImplementation');
+
         return Inertia::render('ProgramImplementation/ProjectCharter/DigitalInitiatives/Edit', [
             'initiative' => $digitalInitiative,
             'statusOptions' => InitiativeStatus::ordered()
@@ -174,12 +176,14 @@ class DigitalInitiativeController extends Controller
             'rjjp' => 'nullable|string|max:255',
             'coe' => 'nullable|string|max:255',
             'status' => ['required', 'integer', Rule::exists('trs_status_initiative', 'id')],
+            'sc_status' => 'nullable|string|max:255',
+            'sc_review_status' => ['nullable', Rule::in(['At Risk', 'On Track', 'Not Started', 'Not Signed'])],
         ]);
 
         $oldStatus = $digitalInitiative->status;
         $digitalInitiative->update($validated);
 
-        if ((string)$digitalInitiative->status !== (string)$oldStatus || !$digitalInitiative->wasRecentlyCreated) {
+        if ((string)$digitalInitiative->status !== (string)$oldStatus) {
             $statusModel = InitiativeStatus::find($digitalInitiative->status);
             $statusName = $statusModel ? $statusModel->name : (string)$digitalInitiative->status;
             
@@ -189,6 +193,20 @@ class DigitalInitiativeController extends Controller
                 'date' => now()->toDateString(),
                 'time_start' => now()->toTimeString(),
             ]);
+        }
+
+        if ($request->filled('sc_status') || $request->filled('sc_review_status')) {
+            \App\Models\ScStatusImplementation::updateOrCreate(
+                [
+                    'digital_initiative_id' => $digitalInitiative->id,
+                    'date' => now()->toDateString(), // Using current date for the status log
+                ],
+                [
+                    'status' => $validated['sc_status'],
+                    'review_status' => $validated['sc_review_status'],
+                    'time_start' => now()->toTimeString(),
+                ]
+            );
         }
 
         return redirect()->route('digital-initiatives.index')->with('success', 'Digital Initiative updated successfully.');
