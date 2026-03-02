@@ -31,8 +31,8 @@
                         <td :class="tbodyCellClass">{{ initiative.description || '-' }}</td>
                         <td :class="tbodyCellClass">{{ initiative.status || '-' }}</td>
                         <td :class="tbodyCellClass">{{ formatInitiativeType(initiative.tipe_initiative) }}</td>
-                        <td :class="tbodyCellClass">{{ initiative.business_unit_name || initiative.business_unit || '-'
-                            }}</td>
+                        <td :class="tbodyCellClass">{{ initiative.organization?.name || initiative.business_unit_name ||
+                            initiative.business_unit || '-' }}</td>
                     </tr>
                 </tbody>
             </table>

@@ -47,6 +47,7 @@ class TrsReviewPCController extends Controller
     {
         $trsReviewPC->load([
             'initiative' => fn ($query) => $query
+                ->with('organization')
                 ->with('initiativeRelationsRow.initiativeRow')
                 ->with('initiativeRelationsRow.initiativeColumn')
                 ->with('initiativeRelationsColumn.initiativeRow')
