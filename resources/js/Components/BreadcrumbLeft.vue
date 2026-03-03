@@ -8,11 +8,11 @@ const page = usePage();
 const currentUrl = computed(() => page.url);
 
 const planningChildHrefs = [
-    '/program-planning/rsti-sub-holding',
+    // '/program-planning/rsti-sub-holding',
     '/strategic-pillars',
     '/program-planning/program-definition/digital-initiatives',
     '/program-planning/program-definition/it-initiatives',
-    '/program-planning/initiative-relation',
+    // '/program-planning/initiative-relation',
 ];
 const implementationChildHrefs = [
     '/strategic-pillars',
@@ -20,7 +20,7 @@ const implementationChildHrefs = [
     '/it-initiatives',
     '/roadmap',
     '/program-implementation/budgeting',
-    '/program-implementation/initiative-relation',
+    // '/program-implementation/initiative-relation',
 ];
 
 const programPlanningItem = computed(() => {
