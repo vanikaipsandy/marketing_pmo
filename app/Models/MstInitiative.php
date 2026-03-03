@@ -49,6 +49,6 @@ class MstInitiative extends Model
 
     public function mappedProjects(): BelongsToMany
     {
-        return $this->belongsToMany(Project::class, 'trs_pc_initiative', 'initiative_id', 'project_id');
+        return $this->belongsToMany(Project::class, 'trs_pc_initiative', 'initiative_id', 'pc_id');
     }
 }

@@ -297,15 +297,16 @@ const pcStatusFilter = ref('');
 
 const statusTimelineFilterOptions = [
     { value: '', label: 'Semua', activeClass: 'bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900' },
-    { value: 1, label: 'Drafting', activeClass: 'bg-slate-100 text-slate-600 ring-1 ring-slate-300' },
+    { value: 1, label: 'Draft', activeClass: 'bg-slate-100 text-slate-600 ring-1 ring-slate-300' },
     { value: 2, label: 'Propose', activeClass: 'bg-blue-100 text-blue-700 ring-1 ring-blue-300' },
     { value: 3, label: 'Review', activeClass: 'bg-amber-100 text-amber-700 ring-1 ring-amber-300' },
+    { value: 5, label: 'Baseline', activeClass: 'bg-purple-100 text-purple-700 ring-1 ring-purple-300' },
     { value: 4, label: 'Approve', activeClass: 'bg-emerald-100 text-emerald-700 ring-1 ring-emerald-300' },
 ];
 
 const getProjectReviewStatus = (proj) => {
     // Baca kolom `status` integer dari tabel trs_project
-    // 1=Drafting, 2=Propose, 3=Review, 4=Approve
+    // 1=Drafting, 2=Propose, 3=Review, 4=Approve, 5=Baseline
     const raw = proj?.status;
     if (raw === null || raw === undefined || raw === '') return null;
     return Number(raw);
