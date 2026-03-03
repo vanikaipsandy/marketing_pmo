@@ -259,7 +259,23 @@ class ITInitiativeController extends Controller
             'owner',
             'statusRef:id,name',
             'pcStatusImplementations',
+            'mappedInitiatives:id,code,name',
         ]);
+
+        // Get all related projects through mapped initiatives
+        $relatedProjects = Project::query()
+            ->whereIn('id', function ($query) use ($project) {
+                $query->select('project_id')
+                    ->from('trs_pc_initiative')
+                    ->whereIn('initiative_id', $project->mappedInitiatives->pluck('id'));
+            })
+            ->with([
+                'charter:id,project_id,category',
+                'statusRef:id,name',
+                'pcStatusImplementations' => static fn ($q) => $q->orderBy('date', 'desc')->orderBy('time_start', 'desc')->limit(1),
+            ])
+            ->orderBy('code')
+            ->get();
 
         $projectOptions = Project::query()
             ->select(['id', 'code', 'name'])
@@ -282,6 +298,7 @@ class ITInitiativeController extends Controller
 
         return Inertia::render('ProgramImplementation/ProjectCharter/ITInitiatives/Show', [
             'itInitiative' => $project,
+            'relatedProjects' => $relatedProjects,
             'projectOptions' => $projectOptions,
         ]);
     }

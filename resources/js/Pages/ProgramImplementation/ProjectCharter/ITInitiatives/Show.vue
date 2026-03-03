@@ -46,7 +46,7 @@
                 <!-- Detail panel (Status Implementation) -->
                 <div v-if="activeTab === 'detail'" class="border-t border-slate-100 dark:border-white/5">
                     <div class="px-3 py-3">
-                        <StatusImplementationTable :project="itInitiative" />
+                        <StatusImplementationTable :projects="relatedProjects" />
                     </div>
                 </div>
             </section>
@@ -129,6 +129,10 @@ import StatusImplementationTable from '@/Components/ITInitiative/StatusImplement
 
 const props = defineProps({
     itInitiative: Object,
+    relatedProjects: {
+        type: Array,
+        default: () => [],
+    },
     projectOptions: {
         type: Array,
         default: () => [],
