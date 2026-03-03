@@ -91,6 +91,9 @@
                 <section v-if="activeNav === 'initiative-relation'" id="initiative-relation" class="space-y-0">
                     <div v-if="trsReviewPC.initiative"
                         class="overflow-hidden border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717] p-6">
+                        <div class="px-3 py-3">
+                            <StatusImplementationTable :project="mappedProject" />
+                        </div>
                         <InitiativeDetailsWithRelations :initiative="trsReviewPC.initiative"
                             :relations="initiativeRelations" variant="emerald" status-label="Status"
                             relations-title="Initiative Relations" column-a-label="Predecessor"
