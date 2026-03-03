@@ -22,11 +22,6 @@
                     </select>
                     <div class="ml-auto flex items-center gap-1.5">
                         <button type="button" class="rounded-md px-2.5 py-1 text-[10px] font-semibold"
-                            :class="activeNav === 'status-implementation' ? 'bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900' : 'text-slate-500 dark:text-slate-400'"
-                            @click="setActiveNav('status-implementation')">
-                            Status Implementation
-                        </button>
-                        <button type="button" class="rounded-md px-2.5 py-1 text-[10px] font-semibold"
                             :class="activeNav === 'project-charter' ? 'bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900' : 'text-slate-500 dark:text-slate-400'"
                             @click="setActiveNav('project-charter')">
                             Project Charter
@@ -69,15 +64,6 @@
                         Review Project Charter: {{ initiativeName }}
                     </h1>
                 </header>
-
-                <section v-if="activeNav === 'status-implementation'" id="status-implementation" class="space-y-0">
-                    <div
-                        class="overflow-hidden border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717]">
-                        <div class="px-3 py-3">
-                            <StatusImplementationTable :project="mappedProject" />
-                        </div>
-                    </div>
-                </section>
 
                 <section v-if="activeNav === 'review'" id="review" class="space-y-0">
                     <div class="px-3 py-3">
