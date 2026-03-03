@@ -2,12 +2,11 @@
     <UserLayout :title="`IT Initiative - ${itInitiative.name}`">
         <div class="space-y-4 print:space-y-0">
             <!-- Top Bar -->
-            <section class="print:hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717]">
+            <section
+                class="print:hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717]">
                 <div class="flex flex-wrap items-center gap-2 px-3 py-2.5">
-                    <Link
-                        href="/it-initiatives"
-                        class="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-slate-500 dark:text-slate-400"
-                    >
+                    <Link href="/it-initiatives"
+                        class="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-slate-500 dark:text-slate-400">
                         <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7" />
                         </svg>
@@ -16,28 +15,19 @@
 
                     <span class="text-slate-300 dark:text-slate-600">|</span>
 
-                    <select
-                        v-model="selectedProjectId"
-                        class="max-w-xs rounded-md border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 focus:border-[#1C75BC] focus:outline-none dark:border-white/10 dark:bg-[#101826] dark:text-slate-100 lg:max-w-md"
-                    >
-                        <option
-                            v-for="option in projectSelectOptions"
-                            :key="`bar-${option.id}`"
-                            :value="String(option.id)"
-                        >
+                    <select v-model="selectedProjectId"
+                        class="max-w-xs rounded-md border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 focus:border-[#1C75BC] focus:outline-none dark:border-white/10 dark:bg-[#101826] dark:text-slate-100 lg:max-w-md">
+                        <option v-for="option in projectSelectOptions" :key="`bar-${option.id}`"
+                            :value="String(option.id)">
                             {{ projectOptionLabel(option) }}
                         </option>
                     </select>
 
                     <div class="ml-auto flex items-center gap-1.5">
-                        <button
-                            v-for="tab in tabs"
-                            :key="tab.key"
-                            type="button"
+                        <button v-for="tab in tabs" :key="tab.key" type="button"
                             class="rounded-md px-2.5 py-1 text-[10px] font-semibold"
                             :class="activeTab === tab.key ? 'bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900' : 'text-slate-500 dark:text-slate-400'"
-                            @click="toggleTab(tab.key)"
-                        >
+                            @click="toggleTab(tab.key)">
                             {{ tab.label }}
                         </button>
                     </div>
@@ -53,67 +43,112 @@
 
             <!-- Project Charter Section -->
             <template v-if="activeTab === 'charter'">
-                <section class="print:hidden rounded-2xl border border-slate-200 bg-white p-3 shadow-sm dark:border-white/10 dark:bg-[#171717]">
+                <section
+                    class="print:hidden rounded-2xl border border-slate-200 bg-white p-3 shadow-sm dark:border-white/10 dark:bg-[#171717]">
                     <div class="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
                         <div class="w-full lg:max-w-sm">
-                            <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                            <label
+                                class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                                 Charter Version
                             </label>
-                            <select
-                                v-model="selectedCharterId"
-                                :disabled="charterVersions.length === 0 || isEditing"
-                                class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:bg-slate-100 dark:border-white/10 dark:bg-[#131313] dark:text-slate-100 dark:disabled:bg-white/5"
-                            >
+                            <select v-model="selectedCharterId" :disabled="charterVersions.length === 0 || isEditing"
+                                class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:bg-slate-100 dark:border-white/10 dark:bg-[#131313] dark:text-slate-100 dark:disabled:bg-white/5">
                                 <option v-if="charterVersions.length === 0" value="">No saved version yet</option>
-                                <option
-                                    v-for="charter in charterVersions"
-                                    :key="charter.id"
-                                    :value="String(charter.id)"
-                                >
+                                <option v-for="charter in charterVersions" :key="charter.id"
+                                    :value="String(charter.id)">
                                     {{ charterOptionLabel(charter) }}
                                 </option>
                             </select>
                         </div>
 
                         <div class="flex flex-wrap items-center gap-2">
-                            <button type="button" class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 dark:border-white/10 dark:text-slate-300" @click="startNewVersion">
+                            <!-- New Version button: always visible when not editing -->
+                            <button v-if="!isEditing" type="button"
+                                class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 dark:border-white/10 dark:text-slate-300"
+                                @click="startNewVersion">
                                 New Version
                             </button>
-                            <button v-if="!isEditing" type="button" class="rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white" @click="startEdit">
+
+                            <!-- Edit Charter button: only when not already editing -->
+                            <button v-if="!isEditing && charterVersions.length > 0" type="button"
+                                class="rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white"
+                                @click="startEdit">
                                 Edit Charter
                             </button>
-                            <template v-else>
-                                <button type="button" class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 dark:border-white/10 dark:text-slate-300" @click="cancelEdit">Cancel</button>
-                                <button type="button" :disabled="form.processing" class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-70" @click="saveCharter">
-                                    <svg v-if="form.processing" class="h-3 w-3 animate-spin text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8V0C5.37 0 0 5.37 0 12h4Zm2 5.29A7.95 7.95 0 0 1 4 12H0c0 3.04 1.14 5.82 3 7.94l3-2.65Z"></path></svg>
-                                    Save as Version
+
+                            <!-- Editing controls -->
+                            <template v-if="isEditing">
+                                <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                                    {{ isNewVersion ? 'New Version' : 'Edit Charter' }}
+                                </span>
+                                <button type="button"
+                                    class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 dark:border-white/10 dark:text-slate-300"
+                                    @click="cancelEdit">
+                                    Cancel
+                                </button>
+                                <button type="button" :disabled="form.processing"
+                                    class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-70"
+                                    @click="saveCharter">
+                                    <svg v-if="form.processing" class="h-3 w-3 animate-spin text-white" fill="none"
+                                        viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                            stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor"
+                                            d="M4 12a8 8 0 0 1 8-8V0C5.37 0 0 5.37 0 12h4Zm2 5.29A7.95 7.95 0 0 1 4 12H0c0 3.04 1.14 5.82 3 7.94l3-2.65Z">
+                                        </path>
+                                    </svg>
+                                    {{ isNewVersion ? 'Save as New Version' : 'Save Charter' }}
                                 </button>
                             </template>
-                            <button type="button" class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 dark:border-white/10 dark:text-slate-300" @click="printCharter">Print</button>
+
+                            <button type="button"
+                                class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 dark:border-white/10 dark:text-slate-300"
+                                @click="printCharter">
+                                Print
+                            </button>
                         </div>
                     </div>
 
-                    <div v-if="isEditing" class="mt-3">
-                        <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Version Label</label>
-                        <input v-model="form.version_label" type="text" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-white/10 dark:bg-[#131313] dark:text-slate-100" placeholder="e.g., v2 - reviewed" />
-                        <p v-if="form.errors.version_label" class="mt-1 text-xs text-red-500">{{ form.errors.version_label }}</p>
+                    <!-- Edit fields: only show when editing -->
+                    <div v-if="isEditing" class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                        <!-- Version Label -->
+                        <div>
+                            <label
+                                class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Version
+                                Label</label>
+                            <input v-model="form.version_label" type="text"
+                                class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-white/10 dark:bg-[#131313] dark:text-slate-100"
+                                placeholder="e.g., v2 - reviewed" />
+                            <p v-if="form.errors.version_label" class="mt-1 text-xs text-red-500">{{
+                                form.errors.version_label }}</p>
+                        </div>
+
+                        <!-- Status -->
+                        <div>
+                            <label
+                                class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Status</label>
+                            <select v-model="form.status"
+                                class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-white/10 dark:bg-[#131313] dark:text-slate-100">
+                                <option value="">-- Pilih Status --</option>
+                                <option v-for="s in statusOptions" :key="s.value" :value="s.value">{{ s.label }}
+                                </option>
+                            </select>
+                            <p v-if="form.errors.status" class="mt-1 text-xs text-red-500">{{ form.errors.status }}</p>
+                        </div>
                     </div>
+
                 </section>
 
                 <main class="print:m-0 print:p-0">
-                    <CharterDocument :it-initiative="itInitiative" :form="form" :editable="isEditing" />
+                    <CharterDocument :it-initiative="editableItInitiative" :form="form" :editable="isEditing" />
                 </main>
             </template>
 
             <!-- Roadmap Section -->
             <section v-if="activeTab === 'roadmap'" class="print:hidden">
-                <ProjectRoadmap
-                    :project="itInitiative"
+                <ProjectRoadmap :project="itInitiative"
                     :form="{ objectives: itInitiative.charter?.objectives ?? '', duration: itInitiative.charter?.duration ?? '' }"
-                    :sequence="1"
-                    :year-start="2025"
-                    :year-end="2029"
-                />
+                    :sequence="1" :year-start="2025" :year-end="2029" />
             </section>
         </div>
     </UserLayout>
@@ -139,6 +174,15 @@ const props = defineProps({
     },
 });
 const page = usePage();
+
+// --- Status options for the charter status dropdown ---
+const statusOptions = [
+    { value: 1, label: 'Draft' },
+    { value: 2, label: 'Propose' },
+    { value: 3, label: 'Review' },
+    { value: 4, label: 'Baseline' },
+    { value: 5, label: 'Approve' },
+];
 
 // --- Tabs ---
 const tabs = [
@@ -170,9 +214,6 @@ const activeTab = ref(parseTabFromUrl());
 const toggleTab = (key) => {
     activeTab.value = activeTab.value === key ? null : key;
 };
-
-// --- Status options ---
-// --- Detail panel now uses StatusImplementationTable component ---
 
 // --- Project selector ---
 const selectedProjectId = ref(String(props.itInitiative?.id ?? ''));
@@ -217,8 +258,12 @@ const CHARTER_FIELDS = [
     'risks_identified', 'risk_mitigation',
 ];
 
-const mapCharterToForm = (charter = null) => {
-    const payload = { version_label: charter?.version_label ?? '' };
+const mapCharterToForm = (charter = null, project = null) => {
+    const payload = {
+        version_label: charter?.version_label ?? '',
+        owner_name: project?.owner_name ?? project?.owner?.name ?? '',
+        status: project?.status ?? '',
+    };
     for (const field of CHARTER_FIELDS) {
         payload[field] = charter?.[field] ?? '';
     }
@@ -236,15 +281,26 @@ const charterVersions = computed(() => {
 const defaultCharter = computed(() => props.itInitiative?.charter ?? charterVersions.value[0] ?? null);
 const selectedCharterId = ref(defaultCharter.value ? String(defaultCharter.value.id) : '');
 const isEditing = ref(false);
-const form = useForm(mapCharterToForm(defaultCharter.value));
+// true = creating a new version, false = editing existing charter in-place
+const isNewVersion = ref(false);
+const form = useForm(mapCharterToForm(defaultCharter.value, props.itInitiative));
 
 const selectedCharter = computed(() => {
     if (!selectedCharterId.value) return null;
     return charterVersions.value.find((c) => String(c.id) === String(selectedCharterId.value)) || null;
 });
 
-const setFormValues = (charter) => {
-    const values = mapCharterToForm(charter);
+// A reactive proxy of itInitiative that reflects the in-form owner_name when editing
+const editableItInitiative = computed(() => {
+    if (!isEditing.value) return props.itInitiative;
+    return {
+        ...props.itInitiative,
+        owner_name: form.owner_name ?? props.itInitiative?.owner_name ?? '',
+    };
+});
+
+const setFormValues = (charter, project = null) => {
+    const values = mapCharterToForm(charter, project ?? props.itInitiative);
     form.defaults(values);
     form.reset();
     form.clearErrors();
@@ -263,43 +319,57 @@ watch(() => charterVersions.value[0]?.id ?? null, (latestId) => {
     if (!isEditing.value) setFormValues(charterVersions.value[0]);
 });
 
+// Edit Charter: update the selected version in-place
 const startEdit = () => {
-    setFormValues(selectedCharter.value ?? defaultCharter.value);
+    setFormValues(selectedCharter.value ?? defaultCharter.value, props.itInitiative);
+    isNewVersion.value = false;
     isEditing.value = true;
 };
 
+// New Version: create a new charter record based on the selected version
 const startNewVersion = () => {
     const base = selectedCharter.value ?? defaultCharter.value;
-    const values = mapCharterToForm(base);
+    const values = mapCharterToForm(base, props.itInitiative);
     values.version_label = '';
     form.defaults(values);
     form.reset();
     form.clearErrors();
+    isNewVersion.value = true;
     isEditing.value = true;
 };
 
 const saveCharter = () => {
-    form.post(`/it-initiatives/${props.itInitiative.id}/charter`, {
-        preserveScroll: true,
-        onSuccess: () => {
-            isEditing.value = false;
-            selectedCharterId.value = '';
-        },
-    });
+    if (isNewVersion.value) {
+        // POST: create new charter version
+        form.post(`/it-initiatives/${props.itInitiative.id}/charter`, {
+            preserveScroll: true,
+            onSuccess: () => {
+                isEditing.value = false;
+                isNewVersion.value = false;
+            },
+        });
+    } else {
+        // PUT: update the existing selected charter in-place
+        const charterId = selectedCharterId.value;
+        form.put(`/it-initiatives/${props.itInitiative.id}/charter/${charterId}`, {
+            preserveScroll: true,
+            onSuccess: () => {
+                isEditing.value = false;
+                isNewVersion.value = false;
+            },
+        });
+    }
 };
 
 const cancelEdit = () => {
     isEditing.value = false;
+    isNewVersion.value = false;
     setFormValues(selectedCharter.value ?? defaultCharter.value);
 };
 
 const printCharter = () => window.print();
 
 const charterOptionLabel = (charter) => {
-    const createdAt = charter?.created_at ? new Date(charter.created_at) : null;
-    const createdLabel = createdAt && !Number.isNaN(createdAt.getTime())
-        ? createdAt.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })
-        : '-';
-    return `${charter.resolved_version_label} - ${createdLabel}`;
+    return charter.resolved_version_label;
 };
 </script>

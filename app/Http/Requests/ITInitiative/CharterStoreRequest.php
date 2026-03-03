@@ -14,18 +14,20 @@ class CharterStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'version_label' => ['nullable', 'string', 'max:255'],
-            'category' => ['nullable', 'string', 'max:255'],
-            'duration' => ['nullable', 'string', 'max:255'],
-            'background' => ['nullable', 'string'],
-            'objectives' => ['nullable', 'string'],
-            'scope' => ['nullable', 'string'],
-            'impact_value' => ['nullable', 'string'],
-            'key_personnel' => ['nullable', 'string'],
-            'key_items' => ['nullable', 'string'],
-            'budget' => ['nullable', 'string', 'max:255'],
+            'version_label'   => ['nullable', 'string', 'max:255'],
+            'owner_name'      => ['nullable', 'string', 'max:255'],
+            'status'          => ['nullable', 'integer'],
+            'category'        => ['nullable', 'string', 'max:255'],
+            'duration'        => ['nullable', 'string', 'max:255'],
+            'background'      => ['nullable', 'string'],
+            'objectives'      => ['nullable', 'string'],
+            'scope'           => ['nullable', 'string'],
+            'impact_value'    => ['nullable', 'string'],
+            'key_personnel'   => ['nullable', 'string'],
+            'key_items'       => ['nullable', 'string'],
+            'budget'          => ['nullable', 'string', 'max:255'],
             'risks_identified' => ['nullable', 'string'],
-            'risk_mitigation' => ['nullable', 'string'],
+            'risk_mitigation'  => ['nullable', 'string'],
         ];
     }
 }
