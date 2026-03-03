@@ -68,11 +68,21 @@
             </section>
 
             <main v-if="activeProject" class="space-y-5">
+                
                 <ActivityQuarterManager
                     :project="activeProject"
                     :selected-roadmap-version-id="selectedRoadmapVersionIdLocal"
                     :milestone-type-options="milestoneTypeOptionsDisplay"
                 />
+                <section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-white/10 dark:bg-[#171717]">
+                    <h2 class="mb-4 text-lg font-bold text-slate-900 dark:text-white">Project Roadmap</h2>
+                    <ProjectRoadmap
+                        :project="activeProject"
+                        :form="{}"
+                        :selected-roadmap-version-id="selectedRoadmapVersionIdLocal"
+                        :milestone-type-options="milestoneTypeOptionsDisplay"
+                    />
+                </section>
             </main>
 
             <section
@@ -97,6 +107,7 @@ import { computed, ref, watch } from 'vue';
 import { Link, router } from '@inertiajs/vue3';
 import UserLayout from '@/Layouts/UserLayout.vue';
 import ActivityQuarterManager from '@/Components/Roadmap/ActivityQuarterManager.vue';
+import ProjectRoadmap from '@/Components/Roadmap/ProjectRoadmap.vue';
 
 const props = defineProps({
     projects: { type: Array, default: () => [] },
