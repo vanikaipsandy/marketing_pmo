@@ -217,13 +217,16 @@ const filteredTableItems = computed(() => {
     }
 
     // Filter by status if a column was clicked
-    if (selectedStatusFilter.value) {
+    if (selectedStatusFilter.value === '__all__') {
+        // Metric card "Show" click — show ALL items (with or without status)
+        // No additional filtering
+    } else if (selectedStatusFilter.value) {
         items = items.filter((i) => {
             const latestStatus = normalizeStatusName(i.latest_status?.status ?? '');
             return latestStatus === selectedStatusFilter.value;
         });
     } else {
-        // "Show All" / "Total" click — only show items that have a status entry
+        // Summary table "Show All" / "Total" click — only show items that have a status entry
         items = items.filter((i) => {
             const latestStatus = normalizeStatusName(i.latest_status?.status ?? '');
             return latestStatus.length > 0;
@@ -238,23 +241,33 @@ const totalDigitalOverall = computed(() => Number(props.summary?.total_digital_i
 const totalItOverall = computed(() => Number(props.summary?.total_it_initiatives ?? 0));
 
 const showAllDigitalInitiatives = () => {
-    selectedInitiative.value = 'digital';
-    selectedStatusFilter.value = null;
+    if (selectedInitiative.value === 'digital' && selectedStatusFilter.value === '__all__') {
+        selectedInitiative.value = null;
+        selectedStatusFilter.value = null;
+    } else {
+        selectedInitiative.value = 'digital';
+        selectedStatusFilter.value = '__all__';
 
-    window.scrollTo({
-        top: document.body.scrollHeight,
-        behavior: 'smooth',
-    });
+        window.scrollTo({
+            top: document.body.scrollHeight,
+            behavior: 'smooth',
+        });
+    }
 };
 
 const showAllItInitiatives = () => {
-    selectedInitiative.value = 'it';
-    selectedStatusFilter.value = null;
+    if (selectedInitiative.value === 'it' && selectedStatusFilter.value === '__all__') {
+        selectedInitiative.value = null;
+        selectedStatusFilter.value = null;
+    } else {
+        selectedInitiative.value = 'it';
+        selectedStatusFilter.value = '__all__';
 
-    window.scrollTo({
-        top: document.body.scrollHeight,
-        behavior: 'smooth',
-    });
+        window.scrollTo({
+            top: document.body.scrollHeight,
+            behavior: 'smooth',
+        });
+    }
 };
 
 const metricCards = computed(() => [
@@ -262,7 +275,7 @@ const metricCards = computed(() => [
         key: 'digital-total',
         label: 'Total Usulan Digital Inisiatif',
         value: totalDigitalOverall.value,
-        actionLabel: 'Show',
+        actionLabel: selectedInitiative.value === 'digital' && selectedStatusFilter.value === '__all__' ? 'Hide' : 'Show',
         actionMethod: showAllDigitalInitiatives,
         cardClass: 'bg-[#1C75BC] border-[#1C75BC] shadow-[0_4px_16px_rgba(28,117,188,0.3)]',
         textClass: 'text-white',
@@ -273,7 +286,7 @@ const metricCards = computed(() => [
         key: 'it-total',
         label: 'Total Usulan IT Inisiatif',
         value: totalItOverall.value,
-        actionLabel: 'Show',
+        actionLabel: selectedInitiative.value === 'it' && selectedStatusFilter.value === '__all__' ? 'Hide' : 'Show',
         actionMethod: showAllItInitiatives,
         cardClass: 'bg-[#A7C942] border-[#A7C942] shadow-[0_4px_16px_rgba(167,201,66,0.3)]',
         textClass: 'text-white',
