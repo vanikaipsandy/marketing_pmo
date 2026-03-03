@@ -90,6 +90,9 @@
                 <section v-if="activeNav === 'project-charter'" id="project-charter" class="space-y-0">
                     <div v-if="mappedProject"
                         class="border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717]">
+                        <div class="px-3 py-3">
+                            <StatusImplementationTable :project="mappedProject" />
+                        </div>
                         <ItCharterDocument :it-initiative="mappedProject" :form="charterForm" :editable="false" />
                     </div>
                     <div v-else
@@ -101,6 +104,9 @@
                 <section v-if="activeNav === 'initiative-relation'" id="initiative-relation" class="space-y-0">
                     <div v-if="mappedProject"
                         class="overflow-hidden border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717] p-6">
+                        <div class="px-3 py-3">
+                            <StatusImplementationTable :project="mappedProject" />
+                        </div>
                         <InitiativeDetailsWithRelations :initiative="mappedProject" :relations="initiativeRelations"
                             variant="emerald" status-label="Source" relations-title="Initiative Relations"
                             column-a-label="Predecessor" column-b-label="Successor" />
@@ -112,6 +118,9 @@
                 </section>
 
                 <section v-if="activeNav === 'roadmap'" id="roadmap" class="print:hidden">
+                    <div class="px-3 py-3">
+                        <StatusImplementationTable :project="mappedProject" />
+                    </div>
                     <ProjectRoadmap v-if="mappedProject" :project="mappedProject"
                         :form="{ objectives: mappedProject?.charter?.objectives ?? '', duration: mappedProject?.charter?.duration ?? '' }"
                         :sequence="1" :year-start="2025" :year-end="2029" />
