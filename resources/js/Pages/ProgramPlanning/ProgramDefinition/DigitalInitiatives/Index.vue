@@ -55,37 +55,54 @@
                 </div>
 
                 <article class="h-full min-h-[220px] rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-[0_4px_16px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-[#171717] lg:col-span-2">
-                    <div class="mb-2 flex items-center justify-between gap-2">
+                    <div class="mb-4 flex items-center justify-between gap-2">
                         <h2 class="text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
-                            Scope Charter Digital Initiative Timeline
+                            Digital Initiative Timeline
                         </h2>
                     </div>
 
-                    <div>
-                        <div class="grid" :style="gridStyle(scopeSteps)">
-                            <div
-                                v-for="(step, index) in scopeSteps"
-                                :key="`scope-step-${step.key}`"
-                                class="relative flex justify-center"
-                            >
-                                <span
-                                    class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[10px] font-bold"
-                                    :class="step.circleClass"
-                                >
-                                    {{ step.count }}
-                                </span>
-                                <span
-                                    v-if="index < scopeSteps.length - 1"
-                                    class="absolute left-1/2 top-1/2 ml-[0.75rem] h-0.5 w-[calc(100%_-_1.5rem)] -translate-y-1/2 rounded-full"
-                                    :class="step.lineClass"
-                                ></span>
+                    <!-- GitHub-style Branch Flow (SVG) -->
+                    <div ref="branchContainer" class="relative" :style="{ minHeight: postponeCount > 0 ? '130px' : '60px' }">
+                        <svg class="absolute inset-0 h-full w-full" preserveAspectRatio="none">
+                            <defs>
+                                <linearGradient id="mainGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%"   stop-color="#94a3b8" />
+                                    <stop offset="25%"  stop-color="#60a5fa" />
+                                    <stop offset="50%"  stop-color="#fbbf24" />
+                                    <stop offset="100%" stop-color="#10b981" />
+                                </linearGradient>
+                            </defs>
+                            <!-- Main branch line -->
+                            <line :x1="nodeX(0)" y1="28" :x2="nodeX(4)" y2="28"
+                                  stroke="url(#mainGrad)" stroke-width="2.5" stroke-linecap="round" />
+                            <!-- Postpone smooth curve branch -->
+                            <path v-if="postponeCount > 0"
+                                  :d="postponeCurvePath"
+                                  fill="none" stroke="#fb7185" stroke-width="2.5" stroke-linecap="round" />
+                        </svg>
+
+                        <!-- Main branch nodes -->
+                        <div class="relative flex items-start justify-between px-4">
+                            <div v-for="(step, index) in mainSteps" :key="step.key"
+                                 class="relative z-10 flex flex-col items-center" style="min-width: 56px;">
+                                <div class="flex h-[56px] w-[56px] items-center justify-center">
+                                    <div class="flex h-8 w-8 items-center justify-center rounded-full border-[2.5px] text-[11px] font-bold shadow-sm"
+                                         :class="step.nodeClass">
+                                        {{ step.count }}
+                                    </div>
+                                </div>
+                                <span class="mt-0.5 text-[9px] font-semibold" :class="step.labelClass">{{ step.label }}</span>
                             </div>
                         </div>
 
-                        <div class="mt-2 grid gap-1 text-center" :style="gridStyle(scopeSteps)">
-                            <div v-for="step in scopeSteps" :key="`scope-label-${step.key}`">
-                                <p class="text-[9px] font-semibold text-slate-700 dark:text-slate-200">{{ step.label }}</p>
+                        <!-- Postpone node (positioned below curve endpoint) -->
+                        <div v-if="postponeCount > 0"
+                             class="absolute z-10 flex flex-col items-center"
+                             :style="{ left: `${postponeNodeLeft}px`, top: '82px', transform: 'translateX(-50%)' }">
+                            <div class="flex h-8 w-8 items-center justify-center rounded-full border-[2.5px] border-rose-400 bg-rose-500 text-[11px] font-bold text-white shadow-sm">
+                                {{ postponeCount }}
                             </div>
+                            <span class="mt-0.5 whitespace-nowrap text-[9px] font-semibold text-rose-600 dark:text-rose-400">Postpone</span>
                         </div>
                     </div>
                 </article>
@@ -100,10 +117,9 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, ref, onMounted, onUnmounted, nextTick } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import UserLayout from '@/Layouts/UserLayout.vue';
-import { statusFlowClassByIndex } from '@/Composables/initiativeStatus';
 import DigitalMasterInitiativeTable from '@/Components/DigitalInitiative/MasterInitiativeTable.vue';
 
 const props = defineProps({
@@ -137,64 +153,90 @@ const initiativeItemsList = computed(() => {
     return Array.isArray(props.initiativeItems) ? props.initiativeItems : [];
 });
 
-const scopeStatusOrder = ['drafting', 'propose', 'review', 'approve'];
-const normalizeStatusName = (value) => String(value ?? '').trim().toLowerCase();
+// ── Branch flow config ──
+const mainBranch = [
+    { key: 'drafting',  label: 'Drafting', nodeClass: 'border-slate-400 bg-slate-500 text-white',   labelClass: 'text-slate-600 dark:text-slate-300' },
+    { key: 'propose',   label: 'Propose',  nodeClass: 'border-blue-400 bg-blue-500 text-white',     labelClass: 'text-blue-600 dark:text-blue-300' },
+    { key: 'review',    label: 'Review',   nodeClass: 'border-amber-400 bg-amber-500 text-white',   labelClass: 'text-amber-600 dark:text-amber-300' },
+    { key: 'approve',   label: 'Approve',  nodeClass: 'border-emerald-400 bg-emerald-500 text-white', labelClass: 'text-emerald-600 dark:text-emerald-300' },
+    { key: 'finish',    label: 'Finish',   nodeClass: 'border-emerald-500 bg-emerald-600 text-white', labelClass: 'text-emerald-700 dark:text-emerald-300' },
+];
 
-const scopeStatusOptions = computed(() => {
-    const sourceOptions = Array.isArray(props.statusOptions) ? props.statusOptions : [];
-    const mappedStatusByName = new Map();
-
-    sourceOptions.forEach((status) => {
-        const candidateNames = [normalizeStatusName(status?.name), normalizeStatusName(status?.label)];
-
-        if (candidateNames.includes('baseline')) {
-            return;
-        }
-
-        candidateNames.forEach((candidateName) => {
-            if (scopeStatusOrder.includes(candidateName) && !mappedStatusByName.has(candidateName)) {
-                mappedStatusByName.set(candidateName, status);
-            }
-        });
-    });
-
-    const fallbackStatusOptions = [
-        { id: 1, name: 'drafting', label: 'Drafting' },
-        { id: 2, name: 'propose', label: 'Propose' },
-        { id: 3, name: 'review', label: 'Review' },
-        { id: 4, name: 'approve', label: 'Approve' },
-    ];
-
-    return scopeStatusOrder.map((statusName, index) => {
-        const matchedStatus = mappedStatusByName.get(statusName);
-        const fallbackStatus = fallbackStatusOptions[index];
-
-        return {
-            id: Number(matchedStatus?.id ?? fallbackStatus.id),
-            name: statusName,
-            label: fallbackStatus.label,
-        };
-    });
-});
-
-const scopeSteps = computed(() => {
+const mainSteps = computed(() => {
     const counts = props.statusCounts || {};
-
-    return scopeStatusOptions.value.map((status, index) => {
-        const flowClass = statusFlowClassByIndex(index);
-        const key = status.name;
-
-        return {
-            key,
-            label: status.label,
-            count: Number(counts?.[key] ?? 0),
-            circleClass: flowClass.circleClass,
-            lineClass: flowClass.lineClass,
-        };
-    });
+    return mainBranch.map((step) => ({
+        ...step,
+        count: Number(counts[step.key] ?? 0),
+    }));
 });
 
-const gridStyle = (steps = []) => ({
-    gridTemplateColumns: `repeat(${Math.max(steps.length, 1)}, minmax(0, 1fr))`,
+const postponeCount = computed(() => {
+    const counts = props.statusCounts || {};
+    return Number(counts['postpone'] ?? counts['Postpone'] ?? 0);
+});
+
+const postponeBranchFrom = computed(() => {
+    const counts = props.statusCounts || {};
+    let lastActive = 'drafting';
+    for (const step of mainBranch) {
+        if (Number(counts[step.key] ?? 0) > 0) {
+            lastActive = step.key;
+        }
+    }
+    return lastActive;
+});
+
+// ── SVG coordinate helpers ──
+const branchContainer = ref(null);
+const containerWidth = ref(400);
+
+const updateWidth = () => {
+    if (branchContainer.value) {
+        containerWidth.value = branchContainer.value.offsetWidth;
+    }
+};
+
+let resizeObserver = null;
+onMounted(() => {
+    nextTick(updateWidth);
+    if (typeof ResizeObserver !== 'undefined' && branchContainer.value) {
+        resizeObserver = new ResizeObserver(updateWidth);
+        resizeObserver.observe(branchContainer.value);
+    }
+});
+onUnmounted(() => {
+    resizeObserver?.disconnect();
+});
+
+// Padding matches the px-4 (16px each side) on the node container
+const PAD = 16;
+const nodeX = (index) => {
+    const usable = containerWidth.value - PAD * 2;
+    return PAD + (usable / 4) * index;   // 5 nodes → 4 gaps
+};
+
+const postponeBranchIndex = computed(() => {
+    const idx = mainBranch.findIndex((s) => s.key === postponeBranchFrom.value);
+    return idx >= 0 ? idx : 0;
+});
+
+// The pixel left for the postpone node (one step to the right of the branch point)
+const postponeNodeLeft = computed(() => {
+    const idx = Math.min(postponeBranchIndex.value + 1, 4);
+    return nodeX(idx);
+});
+
+// Smooth cubic bezier: starts at branch-from node, curves down to postpone node
+const postponeCurvePath = computed(() => {
+    const startX = nodeX(postponeBranchIndex.value);
+    const startY = 28;  // main line Y
+    const endX = postponeNodeLeft.value;
+    const endY = 98;    // postpone node center Y
+    // control points for a smooth S-curve like GitHub branches
+    const cp1x = startX;
+    const cp1y = startY + 40;
+    const cp2x = endX;
+    const cp2y = endY - 40;
+    return `M ${startX} ${startY} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${endX} ${endY}`;
 });
 </script>

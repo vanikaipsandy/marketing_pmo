@@ -80,7 +80,7 @@ class Project extends Model
 
     public function pcInitiatives(): HasMany
     {
-        return $this->hasMany(PcInitiative::class, 'project_id');
+        return $this->hasMany(PcInitiative::class, 'pc_id');
     }
 
     public function mappedInitiatives(): BelongsToMany

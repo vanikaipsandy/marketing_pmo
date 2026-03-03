@@ -37,9 +37,9 @@ class IndexController extends Controller
 
         $statusCounts = StatusMstInitiative::query()
             ->joinSub($latestIds, 'latest', fn ($join) => $join->on('trs_status_mstinitiative.id', '=', 'latest.id'))
-            ->selectRaw('status, COUNT(*) as total')
-            ->groupBy('status')
-            ->pluck('total', 'status');
+            ->selectRaw('LOWER(status) as status_key, COUNT(*) as total')
+            ->groupBy('status_key')
+            ->pluck('total', 'status_key');
 
         $masterSelectColumns = [
             'id',

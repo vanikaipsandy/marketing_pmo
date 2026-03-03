@@ -265,12 +265,12 @@ class ITInitiativeController extends Controller
         // Get all related projects through mapped initiatives
         $relatedProjects = Project::query()
             ->whereIn('id', function ($query) use ($project) {
-                $query->select('project_id')
+                $query->select('pc_id')
                     ->from('trs_pc_initiative')
                     ->whereIn('initiative_id', $project->mappedInitiatives->pluck('id'));
             })
             ->with([
-                'charter:id,project_id,category',
+                'charter' => static fn ($q) => $q->select('trs_project_charters.id', 'trs_project_charters.project_id', 'trs_project_charters.category'),
                 'statusRef:id,name',
                 'pcStatusImplementations' => static fn ($q) => $q->orderBy('date', 'desc')->orderBy('time_start', 'desc')->limit(1),
             ])
