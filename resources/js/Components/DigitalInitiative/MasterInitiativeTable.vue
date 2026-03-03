@@ -11,13 +11,14 @@
                 <colgroup>
                     <col class="w-[3%]">
                     <col class="w-[4%]">
+                    <col class="w-[11%]">
+                    <col class="w-[11%]">
+                    <col class="w-[15%]">
+                    <col class="w-[10%]">
+                    <col class="w-[10%]">
                     <col class="w-[12%]">
                     <col class="w-[12%]">
-                    <col class="w-[17%]">
                     <col class="w-[12%]">
-                    <col class="w-[12%]">
-                    <col class="w-[14%]">
-                    <col class="w-[14%]">
                 </colgroup>
                 <thead class="bg-slate-50 dark:bg-white/5">
                     <tr>
@@ -26,6 +27,7 @@
                         <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Centre of Excellence (CoE)</th>
                         <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Nama Inisiatif</th>
                         <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Deskripsi</th>
+                        <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Holding / Sub Holding</th>
                         <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Organisasi</th>
                         <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Timeline</th>
                         <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Action</th>
@@ -41,7 +43,8 @@
                             <p class="font-medium break-words">{{ item.name ?? '-' }}</p>
                         </td>
                         <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">{{ descriptionText(item) }}</td>
-                        <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">{{ organizationWithGroup(item) }}</td>
+                        <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">{{ groubName(item) }}</td>
+                        <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">{{ organizationName(item) }}</td>
                         <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">
                             <span v-if="scStatus(item) !== '-'" class="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-medium text-blue-700 dark:bg-blue-500/10 dark:text-blue-300">
                                 {{ scStatus(item) }}
@@ -74,7 +77,7 @@
                     </tr>
 
                     <tr v-if="items.length === 0">
-                        <td colspan="9" class="px-6 py-8 text-center text-xs text-slate-500 dark:text-slate-400">
+                        <td colspan="10" class="px-6 py-8 text-center text-xs text-slate-500 dark:text-slate-400">
                             Tidak ada data `mst_initiative` tipe 1.
                         </td>
                     </tr>
