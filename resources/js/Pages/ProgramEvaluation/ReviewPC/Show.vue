@@ -22,11 +22,6 @@
                     </select>
                     <div class="ml-auto flex items-center gap-1.5">
                         <button type="button" class="rounded-md px-2.5 py-1 text-[10px] font-semibold"
-                            :class="activeNav === 'status-implementation' ? 'bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900' : 'text-slate-500 dark:text-slate-400'"
-                            @click="setActiveNav('status-implementation')">
-                            Status Implementation
-                        </button>
-                        <button type="button" class="rounded-md px-2.5 py-1 text-[10px] font-semibold"
                             :class="activeNav === 'project-charter' ? 'bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900' : 'text-slate-500 dark:text-slate-400'"
                             @click="setActiveNav('project-charter')">
                             Project Charter
@@ -70,15 +65,6 @@
                     </h1>
                 </header>
 
-                <section v-if="activeNav === 'status-implementation'" id="status-implementation" class="space-y-0">
-                    <div
-                        class="overflow-hidden border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717]">
-                        <div class="px-3 py-3">
-                            <StatusImplementationTable :project="mappedProject" />
-                        </div>
-                    </div>
-                </section>
-
                 <section v-if="activeNav === 'review'" id="review" class="space-y-0">
                     <div class="px-3 py-3">
                         <StatusImplementationTable :project="mappedProject" />
@@ -90,6 +76,9 @@
                 <section v-if="activeNav === 'project-charter'" id="project-charter" class="space-y-0">
                     <div v-if="mappedProject"
                         class="border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717]">
+                        <div class="px-3 py-3">
+                            <StatusImplementationTable :project="mappedProject" />
+                        </div>
                         <ItCharterDocument :it-initiative="mappedProject" :form="charterForm" :editable="false" />
                     </div>
                     <div v-else
@@ -101,6 +90,9 @@
                 <section v-if="activeNav === 'initiative-relation'" id="initiative-relation" class="space-y-0">
                     <div v-if="mappedProject"
                         class="overflow-hidden border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717] p-6">
+                        <div class="px-3 py-3">
+                            <StatusImplementationTable :project="mappedProject" />
+                        </div>
                         <InitiativeDetailsWithRelations :initiative="mappedProject" :relations="initiativeRelations"
                             variant="emerald" status-label="Source" relations-title="Initiative Relations"
                             column-a-label="Predecessor" column-b-label="Successor" />
@@ -112,6 +104,9 @@
                 </section>
 
                 <section v-if="activeNav === 'roadmap'" id="roadmap" class="print:hidden">
+                    <div class="px-3 py-3">
+                        <StatusImplementationTable :project="mappedProject" />
+                    </div>
                     <ProjectRoadmap v-if="mappedProject" :project="mappedProject"
                         :form="{ objectives: mappedProject?.charter?.objectives ?? '', duration: mappedProject?.charter?.duration ?? '' }"
                         :sequence="1" :year-start="2025" :year-end="2029" />
