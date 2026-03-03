@@ -219,8 +219,14 @@ const filteredTableItems = computed(() => {
     // Filter by status if a column was clicked
     if (selectedStatusFilter.value) {
         items = items.filter((i) => {
-            const latestStatus = normalizeStatusName(i.latest_status?.status ?? i.status);
+            const latestStatus = normalizeStatusName(i.latest_status?.status ?? '');
             return latestStatus === selectedStatusFilter.value;
+        });
+    } else {
+        // "Show All" / "Total" click — only show items that have a status entry
+        items = items.filter((i) => {
+            const latestStatus = normalizeStatusName(i.latest_status?.status ?? '');
+            return latestStatus.length > 0;
         });
     }
 
