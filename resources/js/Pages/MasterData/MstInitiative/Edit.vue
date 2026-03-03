@@ -189,7 +189,7 @@ const newRow = reactive({ status: '', tanggal: '', notes: '' });
 const newRowErrors = reactive({ status: '' });
 const newRowProcessing = ref(false);
 
-const statusList = ['Drafting', 'Propose', 'Review', 'Approve', 'Postpone'];
+const statusList = ['Drafting', 'Propose', 'Review', 'Approved', 'Postpone'];
 
 const openNewRow = () => {
     showNewRow.value = true;
