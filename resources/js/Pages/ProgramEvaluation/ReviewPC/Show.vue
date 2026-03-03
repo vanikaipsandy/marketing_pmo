@@ -68,19 +68,42 @@
 
                 <section v-if="activeNav === 'review'" id="review" class="space-y-0">
                     <div class="px-3 py-3">
-                        <StatusImplementationTable :project="mappedProject" />
+                        <StatusImplementationTable :projects="mappedProjects" />
                     </div>
                     <ReviewContent :review="review" :penjelasan-items="penjelasanItems" :why-items="whyItems"
                         :how-parsed="howParsed" :project-profile-items="projectProfileItems" />
                 </section>
 
                 <section v-if="activeNav === 'project-charter'" id="project-charter" class="space-y-0">
-                    <div v-if="mappedProject"
-                        class="border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717]">
-                        <div class="px-3 py-3">
-                            <StatusImplementationTable :project="mappedProject" />
+                    <!-- Filter Status Timeline -->
+                    <div v-if="mappedProjects.length > 0"
+                        class="flex flex-wrap items-center gap-2 px-3 py-2 bg-white border-b border-slate-100 dark:bg-[#171717] dark:border-white/10">
+                        <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Filter
+                            Status:</span>
+                        <button v-for="opt in statusTimelineFilterOptions" :key="opt.value" type="button"
+                            @click="pcStatusFilter = opt.value" :class="[
+                                'inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold capitalize transition',
+                                pcStatusFilter === opt.value
+                                    ? opt.activeClass
+                                    : 'bg-slate-100 text-slate-500 hover:bg-slate-200 dark:bg-white/10 dark:text-slate-400 dark:hover:bg-white/20'
+                            ]">
+                            {{ opt.label }}
+                        </button>
+                    </div>
+
+                    <div v-if="filteredProjects.length > 0" class="space-y-4">
+                        <div v-for="proj in filteredProjects" :key="proj.id"
+                            class="border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717]">
+                            <div class="px-3 py-3">
+                                <StatusImplementationTable :projects="[proj]" />
+                            </div>
+                            <ItCharterDocument :it-initiative="proj" :form="charterFormFor(proj)"
+                                :status-timeline="getProjectReviewStatus(proj)" :editable="false" />
                         </div>
-                        <ItCharterDocument :it-initiative="mappedProject" :form="charterForm" :editable="false" />
+                    </div>
+                    <div v-else-if="mappedProjects.length > 0"
+                        class="border border-slate-200 bg-white px-4 py-6 text-center text-xs text-slate-500 dark:border-white/10 dark:bg-[#171717] dark:text-slate-400">
+                        Tidak ada project charter dengan status <strong>{{ pcStatusFilter || 'dipilih' }}</strong>.
                     </div>
                     <div v-else
                         class="border border-slate-200 bg-white px-4 py-6 text-center text-xs text-slate-500 dark:border-white/10 dark:bg-[#171717] dark:text-slate-400">
@@ -92,7 +115,7 @@
                     <div v-if="trsReviewPC.initiative"
                         class="overflow-hidden border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717] p-6">
                         <div class="px-3 py-3">
-                            <StatusImplementationTable :project="mappedProject" />
+                            <StatusImplementationTable :projects="mappedProjects" />
                         </div>
                         <InitiativeDetailsWithRelations :initiative="trsReviewPC.initiative"
                             :relations="initiativeRelations" variant="emerald" status-label="Status"
@@ -107,7 +130,7 @@
 
                 <section v-if="activeNav === 'roadmap'" id="roadmap" class="print:hidden">
                     <div class="px-3 py-3">
-                        <StatusImplementationTable :project="mappedProject" />
+                        <StatusImplementationTable :projects="mappedProjects" />
                     </div>
                     <ProjectRoadmap v-if="mappedProject" :project="mappedProject"
                         :form="{ objectives: mappedProject?.charter?.objectives ?? '', duration: mappedProject?.charter?.duration ?? '' }"
@@ -144,6 +167,10 @@ const props = defineProps({
     mappedProject: {
         type: Object,
         default: null,
+    },
+    mappedProjects: {
+        type: Array,
+        default: () => [],
     },
     mstInitiatives: {
         type: Array,
@@ -244,8 +271,9 @@ const formatReviewLabel = (option) => {
     return `${code} - ${name}`;
 };
 
-const charterForm = computed(() => {
-    const charter = props.mappedProject?.charter ?? {};
+// ---- Per-project charter form helper ----
+const charterFormFor = (proj) => {
+    const charter = proj?.charter ?? {};
     return {
         category: charter?.category ?? '',
         duration: charter?.duration ?? '',
@@ -259,6 +287,35 @@ const charterForm = computed(() => {
         risks_identified: charter?.risks_identified ?? '',
         risk_mitigation: charter?.risk_mitigation ?? '',
     };
+};
+
+// Keep backward-compatible charterForm for other tabs
+const charterForm = computed(() => charterFormFor(props.mappedProject));
+
+// ---- Status Timeline Filter ----
+const pcStatusFilter = ref('');
+
+const statusTimelineFilterOptions = [
+    { value: '', label: 'Semua', activeClass: 'bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900' },
+    { value: 1, label: 'Drafting', activeClass: 'bg-slate-100 text-slate-600 ring-1 ring-slate-300' },
+    { value: 2, label: 'Propose', activeClass: 'bg-blue-100 text-blue-700 ring-1 ring-blue-300' },
+    { value: 3, label: 'Review', activeClass: 'bg-amber-100 text-amber-700 ring-1 ring-amber-300' },
+    { value: 4, label: 'Approve', activeClass: 'bg-emerald-100 text-emerald-700 ring-1 ring-emerald-300' },
+];
+
+const getProjectReviewStatus = (proj) => {
+    // Baca kolom `status` integer dari tabel trs_project
+    // 1=Drafting, 2=Propose, 3=Review, 4=Approve
+    const raw = proj?.status;
+    if (raw === null || raw === undefined || raw === '') return null;
+    return Number(raw);
+};
+
+const filteredProjects = computed(() => {
+    if (pcStatusFilter.value === '' || pcStatusFilter.value === null) return props.mappedProjects;
+    return props.mappedProjects.filter((proj) => {
+        return Number(getProjectReviewStatus(proj)) === Number(pcStatusFilter.value);
+    });
 });
 
 const initiativeLabel = (initiative) => {

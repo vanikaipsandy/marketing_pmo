@@ -55,6 +55,7 @@ class TrsReviewPCController extends Controller
         ]);
 
         $mappedProject = null;
+        $mappedProjects = [];
         $initiativeId = $trsReviewPC->initiative_id;
 
         if ($initiativeId && Schema::hasTable('trs_pc_initiative')) {
@@ -71,12 +72,20 @@ class TrsReviewPCController extends Controller
                 if (in_array('id', $tableColumns, true)) {
                     $query->orderByDesc('id');
                 }
-                $mappedProjectId = $query->value($projectColumn);
 
-                if ($mappedProjectId) {
-                    $mappedProject = Project::query()
+                // Ambil semua project_id yang berelasi dengan initiative ini
+                $mappedProjectIds = $query->pluck($projectColumn)->filter()->unique()->values();
+
+                if ($mappedProjectIds->isNotEmpty()) {
+                    $mappedProjects = Project::query()
                         ->with(['charter', 'owner', 'milestones', 'statusRef:id,name', 'pcStatusImplementations'])
-                        ->find($mappedProjectId);
+                        ->whereIn('id', $mappedProjectIds)
+                        ->get()
+                        ->values()
+                        ->all();
+
+                    // Tetap sediakan mappedProject (pertama) untuk backward compatibility
+                    $mappedProject = $mappedProjects[0] ?? null;
                 }
             }
         }
@@ -103,6 +112,7 @@ class TrsReviewPCController extends Controller
             'trsReviewPC' => $trsReviewPC,
             'reviewOptions' => $reviewOptions,
             'mappedProject' => $mappedProject,
+            'mappedProjects' => $mappedProjects,
         ]);
     }
 

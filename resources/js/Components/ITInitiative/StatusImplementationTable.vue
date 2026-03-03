@@ -7,6 +7,21 @@ const props = defineProps({
         type: Object,
         default: null,
     },
+    projects: {
+        type: Array,
+        default: () => [],
+    },
+});
+
+// Normalize to array of projects
+const projectList = computed(() => {
+    if (Array.isArray(props.projects) && props.projects.length > 0) {
+        return props.projects;
+    }
+    if (props.project) {
+        return [props.project];
+    }
+    return [];
 });
 
 const statusOptions = computed(() => {
@@ -18,16 +33,17 @@ const statusOptions = computed(() => {
         { id: 5, name: 'baseline', label: 'Baseline' },
     ];
 
-    if (!props.project?.status_ref?.name) {
+    if (!props.projects?.[0]?.status_ref?.name && !props.project?.status_ref?.name) {
         return defaultOptions;
     }
 
+    const currentProject = props.project || props.projects?.[0];
     return defaultOptions.map((option) =>
-        option.id === Number(props.project?.status)
+        option.id === Number(currentProject?.status)
             ? {
                 ...option,
-                name: props.project.status_ref.name,
-                label: String(props.project.status_ref.name)
+                name: currentProject.status_ref.name,
+                label: String(currentProject.status_ref.name)
                     .replace(/_/g, ' ')
                     .replace(/\b\w/g, (char) => char.toUpperCase()),
             }
@@ -35,37 +51,42 @@ const statusOptions = computed(() => {
     );
 });
 
-const architectureBlockLabel = computed(() => {
-    const text = String(props.project?.charter?.category ?? '').trim();
+// Helper functions for each project row
+const getArchitectureBlockLabel = (project) => {
+    const text = String(project?.charter?.category ?? '').trim();
     return text.length > 0 ? text : '-';
-});
+};
 
-const implementationHistory = computed(() => {
-    const source = props.project?.pc_status_implementations ?? props.project?.pcStatusImplementations ?? [];
+const getImplementationHistory = (project) => {
+    const source = project?.pc_status_implementations ?? project?.pcStatusImplementations ?? [];
     return Array.isArray(source) ? source : [];
-});
+};
 
-const latestImplementationLog = computed(() => (
-    implementationHistory.value.length > 0 ? implementationHistory.value[0] : null
-));
+const getLatestImplementationLog = (project) => {
+    const history = getImplementationHistory(project);
+    return history.length > 0 ? history[0] : null;
+};
 
-const latestReviewStatus = computed(() => {
-    const raw = String(latestImplementationLog.value?.review_status ?? '').trim();
+const getLatestReviewStatus = (project) => {
+    const log = getLatestImplementationLog(project);
+    const raw = String(log?.review_status ?? '').trim();
     return raw.length > 0 ? raw : null;
-});
+};
 
-const latestImplementationStatus = computed(() => {
-    const raw = String(latestImplementationLog.value?.status ?? '').trim();
+const getLatestImplementationStatus = (project) => {
+    const log = getLatestImplementationLog(project);
+    const raw = String(log?.status ?? '').trim();
     return raw.length > 0 ? raw : null;
-});
+};
 
-const latestImplementationMonthYear = computed(() => {
-    const rawDate = latestImplementationLog.value?.date ?? null;
+const getLatestImplementationMonthYear = (project) => {
+    const log = getLatestImplementationLog(project);
+    const rawDate = log?.date ?? null;
     if (!rawDate) return null;
     const date = new Date(rawDate);
     if (Number.isNaN(date.getTime())) return null;
     return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
-});
+};
 
 const reviewStatusBadgeClass = (reviewStatus) => {
     const normalized = String(reviewStatus ?? '').trim().toLowerCase();
@@ -94,37 +115,37 @@ const reviewStatusBadgeClass = (reviewStatus) => {
                     <th class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">Code</th>
                     <th class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">Building Blok</th>
                     <th class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">Inisiatif</th>
-                    <th class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">Status</th>
+                    <th class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">Status Timeline</th>
                     <th class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">Bulan/Tahun</th>
-                    <th class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">Review</th>
+                    <th class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">Review Status</th>
                     <th class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">Implementasi</th>
                 </tr>
             </thead>
             <tbody class="bg-white dark:bg-[#1a1a1a]">
-                <tr v-if="project">
-                    <td class="px-2 py-2 text-[11px] font-semibold text-slate-700 dark:text-slate-200">{{ project.code || '-' }}</td>
+                <tr v-for="proj in projectList" :key="proj.id">
+                    <td class="px-2 py-2 text-[11px] font-semibold text-slate-700 dark:text-slate-200">{{ proj.code || '-' }}</td>
                     <td class="px-2 py-2">
                         <span class="inline-flex rounded-full bg-blue-100 px-2 py-0.5 text-[9px] font-semibold text-blue-800 dark:bg-blue-500/20 dark:text-blue-300">
-                            {{ architectureBlockLabel }}
+                            {{ getArchitectureBlockLabel(proj) }}
                         </span>
                     </td>
-                    <td class="px-2 py-2 text-[11px] font-medium text-slate-700 break-words dark:text-slate-200">{{ project.name || '-' }}</td>
+                    <td class="px-2 py-2 text-[11px] font-medium text-slate-700 break-words dark:text-slate-200">{{ proj.name || '-' }}</td>
                     <td class="px-2 py-2">
-                        <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-medium capitalize" :class="statusBadgeClassById(project.status)">
-                            {{ statusLabelFromOptions(project.status, statusOptions) }}
+                        <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-medium capitalize" :class="statusBadgeClassById(proj.status)">
+                            {{ statusLabelFromOptions(proj.status, statusOptions) }}
                         </span>
                     </td>
-                    <td class="px-2 py-2 text-[10px] font-medium text-slate-600 dark:text-slate-300">{{ latestImplementationMonthYear || '-' }}</td>
+                    <td class="px-2 py-2 text-[10px] font-medium text-slate-600 dark:text-slate-300">{{ getLatestImplementationMonthYear(proj) || '-' }}</td>
                     <td class="px-2 py-2">
-                        <span v-if="latestReviewStatus" class="inline-flex rounded-md px-1.5 py-0.5 text-[9px] font-medium" :class="reviewStatusBadgeClass(latestReviewStatus)">{{ latestReviewStatus }}</span>
+                        <span v-if="getLatestReviewStatus(proj)" class="inline-flex rounded-md px-1.5 py-0.5 text-[9px] font-medium" :class="reviewStatusBadgeClass(getLatestReviewStatus(proj))">{{ getLatestReviewStatus(proj) }}</span>
                         <span v-else class="text-[10px] italic text-slate-400">-</span>
                     </td>
                     <td class="px-2 py-2">
-                        <span v-if="latestImplementationStatus" class="inline-flex rounded-md bg-slate-100 px-1.5 py-0.5 text-[9px] font-medium text-slate-700 dark:bg-white/10 dark:text-slate-300">{{ latestImplementationStatus }}</span>
+                        <span v-if="getLatestImplementationStatus(proj)" class="inline-flex rounded-md bg-slate-100 px-1.5 py-0.5 text-[9px] font-medium text-slate-700 dark:bg-white/10 dark:text-slate-300">{{ getLatestImplementationStatus(proj) }}</span>
                         <span v-else class="text-[10px] italic text-slate-400">-</span>
                     </td>
                 </tr>
-                <tr v-else>
+                <tr v-if="projectList.length === 0">
                     <td colspan="7" class="px-4 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
                         Data status implementasi belum tersedia untuk initiative ini.
                     </td>
