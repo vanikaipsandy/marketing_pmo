@@ -1,9 +1,64 @@
 <template>
     <div class="overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-white/5 dark:bg-[#1a1a1a]">
-        <div class="border-b border-slate-200 px-4 py-3 dark:border-white/10">
-            <p class="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
-                Data Sumber `mst_initiative` (tipe_initiative = 1)
-            </p>
+        <div class="flex flex-wrap items-center gap-2 border-b border-slate-200 px-4 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:border-white/10 dark:text-slate-400">
+            <div class="flex items-center gap-1.5">
+                <label class="text-[10px]">CoE</label>
+                <select
+                    v-model="filterCoe"
+                    class="rounded border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-semibold text-slate-700 shadow-sm transition focus:border-slate-300 focus:outline-none dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-200"
+                >
+                    <option value="">All</option>
+                    <option v-for="opt in coeOptions" :key="opt" :value="opt">{{ opt }}</option>
+                </select>
+            </div>
+            <div class="flex items-center gap-1.5">
+                <label class="text-[10px]">Holding</label>
+                <select
+                    v-model="filterGroub"
+                    class="rounded border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-semibold text-slate-700 shadow-sm transition focus:border-slate-300 focus:outline-none dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-200"
+                >
+                    <option value="">All</option>
+                    <option v-for="opt in groubOptions" :key="opt" :value="opt">{{ opt }}</option>
+                </select>
+            </div>
+            <div class="flex items-center gap-1.5">
+                <label class="text-[10px]">Organisasi</label>
+                <select
+                    v-model="filterOrganization"
+                    class="rounded border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-semibold text-slate-700 shadow-sm transition focus:border-slate-300 focus:outline-none dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-200"
+                >
+                    <option value="">All</option>
+                    <option v-for="opt in organizationOptions" :key="opt" :value="opt">{{ opt }}</option>
+                </select>
+            </div>
+            <div class="flex items-center gap-1.5">
+                <label class="text-[10px]">Status</label>
+                <select
+                    v-model="filterStatusTimeline"
+                    class="rounded border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-semibold text-slate-700 shadow-sm transition focus:border-slate-300 focus:outline-none dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-200"
+                >
+                    <option value="">All</option>
+                    <option v-for="opt in statusTimelineOptions" :key="opt" :value="opt">{{ opt }}</option>
+                </select>
+            </div>
+            <div class="flex items-center gap-1.5">
+                <label class="text-[10px]">Sumber</label>
+                <select
+                    v-model="filterSumber"
+                    class="rounded border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-semibold text-slate-700 shadow-sm transition focus:border-slate-300 focus:outline-none dark:border-white/10 dark:bg-[#1f1f1f] dark:text-slate-200"
+                >
+                    <option value="">All</option>
+                    <option v-for="opt in sumberOptions" :key="opt" :value="opt">{{ opt }}</option>
+                </select>
+            </div>
+            <button
+                v-if="filterCoe || filterGroub || filterOrganization || filterStatusTimeline || filterSumber"
+                type="button"
+                class="ml-auto rounded border border-slate-200 px-2 py-0.5 text-[10px] font-semibold normal-case tracking-normal text-slate-500 shadow-sm transition hover:bg-slate-100 dark:border-white/10 dark:text-slate-400 dark:hover:bg-white/5"
+                @click="filterCoe = ''; filterGroub = ''; filterOrganization = ''; filterStatusTimeline = ''; filterSumber = ''"
+            >
+                Reset
+            </button>
         </div>
 
         <div class="overflow-x-hidden">
@@ -35,7 +90,7 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-200 bg-white dark:divide-white/5 dark:bg-[#1a1a1a]">
-                    <tr v-for="(item, index) in items" :key="`mst-digital-${item.id}`" class="transition-colors hover:bg-slate-50 dark:hover:bg-white/5">
+                    <tr v-for="(item, index) in filteredItems" :key="`mst-digital-${item.id}`" class="transition-colors hover:bg-slate-50 dark:hover:bg-white/5">
                         <td class="px-3 py-3 text-[11px] font-medium text-slate-600 dark:text-slate-400">{{ index + 1 }}</td>
                         <td class="px-3 py-3 text-[11px] font-medium text-slate-700 dark:text-slate-200">{{ item.code ?? '-' }}</td>
                         <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">{{ coeName(item) }}</td>
@@ -76,7 +131,7 @@
                         </td>
                     </tr>
 
-                    <tr v-if="items.length === 0">
+                    <tr v-if="filteredItems.length === 0">
                         <td colspan="10" class="px-6 py-8 text-center text-xs text-slate-500 dark:text-slate-400">
                             Tidak ada data `mst_initiative` tipe 1.
                         </td>
@@ -88,6 +143,7 @@
 </template>
 
 <script setup>
+import { computed, ref } from 'vue';
 import { Link } from '@inertiajs/vue3';
 
 const props = defineProps({
@@ -111,6 +167,32 @@ const coeName = (item) => normalizeText(item?.coe?.name ?? item?.coe_name ?? ite
 const organizationName = (item) => normalizeText(item?.organization?.name ?? item?.business_unit_name ?? item?.business_unit);
 
 const groubName = (item) => normalizeText(item?.organization?.groub?.name);
+
+// Filter state
+const filterCoe = ref('');
+const filterGroub = ref('');
+const filterOrganization = ref('');
+const filterStatusTimeline = ref('');
+const filterSumber = ref('');
+
+const uniqueSorted = (arr) => [...new Set(arr.filter((v) => v && v !== '-'))].sort();
+
+const coeOptions = computed(() => uniqueSorted(props.items.map((item) => coeName(item))));
+const groubOptions = computed(() => uniqueSorted(props.items.map((item) => groubName(item))));
+const organizationOptions = computed(() => uniqueSorted(props.items.map((item) => organizationName(item))));
+const statusTimelineOptions = computed(() => uniqueSorted(props.items.map((item) => scStatus(item))));
+const sumberOptions = computed(() => uniqueSorted(props.items.map((item) => statusName(item))));
+
+const filteredItems = computed(() => {
+    return props.items.filter((item) => {
+        if (filterCoe.value && coeName(item) !== filterCoe.value) return false;
+        if (filterGroub.value && groubName(item) !== filterGroub.value) return false;
+        if (filterOrganization.value && organizationName(item) !== filterOrganization.value) return false;
+        if (filterStatusTimeline.value && scStatus(item) !== filterStatusTimeline.value) return false;
+        if (filterSumber.value && statusName(item) !== filterSumber.value) return false;
+        return true;
+    });
+});
 
 const organizationWithGroup = (item) => {
     const org = organizationName(item);
