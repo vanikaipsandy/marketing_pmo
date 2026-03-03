@@ -20,7 +20,7 @@ class MasterDataController extends Controller
 
         try {
             $tableNames = collect(Schema::getTableListing())
-                ->filter(fn (string $table): bool => $this->isMasterOrTransactionTable($table))
+                ->filter(fn (string $table): bool => Str::startsWith(Str::lower($table), 'mst_'))
                 ->sort()
                 ->values();
 
@@ -34,17 +34,10 @@ class MasterDataController extends Controller
         }
 
         return Inertia::render('MasterData/Index', [
-            'tables' => $tables,
+            'tables'       => $tables,
             'previewLimit' => $previewLimit,
-            'error' => $error,
+            'error'        => $error,
         ]);
-    }
-
-    private function isMasterOrTransactionTable(string $table): bool
-    {
-        $normalized = Str::lower($table);
-
-        return Str::startsWith($normalized, ['mst_', 'trs_']);
     }
 
     private function tablePayload(string $table, int $previewLimit): array
@@ -58,9 +51,9 @@ class MasterDataController extends Controller
             ->all();
 
         return [
-            'name' => $table,
-            'columns' => $columns,
-            'rows' => $rows,
+            'name'       => $table,
+            'columns'    => $columns,
+            'rows'       => $rows,
             'total_rows' => DB::table($table)->count(),
         ];
     }

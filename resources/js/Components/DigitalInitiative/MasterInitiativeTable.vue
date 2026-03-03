@@ -248,10 +248,7 @@ const initiativeHref = (item) => {
 };
 
 const editHref = (item) => {
-    const matchedInitiative = resolveLinkedInitiative(item);
-    return matchedInitiative?.id
-        ? `/program-planning/program-definition/digital-initiatives/${matchedInitiative.id}/edit`
-        : '/program-planning/program-definition/digital-initiatives';
+    return '/master-data';
 };
 
 const actionCellClass = (isReady) => {

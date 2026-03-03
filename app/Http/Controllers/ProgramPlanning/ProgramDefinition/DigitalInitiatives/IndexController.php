@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\DigitalInitiative;
 use App\Models\InitiativeStatus;
 use App\Models\MstInitiative;
+use App\Models\ScStatusImplementation;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -27,7 +29,13 @@ class IndexController extends Controller
             ])
             ->values();
 
-        $statusCounts = DigitalInitiative::query()
+        // Count latest status per digital_initiative from trs_sc_status_implementation
+        $latestIds = ScStatusImplementation::query()
+            ->select(DB::raw('MAX(id) as id'))
+            ->groupBy('digital_initiative_id');
+
+        $statusCounts = ScStatusImplementation::query()
+            ->joinSub($latestIds, 'latest', fn ($join) => $join->on('trs_sc_status_implementation.id', '=', 'latest.id'))
             ->selectRaw('status, COUNT(*) as total')
             ->groupBy('status')
             ->pluck('total', 'status');

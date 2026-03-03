@@ -11,6 +11,9 @@ use App\Http\Controllers\ITInitiative\CharterController;
 use App\Http\Controllers\ITInitiative\ITInitiativeController;
 use App\Http\Controllers\ITInitiative\MilestoneController;
 use App\Http\Controllers\MasterData\MasterDataController;
+use App\Http\Controllers\MasterData\MstInitiative\MstInitiativeController;
+use App\Http\Controllers\MasterData\ScopeCharter\ScopeCharterController;
+use App\Http\Controllers\MasterData\ProjectCharter\ProjectCharterController as MasterDataProjectCharterController;
 use App\Http\Controllers\ProgramEvaluation\TrsReviewPCController;
 use App\Http\Controllers\ProgramImplementation\DashboardController;
 use App\Http\Controllers\ProgramImplementation\ProgramImplementationController;
@@ -63,6 +66,33 @@ Route::middleware(['auth', 'approved'])->group(function () {
     Route::get('/program-planning/program-definition/digital-initiatives', ProgramDefinitionDigitalInitiativesController::class)->name('program-planning.program-definition.digital-initiatives');
     Route::get('/program-planning/program-definition/digital-initiatives/{digitalInitiative}/edit', ProgramDefinitionDigitalInitiativesEditController::class)->name('program-planning.program-definition.digital-initiatives.edit');
     Route::put('/program-planning/program-definition/digital-initiatives/{digitalInitiative}', ProgramDefinitionDigitalInitiativesUpdateController::class)->name('program-planning.program-definition.digital-initiatives.update');
+
+    // ═══ Master Data ═══════════════════════════════════════════════
+    Route::get('/master-data', MasterDataController::class)->name('master-data.index');
+
+    // Master Data → Master Initiative CRUD
+    Route::prefix('/master-data/master-initiatives')->name('master-data.mst-initiatives.')->group(function () {
+        Route::get('/', [MstInitiativeController::class, 'index'])->name('index');
+        Route::post('/', [MstInitiativeController::class, 'store'])->name('store');
+        Route::put('/{mstInitiative}', [MstInitiativeController::class, 'update'])->name('update');
+        Route::delete('/{mstInitiative}', [MstInitiativeController::class, 'destroy'])->name('destroy');
+    });
+
+    // Master Data → Scope Charter CRUD (trs_sc_initiative + trs_sc_status_implementation)
+    Route::prefix('/master-data/scope-charter')->name('master-data.scope-charter.')->group(function () {
+        Route::get('/', [ScopeCharterController::class, 'index'])->name('index');
+        Route::post('/', [ScopeCharterController::class, 'store'])->name('store');
+        Route::put('/{scopeCharter}', [ScopeCharterController::class, 'update'])->name('update');
+        Route::delete('/{scopeCharter}', [ScopeCharterController::class, 'destroy'])->name('destroy');
+    });
+
+    // Master Data → Project Charter CRUD (trs_projects + trs_pc_status_implementation)
+    Route::prefix('/master-data/project-charter')->name('master-data.project-charter.')->group(function () {
+        Route::get('/', [MasterDataProjectCharterController::class, 'index'])->name('index');
+        Route::post('/', [MasterDataProjectCharterController::class, 'store'])->name('store');
+        Route::put('/{projectCharter}', [MasterDataProjectCharterController::class, 'update'])->name('update');
+        Route::delete('/{projectCharter}', [MasterDataProjectCharterController::class, 'destroy'])->name('destroy');
+    });
     Route::get('/program-planning/program-definition/it-initiatives', ProgramDefinitionITInitiativesController::class)->name('program-planning.program-definition.it-initiatives');
     Route::get('/program-planning/initiative-relation', [InitiativeRelationController::class, 'index'])->name('program-implementation.initiative-relation');
     Route::redirect('/program-planning/initiative', '/program-planning/initiative-relation');
@@ -82,7 +112,6 @@ Route::middleware(['auth', 'approved'])->group(function () {
     Route::get('/architecture', fn () => Inertia::render('Placeholder/Index', [
         'title' => 'Architecture',
     ]))->name('architecture.index');
-    Route::get('/master-data', MasterDataController::class)->name('master-data.index');
     Route::get('/program-information', fn () => Inertia::render('Placeholder/Index', [
         'title' => 'Program Information',
     ]))->name('program-information.index');

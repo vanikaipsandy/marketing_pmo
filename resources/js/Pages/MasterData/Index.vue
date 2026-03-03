@@ -1,144 +1,119 @@
 <template>
     <UserLayout title="Master Data">
-        <div class="space-y-4 animate-fade-in-up">
+        <div class="animate-fade-in-up space-y-4">
+            <!-- Header -->
             <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-[#171717]">
                 <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                     <div>
                         <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Master Data Center</h1>
                         <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                            Halaman ini menampilkan data dari tabel <span class="font-semibold">mst_</span> dan <span class="font-semibold">trs_</span>.
+                            Kelola dan lihat semua tabel master (<span class="font-semibold">mst_</span>).
                         </p>
                     </div>
                     <div class="w-full sm:w-80">
-                        <label class="mb-1 block text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
-                            Cari Nama Tabel
-                        </label>
                         <input
-                            v-model="search"
+                            v-model="tableSearch"
                             type="text"
-                            placeholder="Contoh: initiative"
+                            placeholder="Cari nama tabel..."
                             class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs text-slate-700 focus:border-[#1C75BC] focus:outline-none focus:ring-2 focus:ring-[#1C75BC]/20 dark:border-white/10 dark:bg-[#101826] dark:text-slate-100"
                         />
                     </div>
                 </div>
             </section>
 
-            <section class="grid grid-cols-1 gap-4 lg:grid-cols-[240px_minmax(0,1fr)]">
+            <!-- Main grid -->
+            <section class="grid grid-cols-1 gap-4 lg:grid-cols-[220px_minmax(0,1fr)]">
+                <!-- Sidebar -->
                 <aside class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-white/10 dark:bg-[#171717]">
-                    <p class="text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
-                        Menu
-                    </p>
-                    <div class="mt-3 space-y-2">
+                    <p class="text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Navigasi CRUD</p>
+
+                    <div class="mt-3 space-y-1">
+                        <a v-for="nav in crudNav" :key="nav.href" :href="nav.href"
+                            class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold transition-colors text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/5">
+                            <svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="nav.icon" />
+                            </svg>
+                            <span>{{ nav.label }}</span>
+                        </a>
+                    </div>
+
+                    <p class="mt-5 text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Tabel Viewer</p>
+
+                    <div class="mt-3 space-y-1">
                         <button
+                            v-for="table in sidebarTables"
+                            :key="table.name"
                             type="button"
-                            class="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm font-semibold transition-colors"
-                            :class="activeSection === 'master'
-                                ? 'bg-[#1C75BC]/10 text-[#1C75BC] dark:bg-[#1C75BC]/20 dark:text-[#7FC0F2]'
-                                : 'text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/5'"
-                            @click="activeSection = 'master'"
+                            class="flex w-full items-center justify-between rounded-lg px-3 py-1.5 text-left text-[11px] transition-colors"
+                            :class="activeTable?.name === table.name
+                                ? 'bg-[#1C75BC]/10 font-semibold text-[#1C75BC] dark:bg-[#1C75BC]/20 dark:text-[#7FC0F2]'
+                                : 'text-slate-600 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-white/5'"
+                            @click="activeTableName = table.name"
                         >
-                            <span>Data Master</span>
-                            <span class="text-xs">{{ masterTables.length }}</span>
-                        </button>
-                        <button
-                            type="button"
-                            class="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm font-semibold transition-colors"
-                            :class="activeSection === 'transaction'
-                                ? 'bg-[#A7C942]/20 text-[#4F6B0F] dark:bg-[#A7C942]/20 dark:text-[#C7E67A]'
-                                : 'text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/5'"
-                            @click="activeSection = 'transaction'"
-                        >
-                            <span>Data Transaksi</span>
-                            <span class="text-xs">{{ transactionTables.length }}</span>
+                            <span class="truncate">{{ table.name }}</span>
+                            <span class="ml-1 shrink-0 text-[9px] text-slate-400">{{ table.total_rows }}</span>
                         </button>
                     </div>
 
                     <div class="mt-4 rounded-xl border border-slate-200 p-3 text-xs dark:border-white/10">
                         <p class="font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Ringkasan</p>
-                        <p class="mt-2 text-slate-600 dark:text-slate-300">MST: <span class="font-semibold">{{ masterTables.length }}</span> tabel</p>
-                        <p class="text-slate-600 dark:text-slate-300">TRS: <span class="font-semibold">{{ transactionTables.length }}</span> tabel</p>
+                        <p class="mt-2 text-slate-600 dark:text-slate-300">
+                            <span class="font-semibold">{{ tables.length }}</span> tabel master
+                        </p>
                     </div>
                 </aside>
 
+                <!-- Content -->
                 <div class="space-y-4">
-                    <section class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        <article class="rounded-2xl border border-[#1C75BC] bg-[#1C75BC] p-4 shadow-[0_4px_16px_rgba(28,117,188,0.3)]">
-                            <p class="text-[10px] font-semibold uppercase tracking-[0.08em] text-white">Tabel {{ sectionLabel }}</p>
-                            <p class="mt-2 text-3xl font-bold text-white">{{ filteredTables.length }}</p>
-                        </article>
-                        <article class="rounded-2xl border border-slate-700 bg-slate-700 p-4 shadow-[0_4px_16px_rgba(51,65,85,0.35)]">
-                            <p class="text-[10px] font-semibold uppercase tracking-[0.08em] text-white">Total Baris (Preview Scope)</p>
-                            <p class="mt-2 text-3xl font-bold text-white">{{ selectedTotalRows }}</p>
-                        </article>
-                    </section>
+                    <!-- Raw table preview -->
+                    <template v-if="activeTable">
+                        <section class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            <article class="rounded-2xl border border-[#1C75BC] bg-[#1C75BC] p-4 shadow-md">
+                                <p class="text-[10px] font-semibold uppercase tracking-[0.08em] text-white">Tabel</p>
+                                <p class="mt-1 text-lg font-bold text-white">{{ activeTable.name }}</p>
+                            </article>
+                            <article class="rounded-2xl border border-slate-700 bg-slate-700 p-4 shadow-md">
+                                <p class="text-[10px] font-semibold uppercase tracking-[0.08em] text-white">Total Baris</p>
+                                <p class="mt-1 text-3xl font-bold text-white">{{ activeTable.total_rows ?? 0 }}</p>
+                            </article>
+                        </section>
 
-                    <section
-                        v-if="error"
-                        class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-300"
-                    >
-                        {{ error }}
-                    </section>
+                        <section v-if="error"
+                            class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-300">
+                            {{ error }}
+                        </section>
 
-                    <section
-                        v-if="!error && filteredTables.length === 0"
-                        class="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center text-sm text-slate-500 dark:border-white/10 dark:bg-[#171717] dark:text-slate-300"
-                    >
-                        Tidak ada tabel untuk kategori ini.
-                    </section>
+                        <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717]">
+                            <div class="border-b border-slate-200 px-4 py-3 dark:border-white/10">
+                                <p class="text-xs text-slate-500 dark:text-slate-400">
+                                    Preview {{ previewLimit }} baris dari {{ activeTable.total_rows }} total
+                                </p>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-slate-200 text-[11px] dark:divide-white/10">
+                                    <thead class="bg-slate-50 dark:bg-white/5">
+                                        <tr>
+                                            <th v-for="col in activeTable.columns" :key="col"
+                                                class="whitespace-nowrap px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">{{ col }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-100 dark:divide-white/5">
+                                        <tr v-for="(row, ri) in activeTable.rows" :key="ri" class="transition-colors hover:bg-slate-50 dark:hover:bg-white/5">
+                                            <td v-for="col in activeTable.columns" :key="col"
+                                                class="max-w-[240px] whitespace-nowrap px-3 py-2 text-slate-700 dark:text-slate-200"
+                                                :title="fullCell(row[col])">{{ shortCell(row[col]) }}</td>
+                                        </tr>
+                                        <tr v-if="activeTable.rows.length === 0">
+                                            <td :colspan="Math.max(activeTable.columns.length, 1)" class="px-4 py-6 text-center text-xs text-slate-500">Belum ada data.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+                    </template>
 
-                    <section
-                        v-for="table in filteredTables"
-                        :key="table.name"
-                        class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717]"
-                    >
-                        <div class="flex flex-col gap-1 border-b border-slate-200 px-4 py-3 dark:border-white/10 sm:flex-row sm:items-center sm:justify-between">
-                            <h2 class="text-sm font-bold uppercase tracking-[0.06em] text-slate-800 dark:text-slate-100">
-                                {{ table.name }}
-                            </h2>
-                            <p class="text-xs text-slate-500 dark:text-slate-400">
-                                {{ table.total_rows }} baris | preview {{ previewLimit }} baris
-                            </p>
-                        </div>
-
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-slate-200 text-[11px] dark:divide-white/10">
-                                <thead class="bg-slate-50 dark:bg-white/5">
-                                    <tr>
-                                        <th
-                                            v-for="column in table.columns"
-                                            :key="`${table.name}-head-${column}`"
-                                            class="whitespace-nowrap px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400"
-                                        >
-                                            {{ column }}
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-slate-100 dark:divide-white/5">
-                                    <tr
-                                        v-for="(row, rowIndex) in table.rows"
-                                        :key="`${table.name}-row-${rowIndex}`"
-                                        class="transition-colors hover:bg-slate-50 dark:hover:bg-white/5"
-                                    >
-                                        <td
-                                            v-for="column in table.columns"
-                                            :key="`${table.name}-${rowIndex}-${column}`"
-                                            class="max-w-[240px] whitespace-nowrap px-3 py-2 text-slate-700 dark:text-slate-200"
-                                            :title="fullCell(row[column])"
-                                        >
-                                            {{ shortCell(row[column]) }}
-                                        </td>
-                                    </tr>
-                                    <tr v-if="table.rows.length === 0">
-                                        <td
-                                            :colspan="Math.max(table.columns.length, 1)"
-                                            class="px-4 py-6 text-center text-xs text-slate-500 dark:text-slate-400"
-                                        >
-                                            Belum ada data.
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                    <section v-else class="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center text-sm text-slate-500 dark:border-white/10 dark:bg-[#171717]">
+                        Pilih tabel dari sidebar, atau masuk ke halaman CRUD di atas.
                     </section>
                 </div>
             </section>
@@ -151,87 +126,39 @@ import { computed, ref } from 'vue';
 import UserLayout from '@/Layouts/UserLayout.vue';
 
 const props = defineProps({
-    tables: {
-        type: Array,
-        default: () => [],
-    },
-    previewLimit: {
-        type: Number,
-        default: 10,
-    },
-    error: {
-        type: String,
-        default: null,
-    },
+    tables:       { type: Array,  default: () => [] },
+    previewLimit: { type: Number, default: 10 },
+    error:        { type: String, default: null },
 });
 
-const search = ref('');
-const activeSection = ref('master');
+// ── CRUD sidebar links ──
+const crudNav = [
+    { label: 'Master Initiative', href: '/master-data/master-initiatives', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
+    { label: 'Scope Charter',     href: '/master-data/scope-charter',           icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2' },
+    { label: 'Project Charter',   href: '/master-data/project-charter',         icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4' },
+];
 
-const allTables = computed(() => {
-    return Array.isArray(props.tables) ? props.tables : [];
+// ── Table viewer sidebar ──
+const tableSearch = ref('');
+const activeTableName = ref(null);
+
+const sidebarTables = computed(() => {
+    const q = tableSearch.value.trim().toLowerCase();
+    if (!q) return props.tables;
+    return props.tables.filter(t => t.name.toLowerCase().includes(q));
 });
 
-const masterTables = computed(() => {
-    return allTables.value.filter((table) => String(table?.name ?? '').toLowerCase().startsWith('mst_'));
+const activeTable = computed(() => {
+    if (!activeTableName.value) return null;
+    return props.tables.find(t => t.name === activeTableName.value) ?? null;
 });
 
-const transactionTables = computed(() => {
-    return allTables.value.filter((table) => String(table?.name ?? '').toLowerCase().startsWith('trs_'));
-});
-
-const sectionTables = computed(() => {
-    return activeSection.value === 'transaction'
-        ? transactionTables.value
-        : masterTables.value;
-});
-
-const filteredTables = computed(() => {
-    const keyword = String(search.value ?? '').trim().toLowerCase();
-
-    if (!keyword) {
-        return sectionTables.value;
-    }
-
-    return sectionTables.value.filter((table) =>
-        String(table?.name ?? '').toLowerCase().includes(keyword)
-    );
-});
-
-const sectionLabel = computed(() => {
-    return activeSection.value === 'transaction' ? 'Transaksi' : 'Master';
-});
-
-const selectedTotalRows = computed(() => {
-    return filteredTables.value.reduce((total, table) => {
-        return total + Number(table?.total_rows ?? 0);
-    }, 0);
-});
-
+// ── Cell helpers ──
 const fullCell = (value) => {
-    if (value === null || value === undefined) {
-        return '-';
-    }
-
-    if (typeof value === 'object') {
-        try {
-            return JSON.stringify(value);
-        } catch {
-            return String(value);
-        }
-    }
-
+    if (value === null || value === undefined) return '-';
+    if (typeof value === 'object') { try { return JSON.stringify(value); } catch { return String(value); } }
     return String(value);
 };
-
-const shortCell = (value) => {
-    const text = fullCell(value);
-
-    if (text.length <= 80) {
-        return text;
-    }
-
-    return `${text.slice(0, 80)}...`;
-};
+const shortCell = (value) => { const t = fullCell(value); return t.length <= 80 ? t : `${t.slice(0, 80)}...`; };
 </script>
 

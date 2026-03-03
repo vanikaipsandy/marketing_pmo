@@ -182,7 +182,7 @@ const scopeSteps = computed(() => {
 
     return scopeStatusOptions.value.map((status, index) => {
         const flowClass = statusFlowClassByIndex(index);
-        const key = String(status.id);
+        const key = status.name;
 
         return {
             key,
