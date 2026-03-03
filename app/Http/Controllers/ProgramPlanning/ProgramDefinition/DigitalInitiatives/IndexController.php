@@ -35,11 +35,23 @@ class IndexController extends Controller
             ->whereHas('initiative', fn ($q) => $q->where('tipe_initiative', 1))
             ->groupBy('initiative_id');
 
-        $statusCounts = StatusMstInitiative::query()
+        $statusCountsRaw = StatusMstInitiative::query()
             ->joinSub($latestIds, 'latest', fn ($join) => $join->on('trs_status_mstinitiative.id', '=', 'latest.id'))
             ->selectRaw('LOWER(status) as status_key, COUNT(*) as total')
             ->groupBy('status_key')
             ->pluck('total', 'status_key');
+
+        // Normalize variant spellings to canonical keys
+        $aliasMap = [
+            'draft'    => 'drafting',
+            'approved' => 'approve',
+            'aproved'  => 'approve',
+        ];
+        $statusCounts = collect();
+        foreach ($statusCountsRaw as $key => $total) {
+            $canonical = $aliasMap[$key] ?? $key;
+            $statusCounts[$canonical] = ($statusCounts[$canonical] ?? 0) + $total;
+        }
 
         // For initiatives whose latest status is "postpone", find the status
         // just before postpone so the frontend knows which main node to branch from.
@@ -63,6 +75,14 @@ class IndexController extends Controller
                 ->selectRaw('LOWER(trs_status_mstinitiative.status) as from_key, COUNT(*) as total')
                 ->groupBy('from_key')
                 ->pluck('total', 'from_key');
+
+            // Normalize aliases for postponeFromCounts too
+            $normalizedPfc = collect();
+            foreach ($postponeFromCounts as $key => $total) {
+                $canonical = $aliasMap[$key] ?? $key;
+                $normalizedPfc[$canonical] = ($normalizedPfc[$canonical] ?? 0) + $total;
+            }
+            $postponeFromCounts = $normalizedPfc;
         }
 
         $masterSelectColumns = [
