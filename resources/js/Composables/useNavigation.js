@@ -27,13 +27,20 @@ export function useNavigation() {
                 icon: Squares2X2Icon,
                 active: (url) =>
                     url.startsWith('/dashboard-monitoring')
-                    || url.startsWith('/program-planning'),
+                    || url.startsWith('/program-planning')
+                    || url.startsWith('/strategic-pillars'),
             },
             {
                 label: 'RSTI Sub Holding',
                 href: '/program-planning/rsti-sub-holding',
                 icon: BuildingOffice2Icon,
                 active: (url) => url.startsWith('/program-planning/rsti-sub-holding'),
+            },
+            {
+                label: 'Strategic Pillars',
+                href: '/strategic-pillars',
+                icon: FlagIcon,
+                active: (url) => url.startsWith('/strategic-pillars'),
             },
             {
                 label: 'Digital Initiative Definition',
@@ -80,12 +87,6 @@ export function useNavigation() {
                     || url.startsWith('/digital-initiatives')
                     || url.startsWith('/it-initiatives')
                     || url.startsWith('/roadmap'),
-            },
-            {
-                label: 'Strategic Pillars',
-                href: '/strategic-pillars',
-                icon: FlagIcon,
-                active: (url) => url.startsWith('/strategic-pillars'),
             },
             {
                 label: 'Digital Initiatives',
