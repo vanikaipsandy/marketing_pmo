@@ -12,7 +12,8 @@
                         Kembali
                     </Link>
                     <span class="text-slate-300 dark:text-slate-600">|</span>
-                    <label for="review" class="text-xs font-medium text-slate-700 dark:text-slate-200">Pilih Initiative</label>
+                    <label for="review" class="text-xs font-medium text-slate-700 dark:text-slate-200">Pilih
+                        Initiative</label>
                     <select v-if="reviewOptions.length" v-model="selectedReviewId"
                         class="max-w-xs rounded-md border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 focus:border-[#1C75BC] focus:outline-none dark:border-white/10 dark:bg-[#101826] dark:text-slate-100">
                         <option v-for="option in reviewOptions" :key="`review-opt-${option.id}`"
@@ -88,14 +89,12 @@
                 </section>
 
                 <section v-if="activeNav === 'initiative-relation'" id="initiative-relation" class="space-y-0">
-                    <div v-if="mappedProject"
+                    <div v-if="trsReviewPC.initiative"
                         class="overflow-hidden border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717] p-6">
-                        <div class="px-3 py-3">
-                            <StatusImplementationTable :project="mappedProject" />
-                        </div>
-                        <InitiativeDetailsWithRelations :initiative="mappedProject" :relations="initiativeRelations"
-                            variant="emerald" status-label="Source" relations-title="Initiative Relations"
-                            column-a-label="Predecessor" column-b-label="Successor" />
+                        <InitiativeDetailsWithRelations :initiative="trsReviewPC.initiative"
+                            :relations="initiativeRelations" variant="emerald" status-label="Status"
+                            relations-title="Initiative Relations" column-a-label="Predecessor"
+                            column-b-label="Successor" />
                     </div>
                     <div v-else
                         class="border border-slate-200 bg-white px-4 py-6 text-center text-xs text-slate-500 dark:border-white/10 dark:bg-[#171717] dark:text-slate-400">
@@ -273,16 +272,16 @@ const findInitiativeById = (initiativeId) => {
 };
 
 const buildInitiativeRelations = () => {
-    if (!props.mappedProject) return [];
+    const initiative = props.trsReviewPC?.initiative;
+    if (!initiative) return [];
 
-    const projectId = Number(props.mappedProject?.id);
     const rows = [];
     const seen = new Set();
 
-    // Get all relations from the mapped project
+    // Get all relations from trsReviewPC.initiative (eager-loaded by controller)
     const allRelations = [
-        ...(props.mappedProject?.initiativeRelationsRow ?? props.mappedProject?.initiative_relations_row ?? []),
-        ...(props.mappedProject?.initiativeRelationsColumn ?? props.mappedProject?.initiative_relations_column ?? []),
+        ...(initiative?.initiative_relations_row ?? initiative?.initiativeRelationsRow ?? []),
+        ...(initiative?.initiative_relations_column ?? initiative?.initiativeRelationsColumn ?? []),
     ];
 
     const relationKey = (relation) => {
@@ -309,6 +308,7 @@ const buildInitiativeRelations = () => {
             id: relation.id ?? `${relation.initiative_code_row}-${relation.initiative_code_column}`,
             predecessorLabel: rowInitiative ? initiativeLabel(rowInitiative) : (rowFallback ?? '-'),
             successorLabel: columnInitiative ? initiativeLabel(columnInitiative) : (columnFallback ?? '-'),
+            type_relation: relation.type_relation ?? null,
             modelRelasi: relation.model_relasi ?? '-',
             justifikasi,
         });
