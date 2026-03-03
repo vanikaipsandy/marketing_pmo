@@ -47,8 +47,11 @@
                             Review
                         </button>
                     </div>
-                    <Link v-if="activeNav === 'review'" :href="`/program-evalution/review?edit=${trsReviewPC.id}`"
-                        class="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-slate-50 dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/5">
+                    <Link
+                        v-if="activeNav === 'review'"
+                        :href="`/program-evalution/review?edit=${trsReviewPC.id}`"
+                        class="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-slate-50 dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/5"
+                    >
                         Edit
                     </Link>
                     <button type="button"
@@ -71,16 +74,21 @@
                 </header>
 
                 <section v-if="activeNav === 'status-implementation'" id="status-implementation" class="space-y-0">
-                    <div
-                        class="overflow-hidden border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717]">
+                    <div class="overflow-hidden border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717]">
                         <div class="px-3 py-3">
                             <StatusImplementationTable :project="mappedProject" />
                         </div>
                     </div>
                 </section>
 
-                <ReviewContent v-if="activeNav === 'review'" :review="review" :penjelasan-items="penjelasanItems"
-                    :why-items="whyItems" :how-parsed="howParsed" :project-profile-items="projectProfileItems" />
+                <ReviewContent
+                    v-if="activeNav === 'review'"
+                    :review="review"
+                    :penjelasan-items="penjelasanItems"
+                    :why-items="whyItems"
+                    :how-parsed="howParsed"
+                    :project-profile-items="projectProfileItems"
+                />
 
                 <section v-if="activeNav === 'project-charter'" id="project-charter" class="space-y-0">
                     <div v-if="mappedProject"
@@ -94,12 +102,16 @@
                 </section>
 
                 <section v-if="activeNav === 'initiative-relation'" id="initiative-relation" class="space-y-0">
-                    <div v-if="trsReviewPC.initiative"
-                        class="overflow-hidden border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717] p-6">
-                        <InitiativeDetailsWithRelations :initiative="trsReviewPC.initiative"
-                            :relations="initiativeRelations" variant="emerald" status-label="Status"
-                            relations-title="Initiative Relations" column-a-label="Predecessor"
-                            column-b-label="Successor" />
+                    <div v-if="mappedProject" class="overflow-hidden border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717] p-6">
+                        <InitiativeDetailsWithRelations
+                            :initiative="mappedProject"
+                            :relations="initiativeRelations"
+                            variant="emerald"
+                            status-label="Source"
+                            relations-title="Initiative Relations"
+                            column-a-label="Predecessor"
+                            column-b-label="Successor"
+                        />
                     </div>
                     <div v-else
                         class="border border-slate-200 bg-white px-4 py-6 text-center text-xs text-slate-500 dark:border-white/10 dark:bg-[#171717] dark:text-slate-400">
@@ -259,26 +271,30 @@ const findInitiativeById = (initiativeId) => {
 };
 
 const buildInitiativeRelations = () => {
-    const initiative = props.trsReviewPC?.initiative;
-    if (!initiative) return [];
-
+    if (!props.mappedProject) return [];
+    
+    const projectId = Number(props.mappedProject?.id);
     const rows = [];
     const seen = new Set();
 
-    // Data relasi sudah di-eager load oleh controller di trsReviewPC.initiative
+    // Get all relations from the mapped project
     const allRelations = [
-        ...(initiative.initiative_relations_row ?? []),
-        ...(initiative.initiative_relations_column ?? []),
+        ...(props.mappedProject?.initiativeRelationsRow ?? props.mappedProject?.initiative_relations_row ?? []),
+        ...(props.mappedProject?.initiativeRelationsColumn ?? props.mappedProject?.initiative_relations_column ?? []),
     ];
 
     const relationKey = (relation) => {
-        if (relation?.id) return `id-${relation.id}`;
+        if (relation?.id) {
+            return `id-${relation.id}`;
+        }
         return `row-${relation?.initiative_code_row}-col-${relation?.initiative_code_column}`;
     };
 
     allRelations.forEach((relation) => {
         const key = relationKey(relation);
-        if (seen.has(key)) return;
+        if (seen.has(key)) {
+            return;
+        }
         seen.add(key);
 
         const rowInitiative = relation.initiative_row;
@@ -291,7 +307,6 @@ const buildInitiativeRelations = () => {
             id: relation.id ?? `${relation.initiative_code_row}-${relation.initiative_code_column}`,
             predecessorLabel: rowInitiative ? initiativeLabel(rowInitiative) : (rowFallback ?? '-'),
             successorLabel: columnInitiative ? initiativeLabel(columnInitiative) : (columnFallback ?? '-'),
-            type_relation: relation.type_relation ?? null,
             modelRelasi: relation.model_relasi ?? '-',
             justifikasi,
         });
