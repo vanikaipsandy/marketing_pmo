@@ -4,10 +4,11 @@ namespace App\Http\Controllers\ProgramPlanning;
 
 use App\Http\Controllers\Concerns\ResolvesInitiativeStatus;
 use App\Http\Controllers\Controller;
-use App\Models\DigitalInitiative;
+use App\Models\MstInitiative;
+use App\Models\StatusMstInitiative;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -35,26 +36,30 @@ class DashboardController extends Controller
         $statusOptions = $this->statusOptions();
         $baselineStatusId = $this->baselineStatusId($statusOptions);
 
-        $emptyItStatusCounts = $this->mapCountsByStatus($statusOptions, collect());
-        $digitalStatusCounts = $this->digitalStatusCountsByStatus();
+        // Status counts from trs_status_mstinitiative grouped by tipe_initiative
+        $digitalStatusCounts = $this->mstStatusCounts(1); // tipe 1 = Digital
+        $itStatusCounts      = $this->mstStatusCounts(2); // tipe 2 = IT
 
-        $openDigitalInitiatives = $this->openDigitalInitiatives();
-        $openItInitiatives = collect();
+        $totalDigital = MstInitiative::where('tipe_initiative', 1)->count();
+        $totalIt      = MstInitiative::where('tipe_initiative', 2)->count();
+
+        // All mst_initiative with relationships for the unified table
+        $mstInitiatives = MstInitiative::with(['coe', 'organization.groub', 'latestStatus'])
+            ->orderBy('tipe_initiative')
+            ->orderBy('id')
+            ->get();
 
         return Inertia::render('ProgramPlanning/Dashboard', [
             'summary' => [
-                'total_it_initiatives'       => 0,
-                'total_digital_initiatives'  => DigitalInitiative::query()->count(),
-                'total_all_initiatives'      => DigitalInitiative::query()->count(),
+                'total_it_initiatives'       => $totalIt,
+                'total_digital_initiatives'  => $totalDigital,
+                'total_all_initiatives'      => $totalDigital + $totalIt,
                 'status_options'             => $statusOptions,
-                'it_status_counts'           => $emptyItStatusCounts,
+                'it_status_counts'           => $itStatusCounts,
                 'digital_status_counts'      => $digitalStatusCounts,
-                'combined_status_counts'     => $digitalStatusCounts,
-                'status_rows'                => $this->statusRows($statusOptions, $emptyItStatusCounts, $digitalStatusCounts),
             ],
+            'mstInitiatives'         => $mstInitiatives,
             'completedStatusId'      => $baselineStatusId,
-            'openDigitalInitiatives' => $openDigitalInitiatives,
-            'openItInitiatives'     => $openItInitiatives,
             'filters'               => $filters,
             'options'               => $options,
             'categoryOptions'       => $this->categoryOptions(),
@@ -77,22 +82,34 @@ class DashboardController extends Controller
         ];
     }
 
-    private function digitalStatusCountsByStatus(): array
+    private function mstStatusCounts(int $tipeInitiative): array
     {
-        $statusOptions = $this->statusOptions();
-        $rawCounts = DigitalInitiative::query()
-            ->selectRaw('status, COUNT(*) as total')
-            ->groupBy('status')
-            ->pluck('total', 'status');
+        // Get latest status per initiative from trs_status_mstinitiative
+        $latestIds = StatusMstInitiative::query()
+            ->select(DB::raw('MAX(id) as id'))
+            ->whereHas('initiative', fn ($q) => $q->where('tipe_initiative', $tipeInitiative))
+            ->groupBy('initiative_id');
 
-        return $this->mapCountsByStatus($statusOptions, $rawCounts);
-    }
+        $rawCounts = StatusMstInitiative::query()
+            ->joinSub($latestIds, 'latest', fn ($join) => $join->on('trs_status_mstinitiative.id', '=', 'latest.id'))
+            ->selectRaw('LOWER(status) as status_key, COUNT(*) as total')
+            ->groupBy('status_key')
+            ->pluck('total', 'status_key');
 
-    private function openDigitalInitiatives(): Collection
-    {
-        return DigitalInitiative::query()
-            ->latest()
-            ->get();
+        // Normalize aliases (approve → approved, draft → drafting, etc.)
+        $aliasMap = [
+            'draft'    => 'drafting',
+            'approve'  => 'approved',
+            'aproved'  => 'approved',
+        ];
+
+        $normalized = [];
+        foreach ($rawCounts as $key => $total) {
+            $canonical = $aliasMap[$key] ?? $key;
+            $normalized[$canonical] = ($normalized[$canonical] ?? 0) + $total;
+        }
+
+        return $normalized;
     }
 
     private function categoryOptions(): array
@@ -101,26 +118,5 @@ class DashboardController extends Controller
             ['id' => 1, 'label' => 'Planning'],
             ['id' => 2, 'label' => 'Implementation'],
         ];
-    }
-
-    private function statusRows(array $statusOptions, array $itCounts, array $digitalCounts): array
-    {
-        return collect($statusOptions)
-            ->map(function (array $status) use ($itCounts, $digitalCounts): array {
-                $statusId     = (string) $status['id'];
-                $itCount      = (int) ($itCounts[$statusId] ?? 0);
-                $digitalCount = (int) ($digitalCounts[$statusId] ?? 0);
-
-                return [
-                    'id'      => (int) $status['id'],
-                    'name'    => $status['name'],
-                    'label'   => $status['label'],
-                    'it'      => $itCount,
-                    'digital' => $digitalCount,
-                    'total'   => $itCount + $digitalCount,
-                ];
-            })
-            ->values()
-            ->all();
     }
 }

@@ -71,12 +71,12 @@ const props = defineProps({
 const flowItems = computed(() => [
     {
         key: 'digital',
-        title: `${props.charterLabel} Digital Initiative Status`,
+        title: 'Digital Initiative Status Timeline',
         steps: props.digitalSteps,
     },
     {
         key: 'it',
-        title: `${props.charterLabel} IT Initiative Status`,
+        title: 'IT Initiative Status Timeline',
         steps: props.itSteps,
     },
 ]);

@@ -273,12 +273,12 @@ const statusOptions = computed(() => {
         { id: 1, name: 'drafting', label: 'Drafting' },
         { id: 2, name: 'propose', label: 'Propose' },
         { id: 3, name: 'review', label: 'Review' },
-        { id: 4, name: 'approve', label: 'Approve' },
+        { id: 4, name: 'approved', label: 'Approved' },
         { id: 5, name: 'baseline', label: 'Baseline' },
     ];
 });
 
-const scopeStatusOrder = ['drafting', 'propose', 'review', 'approve'];
+const scopeStatusOrder = ['drafting', 'propose', 'review', 'approved'];
 const normalizeStatusName = (value) => String(value ?? '').trim().toLowerCase();
 
 const scopeStatusOptions = computed(() => {
@@ -303,7 +303,7 @@ const scopeStatusOptions = computed(() => {
         { id: 1, name: 'drafting', label: 'Drafting' },
         { id: 2, name: 'propose', label: 'Propose' },
         { id: 3, name: 'review', label: 'Review' },
-        { id: 4, name: 'approve', label: 'Approve' },
+        { id: 4, name: 'approved', label: 'Approved' },
     ];
 
     return scopeStatusOrder.map((statusName, index) => {

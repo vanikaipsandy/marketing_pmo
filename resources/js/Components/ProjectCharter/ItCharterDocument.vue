@@ -21,7 +21,7 @@ const statusMap = {
     2: { label: 'Propose', cls: 'bg-blue-100 text-blue-700 ring-1 ring-blue-300' },
     3: { label: 'Review', cls: 'bg-amber-100 text-amber-700 ring-1 ring-amber-300' },
     5: { label: 'Baseline', cls: 'bg-purple-100 text-purple-700 ring-1 ring-purple-300' },
-    4: { label: 'Approve', cls: 'bg-emerald-100 text-emerald-700 ring-1 ring-emerald-300' },
+    4: { label: 'Approved', cls: 'bg-emerald-100 text-emerald-700 ring-1 ring-emerald-300' },
 };
 
 const statusTimelineBadgeClass = (status) => {

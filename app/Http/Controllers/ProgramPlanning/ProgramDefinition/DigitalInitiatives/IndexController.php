@@ -44,8 +44,8 @@ class IndexController extends Controller
         // Normalize variant spellings to canonical keys
         $aliasMap = [
             'draft'    => 'drafting',
-            'approved' => 'approve',
-            'aproved'  => 'approve',
+            'approve'  => 'approved',
+            'aproved'  => 'approved',
         ];
         $statusCounts = collect();
         foreach ($statusCountsRaw as $key => $total) {

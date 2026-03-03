@@ -128,12 +128,12 @@ const props = defineProps({
 const masterDigitalList   = computed(() => Array.isArray(props.masterDigitalInitiatives) ? props.masterDigitalInitiatives : []);
 const initiativeItemsList = computed(() => Array.isArray(props.initiativeItems) ? props.initiativeItems : []);
 
-// ── Main branch config (straight line: Drafting → Approve) ──
+// ── Main branch config (straight line: Drafting → Approved) ──
 const mainBranch = [
     { key: 'drafting', label: 'Drafting', nodeClass: 'border-slate-400 bg-slate-500 text-white',     labelClass: 'text-slate-600 dark:text-slate-300' },
     { key: 'propose',  label: 'Propose',  nodeClass: 'border-blue-400 bg-blue-500 text-white',      labelClass: 'text-blue-600 dark:text-blue-300' },
     { key: 'review',   label: 'Review',   nodeClass: 'border-amber-400 bg-amber-500 text-white',    labelClass: 'text-amber-600 dark:text-amber-300' },
-    { key: 'approve',  label: 'Approve',  nodeClass: 'border-emerald-400 bg-emerald-500 text-white', labelClass: 'text-emerald-600 dark:text-emerald-300' },
+    { key: 'approved', label: 'Approved', nodeClass: 'border-emerald-400 bg-emerald-500 text-white', labelClass: 'text-emerald-600 dark:text-emerald-300' },
 ];
 
 const mainSteps = computed(() => {

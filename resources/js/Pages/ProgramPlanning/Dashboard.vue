@@ -36,11 +36,11 @@
 
             <ScopeCharterFlowSection :digital-steps="digitalStatusFlow" :it-steps="itStatusFlow" />
 
-            <!-- Scope Charter Status Summary -->
+            <!-- Initiative Status Summary -->
             <section
                 class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717]">
                 <div class="border-b border-slate-200 px-5 py-4 dark:border-white/10">
-                    <h2 class="text-base font-semibold text-slate-900 dark:text-white">Scope Charter Status Summary</h2>
+                    <h2 class="text-base font-semibold text-slate-900 dark:text-white">Initiative Status Summary</h2>
                 </div>
 
                 <div class="overflow-x-auto">
@@ -100,24 +100,22 @@
                 </div>
             </section>
 
-            <!-- Scope Charter Tables -->
+            <!-- Initiative Table -->
             <section class="grid grid-cols-1 gap-5">
                 <article v-if="selectedInitiative === null"
                     class="rounded-2xl border border-dashed border-slate-300 bg-white p-6 text-center shadow-sm dark:border-white/15 dark:bg-[#171717]">
                     <p class="text-sm font-medium text-slate-700 dark:text-slate-200">
-                        Klik baris <span class="font-semibold">Digital initiative</span> atau <span
+                        Klik baris <span class="font-semibold">Digital Initiative</span> atau <span
                             class="font-semibold">IT Initiative</span> untuk menampilkan tabel detail.
                     </p>
                 </article>
 
-                <ScopeCharterDigitalTable v-else-if="selectedInitiative === 'digital'"
-                    :items="filteredDigitalInitiatives" :completed-status-id="completedStatusId"
-                    :completed-status-label="completedStatusLabel" :status-options="statusOptions"
-                    :category-options="categoryOptions" />
-
-                <ScopeCharterItTable v-else-if="selectedInitiative === 'it'" :items="filteredItInitiatives"
-                    :completed-status-id="completedStatusId" :completed-status-label="completedStatusLabel"
-                    :status-options="statusOptions" />
+                <InitiativeStatusTable
+                    v-else
+                    :items="filteredTableItems"
+                    :title="selectedInitiative === 'digital' ? 'Digital Initiatives' : selectedInitiative === 'it' ? 'IT Initiatives' : 'All Initiatives'"
+                    :initial-tipe-filter="selectedInitiative === 'digital' ? '1' : selectedInitiative === 'it' ? '2' : ''"
+                />
             </section>
         </div>
     </UserLayout>
@@ -127,9 +125,8 @@
 import { computed, ref } from 'vue';
 import UserLayout from '@/Layouts/UserLayout.vue';
 import ScopeCharterFlowSection from '@/Components/Dashboard/ScopeCharterFlowSection.vue';
-import ScopeCharterDigitalTable from '@/Components/Dashboard/ScopeCharterDigitalTable.vue';
-import ScopeCharterItTable from '@/Components/Dashboard/ScopeCharterItTable.vue';
-import { statusFlowClassByIndex, statusLabelFromOptions } from '@/Composables/initiativeStatus';
+import InitiativeStatusTable from '@/Components/Dashboard/InitiativeStatusTable.vue';
+import { statusFlowClassByIndex } from '@/Composables/initiativeStatus';
 
 const props = defineProps({
     summary: {
@@ -143,87 +140,29 @@ const props = defineProps({
             digital_status_counts: {},
         }),
     },
+    mstInitiatives: {
+        type: Array,
+        default: () => [],
+    },
     completedStatusId: {
         type: Number,
         default: 5,
     },
-    openDigitalInitiatives: {
-        type: Array,
-        default: () => [],
-    },
-    openItInitiatives: {
-        type: Array,
-        default: () => [],
-    },
-
     categoryOptions: {
         type: Array,
         default: () => [],
     },
 });
 
-const fallbackStatusOptions = [
-    { id: 1, name: 'drafting', label: 'Drafting' },
-    { id: 2, name: 'propose', label: 'Propose' },
-    { id: 3, name: 'review', label: 'Review' },
-    { id: 4, name: 'approve', label: 'Approve' },
-    { id: 5, name: 'finish', label: 'Finish' },
-];
-
-const statusOptions = computed(() => {
-    return Array.isArray(props.summary?.status_options) && props.summary.status_options.length > 0
-        ? props.summary.status_options
-        : fallbackStatusOptions;
-});
-
-const scopeStatusOrder = ['drafting', 'propose', 'review', 'approve', 'finish'];
-
 const normalizeStatusName = (value) => String(value ?? '').trim().toLowerCase();
 
-const scopeStatusOptions = computed(() => {
-    const sourceOptions = Array.isArray(statusOptions.value) ? statusOptions.value : [];
-    const mappedStatusByName = new Map();
-
-    sourceOptions.forEach((status) => {
-        const candidateNames = [normalizeStatusName(status?.name), normalizeStatusName(status?.label)];
-
-        if (candidateNames.includes('baseline')) {
-            return;
-        }
-
-        candidateNames.forEach((candidateName) => {
-            if (scopeStatusOrder.includes(candidateName) && !mappedStatusByName.has(candidateName)) {
-                mappedStatusByName.set(candidateName, status);
-            }
-        });
-    });
-
-    return scopeStatusOrder.map((statusName, index) => {
-        const matchedStatus = mappedStatusByName.get(statusName);
-        const fallbackStatus = fallbackStatusOptions[index] ?? {
-            id: index + 1,
-            label: statusName.charAt(0).toUpperCase() + statusName.slice(1),
-        };
-
-        return {
-            id: Number(matchedStatus?.id ?? fallbackStatus.id),
-            name: statusName,
-            label: String(fallbackStatus.label ?? statusName),
-        };
-    });
-});
-
-const completedStatusId = computed(() => Number(props.completedStatusId || 5));
-
-const completedStatusLabel = computed(() => {
-    return statusLabelFromOptions(completedStatusId.value, statusOptions.value);
-});
-
 const statusSummaryColumns = computed(() => {
-    return scopeStatusOptions.value.map((status) => ({
-        key: String(status.id),
-        label: status.label,
-    }));
+    return [
+        { key: 'drafting', label: 'Drafting' },
+        { key: 'propose',  label: 'Propose' },
+        { key: 'review',   label: 'Review' },
+        { key: 'approved', label: 'Approved' },
+    ];
 });
 
 const statusSummaryRows = computed(() => {
@@ -256,7 +195,6 @@ const statusSummaryRows = computed(() => {
 const selectedInitiative = ref(null);
 const selectedStatusFilter = ref(null);
 
-
 const toggleInitiativeTable = (initiativeKey, statusId = null) => {
     if (selectedInitiative.value === initiativeKey && selectedStatusFilter.value === statusId) {
         selectedInitiative.value = null;
@@ -267,33 +205,26 @@ const toggleInitiativeTable = (initiativeKey, statusId = null) => {
     }
 };
 
-const filteredDigitalInitiatives = computed(() => {
-    if (!selectedStatusFilter.value) return props.openDigitalInitiatives;
-    return props.openDigitalInitiatives.filter((item) => {
-        if (item.statuses?.length) {
-            return item.statuses.some(
-                (s) => String(s.id) === String(selectedStatusFilter.value) || String(s.phase_id) === String(selectedStatusFilter.value)
-            );
-        }
-        return String(item.status) === String(selectedStatusFilter.value);
-    });
-});
+// Filter mstInitiatives by tipe and optionally by status
+const filteredTableItems = computed(() => {
+    let items = props.mstInitiatives || [];
 
-const filteredItInitiatives = computed(() => {
-    if (!selectedStatusFilter.value) return props.openItInitiatives;
-    return props.openItInitiatives.filter(
-        item => String(item.status) === String(selectedStatusFilter.value)
-    );
-});
+    // Filter by tipe_initiative based on selected row
+    if (selectedInitiative.value === 'digital') {
+        items = items.filter((i) => Number(i.tipe_initiative) === 1);
+    } else if (selectedInitiative.value === 'it') {
+        items = items.filter((i) => Number(i.tipe_initiative) === 2);
+    }
 
-const approveStatusId = computed(() => {
-    const approveStatus = statusOptions.value.find(s =>
-        String(s.name).trim().toLowerCase() === 'approve' ||
-        String(s.label).trim().toLowerCase() === 'approve' ||
-        String(s.name).trim().toLowerCase() === 'baseline' ||
-        String(s.label).trim().toLowerCase() === 'baseline'
-    );
-    return approveStatus ? String(approveStatus.id) : null;
+    // Filter by status if a column was clicked
+    if (selectedStatusFilter.value) {
+        items = items.filter((i) => {
+            const latestStatus = normalizeStatusName(i.latest_status?.status ?? i.status);
+            return latestStatus === selectedStatusFilter.value;
+        });
+    }
+
+    return items;
 });
 
 const totalDigitalOverall = computed(() => {
@@ -350,14 +281,19 @@ const metricCards = computed(() => [
 ]);
 
 const mapFlowData = (counts = {}) => {
-    return scopeStatusOptions.value.map((status, index) => {
-        const flowClass = statusFlowClassByIndex(index);
-        const key = String(status.id);
+    const flowSteps = [
+        { key: 'drafting',  label: 'Drafting' },
+        { key: 'propose',   label: 'Propose' },
+        { key: 'review',    label: 'Review' },
+        { key: 'approved',  label: 'Approved' },
+    ];
 
+    return flowSteps.map((step, index) => {
+        const flowClass = statusFlowClassByIndex(index);
         return {
-            key,
-            label: status.label,
-            count: Number(counts?.[key] ?? 0),
+            key: step.key,
+            label: step.label,
+            count: Number(counts?.[step.key] ?? 0),
             circleClass: flowClass.circleClass,
             lineClass: flowClass.lineClass,
         };

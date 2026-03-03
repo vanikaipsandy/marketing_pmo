@@ -189,7 +189,7 @@ const fallbackStatusOptions = [
     { id: 1, name: 'drafting', label: 'Drafting' },
     { id: 2, name: 'propose', label: 'Propose' },
     { id: 3, name: 'review', label: 'Review' },
-    { id: 4, name: 'approve', label: 'Approve' },
+    { id: 4, name: 'approved', label: 'Approved' },
 ];
 
 const statusOptions = computed(() => {
@@ -198,7 +198,7 @@ const statusOptions = computed(() => {
         : fallbackStatusOptions;
 });
 
-const scopeStatusOrder = ['drafting', 'propose', 'review', 'approve'];
+const scopeStatusOrder = ['drafting', 'propose', 'review', 'approved'];
 
 const normalizeStatusName = (value) => String(value ?? '').trim().toLowerCase();
 
