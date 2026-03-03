@@ -68,6 +68,7 @@ class DigitalInitiativeController extends Controller
                 'coe:id,name',
                 'organization:id,name,groub_id',
                 'organization.groub:id,name',
+                'latestStatus',
             ])
             ->where('tipe_initiative', 1)
             ->orderBy('code')

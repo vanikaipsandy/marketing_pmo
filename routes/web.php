@@ -73,9 +73,16 @@ Route::middleware(['auth', 'approved'])->group(function () {
     // Master Data → Master Initiative CRUD
     Route::prefix('/master-data/master-initiatives')->name('master-data.mst-initiatives.')->group(function () {
         Route::get('/', [MstInitiativeController::class, 'index'])->name('index');
+        Route::get('/create', [MstInitiativeController::class, 'create'])->name('create');
         Route::post('/', [MstInitiativeController::class, 'store'])->name('store');
+        Route::get('/{mstInitiative}/edit', [MstInitiativeController::class, 'edit'])->name('edit');
         Route::put('/{mstInitiative}', [MstInitiativeController::class, 'update'])->name('update');
         Route::delete('/{mstInitiative}', [MstInitiativeController::class, 'destroy'])->name('destroy');
+
+        // Status history
+        Route::post('/{mstInitiative}/status', [MstInitiativeController::class, 'storeStatus'])->name('status.store');
+        Route::put('/status/{status}', [MstInitiativeController::class, 'updateStatus'])->name('status.update');
+        Route::delete('/status/{status}', [MstInitiativeController::class, 'destroyStatus'])->name('status.destroy');
     });
 
     // Master Data → Scope Charter CRUD (trs_sc_initiative + trs_sc_status_implementation)

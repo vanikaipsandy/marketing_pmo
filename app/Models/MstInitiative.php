@@ -47,6 +47,22 @@ class MstInitiative extends Model
         return $this->hasMany(PcInitiative::class, 'initiative_id');
     }
 
+    /**
+     * Status history entries (trs_status_mstinitiative).
+     */
+    public function statusHistory(): HasMany
+    {
+        return $this->hasMany(StatusMstInitiative::class, 'initiative_id');
+    }
+
+    /**
+     * The latest status entry.
+     */
+    public function latestStatus(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(StatusMstInitiative::class, 'initiative_id')->latestOfMany();
+    }
+
     public function mappedProjects(): BelongsToMany
     {
         return $this->belongsToMany(Project::class, 'trs_pc_initiative', 'initiative_id', 'project_id');

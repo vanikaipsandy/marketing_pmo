@@ -180,7 +180,7 @@ const uniqueSorted = (arr) => [...new Set(arr.filter((v) => v && v !== '-'))].so
 const coeOptions = computed(() => uniqueSorted(props.items.map((item) => coeName(item))));
 const groubOptions = computed(() => uniqueSorted(props.items.map((item) => groubName(item))));
 const organizationOptions = computed(() => uniqueSorted(props.items.map((item) => organizationName(item))));
-const statusTimelineOptions = computed(() => uniqueSorted(props.items.map((item) => scStatus(item))));
+const statusTimelineOptions = computed(() => uniqueSorted(props.items.map((item) => normalizeText(item?.latest_status?.status))));
 const sumberOptions = computed(() => uniqueSorted(props.items.map((item) => statusName(item))));
 
 const filteredItems = computed(() => {
@@ -218,13 +218,11 @@ const statusName = (item) => normalizeText(item?.status);
 const descriptionText = (item) => normalizeText(item?.description);
 
 const scStatus = (item) => {
-    const matched = resolveLinkedInitiative(item);
-    return normalizeText(matched?.latest_sc_status_implementation?.status);
+    return normalizeText(item?.latest_status?.status);
 };
 
 const scReviewStatus = (item) => {
-    const matched = resolveLinkedInitiative(item);
-    return normalizeText(matched?.latest_sc_status_implementation?.review_status);
+    return normalizeText(item?.latest_status?.notes);
 };
 
 const normalizeKey = (value) => String(value ?? '').trim().toLowerCase();
@@ -248,7 +246,7 @@ const initiativeHref = (item) => {
 };
 
 const editHref = (item) => {
-    return '/master-data';
+    return `/master-data/master-initiatives/${item.id}/edit`;
 };
 
 const actionCellClass = (isReady) => {

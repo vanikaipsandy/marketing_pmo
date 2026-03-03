@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\DigitalInitiative;
 use App\Models\InitiativeStatus;
 use App\Models\MstInitiative;
-use App\Models\ScStatusImplementation;
+use App\Models\StatusMstInitiative;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -29,13 +29,14 @@ class IndexController extends Controller
             ])
             ->values();
 
-        // Count latest status per digital_initiative from trs_sc_status_implementation
-        $latestIds = ScStatusImplementation::query()
+        // Count latest status per mst_initiative from trs_status_mstinitiative
+        $latestIds = StatusMstInitiative::query()
             ->select(DB::raw('MAX(id) as id'))
-            ->groupBy('digital_initiative_id');
+            ->whereHas('initiative', fn ($q) => $q->where('tipe_initiative', 1))
+            ->groupBy('initiative_id');
 
-        $statusCounts = ScStatusImplementation::query()
-            ->joinSub($latestIds, 'latest', fn ($join) => $join->on('trs_sc_status_implementation.id', '=', 'latest.id'))
+        $statusCounts = StatusMstInitiative::query()
+            ->joinSub($latestIds, 'latest', fn ($join) => $join->on('trs_status_mstinitiative.id', '=', 'latest.id'))
             ->selectRaw('status, COUNT(*) as total')
             ->groupBy('status')
             ->pluck('total', 'status');
@@ -60,6 +61,7 @@ class IndexController extends Controller
                 'coe:id,name',
                 'organization:id,name,groub_id',
                 'organization.groub:id,name',
+                'latestStatus',
             ])
             ->where('tipe_initiative', 1)
             ->orderBy('code')
