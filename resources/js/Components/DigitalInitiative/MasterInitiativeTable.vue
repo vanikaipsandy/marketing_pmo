@@ -109,12 +109,22 @@
                         <td class="px-3 py-3 text-[10px] font-medium">
                             <div class="flex flex-col items-start gap-1">
                                 <Link
+                                    v-if="hasLinkedInitiative(item)"
                                     :href="initiativeHref(item)"
-                                    :class="actionCellClass(hasLinkedInitiative(item))"
+                                    :class="actionCellClass(true)"
                                     title="View Scope Charter"
                                 >
                                     Scope Charter
                                 </Link>
+                                <button
+                                    v-else
+                                    type="button"
+                                    :class="actionCellClass(false)"
+                                    title="View Scope Charter"
+                                    @click="showNoDataModal = true"
+                                >
+                                    Scope Charter
+                                </button>
                                 <Link
                                     :href="editHref(item)"
                                     class="inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-semibold bg-amber-100 text-amber-800 hover:bg-amber-200 dark:bg-amber-500/20 dark:text-amber-300 dark:hover:bg-amber-500/30 transition-colors cursor-pointer"
@@ -140,11 +150,22 @@
             </table>
         </div>
     </div>
+
+    <ConfirmationModal
+        :show="showNoDataModal"
+        title="Data Belum Tersedia"
+        message="Data Scope Charter untuk inisiatif ini belum tersedia."
+        confirm-text="Tutup"
+        type="info"
+        @close="showNoDataModal = false"
+        @confirm="showNoDataModal = false"
+    />
 </template>
 
 <script setup>
 import { computed, ref } from 'vue';
 import { Link } from '@inertiajs/vue3';
+import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 
 const props = defineProps({
     items: {
@@ -156,6 +177,8 @@ const props = defineProps({
         default: () => [],
     },
 });
+
+const showNoDataModal = ref(false);
 
 const normalizeText = (value) => {
     const text = String(value ?? '').trim();
