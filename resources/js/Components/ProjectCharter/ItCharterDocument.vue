@@ -17,9 +17,10 @@ const stripBulletPrefix = (value) => String(value || '')
     .replace(/^[\u2022\u2023\u25E6\u2043\u2219â€¢\-\*\u00B7\u2013\u2014]+\s*/u, '')
     .trim();
 const statusMap = {
-    1: { label: 'Drafting', cls: 'bg-slate-100 text-slate-600 ring-1 ring-slate-300' },
+    1: { label: 'Draft', cls: 'bg-slate-100 text-slate-600 ring-1 ring-slate-300' },
     2: { label: 'Propose', cls: 'bg-blue-100 text-blue-700 ring-1 ring-blue-300' },
     3: { label: 'Review', cls: 'bg-amber-100 text-amber-700 ring-1 ring-amber-300' },
+    5: { label: 'Baseline', cls: 'bg-purple-100 text-purple-700 ring-1 ring-purple-300' },
     4: { label: 'Approve', cls: 'bg-emerald-100 text-emerald-700 ring-1 ring-emerald-300' },
 };
 

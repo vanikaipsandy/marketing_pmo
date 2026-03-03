@@ -279,13 +279,7 @@ class ITInitiativeController extends Controller
 
         $projectOptions = Project::query()
             ->select(['id', 'code', 'name'])
-            ->with([
-                'charter' => static fn ($query) => $query->select(
-                    'trs_project_charters.id',
-                    'trs_project_charters.project_id',
-                    'trs_project_charters.category',
-                ),
-            ])
+            ->with(['charter'])
             ->orderBy('id')
             ->get()
             ->map(static fn (Project $item): array => [

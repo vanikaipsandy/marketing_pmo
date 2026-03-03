@@ -118,7 +118,7 @@ const reviewStatusBadgeClass = (reviewStatus) => {
                     <th class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">Status Timeline</th>
                     <th class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">Bulan/Tahun</th>
                     <th class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">Review Status</th>
-                    <th class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">Implementasi</th>
+                    <th class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">Keterangan</th>
                 </tr>
             </thead>
             <tbody class="bg-white dark:bg-[#1a1a1a]">
