@@ -10,15 +10,14 @@
             <table class="w-full table-fixed divide-y divide-slate-200 text-[11px] dark:divide-white/5">
                 <colgroup>
                     <col class="w-[3%]">
-                    <col class="w-[6%]">
+                    <col class="w-[4%]">
+                    <col class="w-[12%]">
+                    <col class="w-[12%]">
+                    <col class="w-[17%]">
+                    <col class="w-[12%]">
                     <col class="w-[12%]">
                     <col class="w-[14%]">
-                    <col class="w-[15%]">
-                    <col class="w-[10%]">
-                    <col class="w-[8%]">
-                    <col class="w-[10%]">
-                    <col class="w-[10%]">
-                    <col class="w-[12%]">
+                    <col class="w-[14%]">
                 </colgroup>
                 <thead class="bg-slate-50 dark:bg-white/5">
                     <tr>
@@ -28,10 +27,9 @@
                         <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Nama Inisiatif</th>
                         <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Deskripsi</th>
                         <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Organisasi</th>
-                        <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Sumber</th>
-                        <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status SC</th>
-                        <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Review SC</th>
+                        <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Timeline</th>
                         <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Action</th>
+                        <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Sumber</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-200 bg-white dark:divide-white/5 dark:bg-[#1a1a1a]">
@@ -45,19 +43,8 @@
                         <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">{{ descriptionText(item) }}</td>
                         <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">{{ organizationWithGroup(item) }}</td>
                         <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">
-                            <span class="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-700 dark:bg-white/10 dark:text-slate-300">
-                                {{ statusName(item) }}
-                            </span>
-                        </td>
-                        <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">
                             <span v-if="scStatus(item) !== '-'" class="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-medium text-blue-700 dark:bg-blue-500/10 dark:text-blue-300">
                                 {{ scStatus(item) }}
-                            </span>
-                            <span v-else>-</span>
-                        </td>
-                        <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">
-                            <span v-if="scReviewStatus(item) !== '-'" class="inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-medium text-amber-700 dark:bg-amber-500/10 dark:text-amber-300">
-                                {{ scReviewStatus(item) }}
                             </span>
                             <span v-else>-</span>
                         </td>
@@ -70,12 +57,24 @@
                                 >
                                     Scope Charter
                                 </Link>
+                                <Link
+                                    :href="editHref(item)"
+                                    class="inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-semibold bg-amber-100 text-amber-800 hover:bg-amber-200 dark:bg-amber-500/20 dark:text-amber-300 dark:hover:bg-amber-500/30 transition-colors cursor-pointer"
+                                    title="Edit Digital Initiative"
+                                >
+                                    Edit
+                                </Link>
                             </div>
+                        </td>
+                        <td class="px-3 py-3 text-[11px] text-slate-700 dark:text-slate-200">
+                            <span class="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-700 dark:bg-white/10 dark:text-slate-300">
+                                {{ statusName(item) }}
+                            </span>
                         </td>
                     </tr>
 
                     <tr v-if="items.length === 0">
-                        <td colspan="10" class="px-6 py-8 text-center text-xs text-slate-500 dark:text-slate-400">
+                        <td colspan="9" class="px-6 py-8 text-center text-xs text-slate-500 dark:text-slate-400">
                             Tidak ada data `mst_initiative` tipe 1.
                         </td>
                     </tr>
@@ -161,6 +160,13 @@ const hasLinkedInitiative = (item) => Boolean(resolveLinkedInitiative(item)?.id)
 const initiativeHref = (item) => {
     const matchedInitiative = resolveLinkedInitiative(item);
     return matchedInitiative?.id ? `/digital-initiatives/${matchedInitiative.id}` : '/digital-initiatives';
+};
+
+const editHref = (item) => {
+    const matchedInitiative = resolveLinkedInitiative(item);
+    return matchedInitiative?.id
+        ? `/program-planning/program-definition/digital-initiatives/${matchedInitiative.id}/edit`
+        : '/program-planning/program-definition/digital-initiatives';
 };
 
 const actionCellClass = (isReady) => {
