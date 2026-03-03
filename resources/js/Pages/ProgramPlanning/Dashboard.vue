@@ -233,13 +233,9 @@ const filteredTableItems = computed(() => {
     return items;
 });
 
-const totalDigitalOverall = computed(() => {
-    return Object.values(props.summary?.digital_status_counts || {}).reduce((sum, val) => sum + Number(val), 0);
-});
+const totalDigitalOverall = computed(() => Number(props.summary?.total_digital_initiatives ?? 0));
 
-const totalItOverall = computed(() => {
-    return Object.values(props.summary?.it_status_counts || {}).reduce((sum, val) => sum + Number(val), 0);
-});
+const totalItOverall = computed(() => Number(props.summary?.total_it_initiatives ?? 0));
 
 const showAllDigitalInitiatives = () => {
     selectedInitiative.value = 'digital';
