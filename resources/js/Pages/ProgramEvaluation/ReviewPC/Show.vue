@@ -12,7 +12,7 @@
                         Kembali
                     </Link>
                     <span class="text-slate-300 dark:text-slate-600">|</span>
-                    <label for="review" class="text-xs font-medium text-slate-700 dark:text-slate-200">Review</label>
+                    <label for="review" class="text-xs font-medium text-slate-700 dark:text-slate-200">Pilih Initiative</label>
                     <select v-if="reviewOptions.length" v-model="selectedReviewId"
                         class="max-w-xs rounded-md border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 focus:border-[#1C75BC] focus:outline-none dark:border-white/10 dark:bg-[#101826] dark:text-slate-100">
                         <option v-for="option in reviewOptions" :key="`review-opt-${option.id}`"
@@ -61,7 +61,7 @@
                 class="mx-auto w-full max-w-[1200px] space-y-0 border border-slate-300 bg-[#e9e9e9] p-0 text-slate-900 shadow-sm dark:border-white/20 dark:bg-[#d7d7d7]">
                 <header class="space-y-2 px-4 pt-3 pb-3">
                     <h1 class="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-                        Review Project Charter: {{ initiativeName }}
+                        {{ headerTitle }}
                     </h1>
                 </header>
 
@@ -155,6 +155,21 @@ const review = computed(() => ({
 }));
 
 const initiativeName = computed(() => review.value?.initiative?.name ?? '-');
+
+const headerTitle = computed(() => {
+    const baseName = initiativeName.value;
+    switch (activeNav.value) {
+        case 'roadmap':
+            return `Roadmap Project Charter: ${baseName}`;
+        case 'initiative-relation':
+            return `Initiative Relation Project Charter: ${baseName}`;
+        case 'project-charter':
+            return `Project Charter: ${baseName}`;
+        case 'review':
+        default:
+            return `Review Project Charter: ${baseName}`;
+    }
+});
 
 const normalizeText = (value) => String(value ?? '').replace(/\u200B/g, '').trim();
 
