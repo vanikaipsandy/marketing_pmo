@@ -80,8 +80,11 @@ const statusTimelineLabel = (status) => {
             <div class="info-cell info-cell-last">
                 <span class="info-label info-label-dark">Project Owner</span>
                 <span class="info-sep"></span>
-                <span class="info-value font-semibold">{{ itInitiative.owner_name || itInitiative.owner?.name || '-'
-                }}</span>
+                <span class="info-value font-semibold">
+                    <input v-if="editable" v-model="form.owner_name" type="text" class="info-input font-semibold"
+                        placeholder="Nama project owner" />
+                    <template v-else>{{ itInitiative.owner_name || itInitiative.owner?.name || '-' }}</template>
+                </span>
             </div>
         </div>
 
