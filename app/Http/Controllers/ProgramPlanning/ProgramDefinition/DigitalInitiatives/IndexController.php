@@ -41,6 +41,30 @@ class IndexController extends Controller
             ->groupBy('status_key')
             ->pluck('total', 'status_key');
 
+        // For initiatives whose latest status is "postpone", find the status
+        // just before postpone so the frontend knows which main node to branch from.
+        // Result: { "drafting": 1, "propose": 2, ... }
+        $postponeFromCounts = [];
+        $postponedInitiativeIds = StatusMstInitiative::query()
+            ->joinSub($latestIds, 'latest', fn ($join) => $join->on('trs_status_mstinitiative.id', '=', 'latest.id'))
+            ->whereRaw('LOWER(status) = ?', ['postpone'])
+            ->pluck('initiative_id');
+
+        if ($postponedInitiativeIds->isNotEmpty()) {
+            // For each postponed initiative, get the second-to-last status entry
+            $prevStatuses = StatusMstInitiative::query()
+                ->whereIn('initiative_id', $postponedInitiativeIds)
+                ->whereRaw('LOWER(status) != ?', ['postpone'])
+                ->select('initiative_id', DB::raw('MAX(id) as prev_id'))
+                ->groupBy('initiative_id');
+
+            $postponeFromCounts = StatusMstInitiative::query()
+                ->joinSub($prevStatuses, 'prev', fn ($join) => $join->on('trs_status_mstinitiative.id', '=', 'prev.prev_id'))
+                ->selectRaw('LOWER(trs_status_mstinitiative.status) as from_key, COUNT(*) as total')
+                ->groupBy('from_key')
+                ->pluck('total', 'from_key');
+        }
+
         $masterSelectColumns = [
             'id',
             'coe_id',
@@ -79,6 +103,7 @@ class IndexController extends Controller
             'initiativeItems' => $initiativeItems,
             'statusOptions' => $statusOptions,
             'statusCounts' => $statusCounts,
+            'postponeFromCounts' => $postponeFromCounts,
         ]);
     }
 }

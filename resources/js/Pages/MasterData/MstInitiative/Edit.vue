@@ -125,7 +125,10 @@
                     <div class="flex items-end gap-2">
                         <div class="flex-1">
                             <label class="mb-0.5 block text-[10px] font-semibold uppercase tracking-wider text-slate-500">Status *</label>
-                            <input v-model="newRow.status" type="text" placeholder="Status" class="form-input-sm" />
+                            <select v-model="newRow.status" class="form-input-sm">
+                                <option value="">— Pilih Status —</option>
+                                <option v-for="opt in statusList" :key="opt" :value="opt">{{ opt }}</option>
+                            </select>
                             <p v-if="newRowErrors.status" class="mt-0.5 text-[10px] text-rose-500">{{ newRowErrors.status }}</p>
                         </div>
                         <div class="w-40">
@@ -185,6 +188,8 @@ const showNewRow = ref(false);
 const newRow = reactive({ status: '', tanggal: '', notes: '' });
 const newRowErrors = reactive({ status: '' });
 const newRowProcessing = ref(false);
+
+const statusList = ['Drafting', 'Propose', 'Review', 'Approve', 'Postpone'];
 
 const openNewRow = () => {
     showNewRow.value = true;

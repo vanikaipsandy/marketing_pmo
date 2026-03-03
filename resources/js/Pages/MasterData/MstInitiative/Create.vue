@@ -122,7 +122,10 @@
                             <tr v-if="showNewRow" class="bg-emerald-50/40 dark:bg-emerald-500/5">
                                 <td class="px-3 py-2.5 text-slate-400">+</td>
                                 <td class="px-3 py-2.5">
-                                    <input v-model="newRow.status" type="text" placeholder="Status *" class="form-input-sm" />
+                                    <select v-model="newRow.status" class="form-input-sm">
+                                        <option value="">— Pilih Status —</option>
+                                        <option v-for="opt in statusList" :key="opt" :value="opt">{{ opt }}</option>
+                                    </select>
                                     <p v-if="newRowError" class="mt-0.5 text-[10px] text-rose-500">{{ newRowError }}</p>
                                 </td>
                                 <td class="px-3 py-2.5">
@@ -180,6 +183,8 @@ const showNewRow = ref(false);
 const newRow = reactive({ status: '', tanggal: '', notes: '' });
 const newRowError = ref('');
 let _nextId = 1;
+
+const statusList = ['Drafting', 'Propose', 'Review', 'Approve', 'Postpone'];
 
 const openNewRow = () => {
     showNewRow.value = true;

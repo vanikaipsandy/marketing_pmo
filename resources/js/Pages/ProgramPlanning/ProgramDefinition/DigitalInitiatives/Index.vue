@@ -62,22 +62,16 @@
                     </div>
 
                     <!-- GitHub-style Branch Flow (SVG) -->
-                    <div ref="branchContainer" class="relative" :style="{ minHeight: postponeCount > 0 ? '130px' : '60px' }">
-                        <svg class="absolute inset-0 h-full w-full" preserveAspectRatio="none">
-                            <defs>
-                                <linearGradient id="mainGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                                    <stop offset="0%"   stop-color="#94a3b8" />
-                                    <stop offset="25%"  stop-color="#60a5fa" />
-                                    <stop offset="50%"  stop-color="#fbbf24" />
-                                    <stop offset="100%" stop-color="#10b981" />
-                                </linearGradient>
-                            </defs>
-                            <!-- Main branch line -->
-                            <line :x1="nodeX(0)" y1="28" :x2="nodeX(4)" y2="28"
-                                  stroke="url(#mainGrad)" stroke-width="2.5" stroke-linecap="round" />
-                            <!-- Postpone smooth curve branch -->
-                            <path v-if="postponeCount > 0"
-                                  :d="postponeCurvePath"
+                    <div ref="branchContainer" class="relative" :style="{ minHeight: hasAnyPostpone ? '140px' : '70px' }">
+                        <svg class="absolute inset-0 h-full w-full overflow-visible">
+                            <!-- Main branch line segments (colored per gap) -->
+                            <line v-for="(seg, si) in mainLineSegments" :key="'seg-' + si"
+                                  :x1="seg.x1" y1="28" :x2="seg.x2" y2="28"
+                                  :stroke="seg.color" stroke-width="2.5" stroke-linecap="round" />
+
+                            <!-- Postpone branch curves (one per branch-from point) -->
+                            <path v-for="br in postponeBranches" :key="br.fromKey"
+                                  :d="br.curvePath"
                                   fill="none" stroke="#fb7185" stroke-width="2.5" stroke-linecap="round" />
                         </svg>
 
@@ -86,23 +80,23 @@
                             <div v-for="(step, index) in mainSteps" :key="step.key"
                                  class="relative z-10 flex flex-col items-center" style="min-width: 56px;">
                                 <div class="flex h-[56px] w-[56px] items-center justify-center">
-                                    <div class="flex h-8 w-8 items-center justify-center rounded-full border-[2.5px] text-[11px] font-bold shadow-sm"
+                                    <div class="flex h-9 w-9 items-center justify-center rounded-full border-[2.5px] text-[11px] font-bold shadow"
                                          :class="step.nodeClass">
                                         {{ step.count }}
                                     </div>
                                 </div>
-                                <span class="mt-0.5 text-[9px] font-semibold" :class="step.labelClass">{{ step.label }}</span>
+                                <span class="mt-0.5 text-[10px] font-semibold" :class="step.labelClass">{{ step.label }}</span>
                             </div>
                         </div>
 
-                        <!-- Postpone node (positioned below curve endpoint) -->
-                        <div v-if="postponeCount > 0"
+                        <!-- Postpone nodes (one per branch) -->
+                        <div v-for="br in postponeBranches" :key="'pn-' + br.fromKey"
                              class="absolute z-10 flex flex-col items-center"
-                             :style="{ left: `${postponeNodeLeft}px`, top: '82px', transform: 'translateX(-50%)' }">
-                            <div class="flex h-8 w-8 items-center justify-center rounded-full border-[2.5px] border-rose-400 bg-rose-500 text-[11px] font-bold text-white shadow-sm">
-                                {{ postponeCount }}
+                             :style="{ left: `${br.endX}px`, top: '86px', transform: 'translateX(-50%)' }">
+                            <div class="flex h-9 w-9 items-center justify-center rounded-full border-[2.5px] border-rose-400 bg-rose-500 text-[11px] font-bold text-white shadow">
+                                {{ br.count }}
                             </div>
-                            <span class="mt-0.5 whitespace-nowrap text-[9px] font-semibold text-rose-600 dark:text-rose-400">Postpone</span>
+                            <span class="mt-0.5 whitespace-nowrap text-[10px] font-semibold text-rose-500 dark:text-rose-400">Postpone</span>
                         </div>
                     </div>
                 </article>
@@ -123,120 +117,104 @@ import UserLayout from '@/Layouts/UserLayout.vue';
 import DigitalMasterInitiativeTable from '@/Components/DigitalInitiative/MasterInitiativeTable.vue';
 
 const props = defineProps({
-    totalDigitalInitiatives: {
-        type: Number,
-        default: 0,
-    },
-    statusOptions: {
-        type: Array,
-        default: () => [],
-    },
-    statusCounts: {
-        type: Object,
-        default: () => ({}),
-    },
-    masterDigitalInitiatives: {
-        type: Array,
-        default: () => [],
-    },
-    initiativeItems: {
-        type: Array,
-        default: () => [],
-    },
+    totalDigitalInitiatives: { type: Number, default: 0 },
+    statusOptions:           { type: Array,  default: () => [] },
+    statusCounts:            { type: Object, default: () => ({}) },
+    postponeFromCounts:      { type: Object, default: () => ({}) },
+    masterDigitalInitiatives:{ type: Array,  default: () => [] },
+    initiativeItems:         { type: Array,  default: () => [] },
 });
 
-const masterDigitalList = computed(() => {
-    return Array.isArray(props.masterDigitalInitiatives) ? props.masterDigitalInitiatives : [];
-});
+const masterDigitalList   = computed(() => Array.isArray(props.masterDigitalInitiatives) ? props.masterDigitalInitiatives : []);
+const initiativeItemsList = computed(() => Array.isArray(props.initiativeItems) ? props.initiativeItems : []);
 
-const initiativeItemsList = computed(() => {
-    return Array.isArray(props.initiativeItems) ? props.initiativeItems : [];
-});
-
-// ── Branch flow config ──
+// ── Main branch config (straight line: Drafting → Approve) ──
 const mainBranch = [
-    { key: 'drafting',  label: 'Drafting', nodeClass: 'border-slate-400 bg-slate-500 text-white',   labelClass: 'text-slate-600 dark:text-slate-300' },
-    { key: 'propose',   label: 'Propose',  nodeClass: 'border-blue-400 bg-blue-500 text-white',     labelClass: 'text-blue-600 dark:text-blue-300' },
-    { key: 'review',    label: 'Review',   nodeClass: 'border-amber-400 bg-amber-500 text-white',   labelClass: 'text-amber-600 dark:text-amber-300' },
-    { key: 'approve',   label: 'Approve',  nodeClass: 'border-emerald-400 bg-emerald-500 text-white', labelClass: 'text-emerald-600 dark:text-emerald-300' },
-    { key: 'finish',    label: 'Finish',   nodeClass: 'border-emerald-500 bg-emerald-600 text-white', labelClass: 'text-emerald-700 dark:text-emerald-300' },
+    { key: 'drafting', label: 'Drafting', nodeClass: 'border-slate-400 bg-slate-500 text-white',     labelClass: 'text-slate-600 dark:text-slate-300' },
+    { key: 'propose',  label: 'Propose',  nodeClass: 'border-blue-400 bg-blue-500 text-white',      labelClass: 'text-blue-600 dark:text-blue-300' },
+    { key: 'review',   label: 'Review',   nodeClass: 'border-amber-400 bg-amber-500 text-white',    labelClass: 'text-amber-600 dark:text-amber-300' },
+    { key: 'approve',  label: 'Approve',  nodeClass: 'border-emerald-400 bg-emerald-500 text-white', labelClass: 'text-emerald-600 dark:text-emerald-300' },
 ];
 
 const mainSteps = computed(() => {
-    const counts = props.statusCounts || {};
-    return mainBranch.map((step) => ({
-        ...step,
-        count: Number(counts[step.key] ?? 0),
-    }));
+    const c = props.statusCounts || {};
+    return mainBranch.map((s) => ({ ...s, count: Number(c[s.key] ?? 0) }));
 });
 
-const postponeCount = computed(() => {
-    const counts = props.statusCounts || {};
-    return Number(counts['postpone'] ?? counts['Postpone'] ?? 0);
-});
-
-const postponeBranchFrom = computed(() => {
-    const counts = props.statusCounts || {};
-    let lastActive = 'drafting';
-    for (const step of mainBranch) {
-        if (Number(counts[step.key] ?? 0) > 0) {
-            lastActive = step.key;
-        }
-    }
-    return lastActive;
+// ── Postpone: one branch per "from" status ──
+const hasAnyPostpone = computed(() => {
+    const pfc = props.postponeFromCounts || {};
+    return Object.values(pfc).some((v) => Number(v) > 0);
 });
 
 // ── SVG coordinate helpers ──
 const branchContainer = ref(null);
-const containerWidth = ref(400);
+const containerWidth  = ref(400);
+const PAD = 16;
 
 const updateWidth = () => {
-    if (branchContainer.value) {
-        containerWidth.value = branchContainer.value.offsetWidth;
-    }
+    if (branchContainer.value) containerWidth.value = branchContainer.value.offsetWidth;
 };
 
-let resizeObserver = null;
+let ro = null;
 onMounted(() => {
     nextTick(updateWidth);
     if (typeof ResizeObserver !== 'undefined' && branchContainer.value) {
-        resizeObserver = new ResizeObserver(updateWidth);
-        resizeObserver.observe(branchContainer.value);
+        ro = new ResizeObserver(updateWidth);
+        ro.observe(branchContainer.value);
     }
 });
-onUnmounted(() => {
-    resizeObserver?.disconnect();
-});
+onUnmounted(() => ro?.disconnect());
 
-// Padding matches the px-4 (16px each side) on the node container
-const PAD = 16;
-const nodeX = (index) => {
-    const usable = containerWidth.value - PAD * 2;
-    return PAD + (usable / 4) * index;   // 5 nodes → 4 gaps
+const nodeX = (i) => {
+    const gap = mainBranch.length - 1;
+    return PAD + ((containerWidth.value - PAD * 2) / gap) * i;
 };
 
-const postponeBranchIndex = computed(() => {
-    const idx = mainBranch.findIndex((s) => s.key === postponeBranchFrom.value);
-    return idx >= 0 ? idx : 0;
+// Main line segments with solid colors (avoids SVG gradient url() issues in SPA)
+const segmentColors = ['#94a3b8', '#60a5fa', '#f59e0b'];  // slate → blue → amber
+const mainLineSegments = computed(() => {
+    const segs = [];
+    for (let i = 0; i < mainBranch.length - 1; i++) {
+        segs.push({
+            x1: nodeX(i),
+            x2: nodeX(i + 1),
+            color: segmentColors[i] ?? '#10b981',
+        });
+    }
+    return segs;
 });
 
-// The pixel left for the postpone node (one step to the right of the branch point)
-const postponeNodeLeft = computed(() => {
-    const idx = Math.min(postponeBranchIndex.value + 1, 4);
-    return nodeX(idx);
-});
+// Build one branch descriptor per "from" status that has postponed items
+const postponeBranches = computed(() => {
+    const pfc = props.postponeFromCounts || {};
+    const branches = [];
+    const MAIN_Y = 28;
+    const END_Y  = 102;
 
-// Smooth cubic bezier: starts at branch-from node, curves down to postpone node
-const postponeCurvePath = computed(() => {
-    const startX = nodeX(postponeBranchIndex.value);
-    const startY = 28;  // main line Y
-    const endX = postponeNodeLeft.value;
-    const endY = 98;    // postpone node center Y
-    // control points for a smooth S-curve like GitHub branches
-    const cp1x = startX;
-    const cp1y = startY + 40;
-    const cp2x = endX;
-    const cp2y = endY - 40;
-    return `M ${startX} ${startY} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${endX} ${endY}`;
+    for (const step of mainBranch) {
+        const cnt = Number(pfc[step.key] ?? 0);
+        if (cnt <= 0) continue;
+
+        const fromIdx = mainBranch.findIndex((s) => s.key === step.key);
+        const startX  = nodeX(fromIdx);
+        // Endpoint: halfway between fromIdx and the next node (or offset to the right)
+        const nextIdx = Math.min(fromIdx + 1, mainBranch.length - 1);
+        const endX    = (nodeX(fromIdx) + nodeX(nextIdx)) / 2;
+
+        // Smooth cubic bezier (GitHub-style S-curve)
+        const cp1x = startX;
+        const cp1y = MAIN_Y + (END_Y - MAIN_Y) * 0.45;
+        const cp2x = endX;
+        const cp2y = END_Y - (END_Y - MAIN_Y) * 0.45;
+
+        branches.push({
+            fromKey:   step.key,
+            count:     cnt,
+            endX,
+            curvePath: `M ${startX} ${MAIN_Y} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${endX} ${END_Y}`,
+        });
+    }
+    return branches;
 });
 </script>
