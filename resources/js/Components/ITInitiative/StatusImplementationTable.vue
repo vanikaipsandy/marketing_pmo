@@ -66,6 +66,7 @@
                     <col class="w-[25%]">
                     <col class="w-[20%]">
                     <col class="w-[20%]">
+                    <col class="w-[20%]">
                 </colgroup>
                 <thead class="bg-slate-50 dark:bg-white/[0.03]">
                     <tr>
@@ -81,6 +82,9 @@
                         <th
                             class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">
                             Status Timeline</th>
+                        <th
+                            class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">
+                            Tanggal Dokumen</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white dark:bg-[#1a1a1a]">
@@ -104,9 +108,12 @@
                                 {{ statusLabelFromOptions(getRowStatus(row), statusOptions) }}
                             </span>
                         </td>
+                        <td class="px-2 py-2 text-[10px] font-medium text-slate-600 dark:text-slate-300">
+                            {{ formatDateLong(row.charter?.tgl_dokumen) }}
+                        </td>
                     </tr>
                     <tr v-if="projectCharterRows.length === 0">
-                        <td colspan="4" class="px-4 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
+                        <td colspan="5" class="px-4 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
                             Data belum tersedia.
                         </td>
                     </tr>
@@ -241,14 +248,22 @@ const getLatestImplementationMonthYear = (project) => {
     return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
 };
 
+const formatDateLong = (value) => {
+    const raw = String(value || '').trim();
+    if (!raw) return '-';
+    const parsed = new Date(raw);
+    if (Number.isNaN(parsed.getTime())) return raw;
+    return new Intl.DateTimeFormat('id-ID', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+    }).format(parsed);
+};
+
 const getRowStatus = (row) => {
     const charterStatus = row?.charter?.status;
     if (charterStatus !== null && charterStatus !== undefined && charterStatus !== '') {
         return Number(charterStatus);
-    }
-    const projectStatus = row?.project?.status;
-    if (projectStatus !== null && projectStatus !== undefined && projectStatus !== '') {
-        return Number(projectStatus);
     }
     return null;
 };
