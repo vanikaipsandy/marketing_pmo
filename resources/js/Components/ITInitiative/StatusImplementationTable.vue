@@ -16,13 +16,13 @@
                             Code</th>
                         <th
                             class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">
-                            Bulan/Tahun</th>
+                            Month/Year</th>
                         <th
                             class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">
-                            Review Status</th>
+                            Review Implementation</th>
                         <th
                             class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">
-                            Keterangan</th>
+                            Notes</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white dark:bg-[#1a1a1a]">
@@ -72,19 +72,19 @@
                     <tr>
                         <th
                             class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">
-                            Version</th>
+                            History Timeline</th>
                         <th
                             class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">
-                            Building Blok</th>
+                            IT Building Block</th>
                         <th
                             class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">
-                            Inisiatif</th>
+                            Initiative</th>
                         <th
                             class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">
-                            Status Timeline</th>
+                            Timeline Status</th>
                         <th
                             class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">
-                            Tanggal Dokumen</th>
+                            Document Date</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white dark:bg-[#1a1a1a]">
