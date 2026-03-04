@@ -5,8 +5,10 @@ namespace App\Http\Controllers\ProgramPlanning\ProgramDefinition\DigitalInitiati
 use App\Http\Controllers\Controller;
 use App\Models\DigitalInitiative;
 use App\Models\InitiativeStatus;
+use App\Models\MstCoe;
 use App\Models\MstInitiative;
 use App\Models\StatusMstInitiative;
+use App\Models\TrsOrganization;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -124,6 +126,8 @@ class IndexController extends Controller
             'statusOptions' => $statusOptions,
             'statusCounts' => $statusCounts,
             'postponeFromCounts' => $postponeFromCounts,
+            'coeOptions' => MstCoe::orderBy('name')->get(['id', 'name'])->map(fn ($c) => ['id' => $c->id, 'name' => $c->name])->values(),
+            'organizationOptions' => TrsOrganization::with('groub:id,name')->orderBy('name')->get(['id', 'name', 'groub_id'])->map(fn ($o) => ['id' => $o->id, 'name' => $o->name, 'groub' => $o->groub?->name])->values(),
         ]);
     }
 }

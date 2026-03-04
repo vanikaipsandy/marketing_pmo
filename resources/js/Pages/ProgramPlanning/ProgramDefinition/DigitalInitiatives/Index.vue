@@ -8,113 +8,39 @@
             </div>
 
             <section class="mb-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
-                <div class="flex h-full flex-col gap-3">
-                    <article
-                        class="relative flex min-h-[220px] flex-1 flex-col justify-center rounded-2xl border border-[#1C75BC] bg-[#1C75BC] p-5 shadow-[0_4px_16px_rgba(28,117,188,0.3)]"
-                    >
-                        <p
-                            class="text-xs font-semibold uppercase tracking-[0.08em] text-white"
-                            style="text-shadow: 0 1px 3px rgba(0,0,0,0.3);"
-                        >
-                            Total Digital Inisiatif
-                        </p>
-                        <p
-                            class="mt-2 flex items-center justify-between text-3xl font-bold text-white"
-                            style="text-shadow: 0 2px 6px rgba(0,0,0,0.35);"
-                        >
-                            <span>{{ totalDigitalInitiatives }}</span>
-                        </p>
-                    </article>
+                <SummaryCard :total="totalDigitalInitiatives" @create="showCreateModal = true" />
 
-                    <div class="flex flex-wrap gap-2">
-                        <Link
-                            href="/digital-initiatives/create"
-                            class="inline-flex items-center rounded-full border border-[#1C75BC]/45 bg-[#1C75BC]/10 px-3 py-1.5 text-xs font-semibold text-[#1C75BC] transition hover:bg-[#1C75BC]/20 dark:text-[#7FC0F2]"
-                        >
-                            New Initiative
-                        </Link>
-                        <Link
-                            href="/digital-initiatives"
-                            class="inline-flex items-center rounded-full border border-[#1C75BC]/45 bg-[#1C75BC]/10 px-3 py-1.5 text-xs font-semibold text-[#1C75BC] transition hover:bg-[#1C75BC]/20 dark:text-[#7FC0F2]"
-                        >
-                            Digital Initiative
-                        </Link>
-                        <Link
-                            href="/digital-initiatives"
-                            class="inline-flex items-center rounded-full border border-[#1C75BC]/45 bg-[#1C75BC]/10 px-3 py-1.5 text-xs font-semibold text-[#1C75BC] transition hover:bg-[#1C75BC]/20 dark:text-[#7FC0F2]"
-                        >
-                            Compedium List
-                        </Link>
-                        <Link
-                            href="/digital-initiatives"
-                            class="inline-flex items-center rounded-full border border-[#A7C942]/80 bg-[#A7C942]/15 px-3 py-1.5 text-xs font-semibold text-[#4F6B0F] transition hover:bg-[#A7C942]/25 dark:text-[#C7E67A]"
-                        >
-                            Appendix List
-                        </Link>
-                    </div>
+                <div class="lg:col-span-2">
+                    <TimelineFlow
+                        :status-counts="statusCounts"
+                        :postpone-from-counts="postponeFromCounts"
+                    />
                 </div>
-
-                <article class="h-full min-h-[220px] rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-[0_4px_16px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-[#171717] lg:col-span-2">
-                    <div class="mb-4 flex items-center justify-between gap-2">
-                        <h2 class="text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
-                            Digital Initiative Timeline
-                        </h2>
-                    </div>
-
-                    <!-- GitHub-style Branch Flow (SVG) -->
-                    <div ref="branchContainer" class="relative" :style="{ minHeight: hasAnyPostpone ? '140px' : '70px' }">
-                        <svg class="absolute inset-0 h-full w-full overflow-visible">
-                            <!-- Main branch line segments (colored per gap) -->
-                            <line v-for="(seg, si) in mainLineSegments" :key="'seg-' + si"
-                                  :x1="seg.x1" y1="28" :x2="seg.x2" y2="28"
-                                  :stroke="seg.color" stroke-width="2.5" stroke-linecap="round" />
-
-                            <!-- Postpone branch curves (one per branch-from point) -->
-                            <path v-for="br in postponeBranches" :key="br.fromKey"
-                                  :d="br.curvePath"
-                                  fill="none" stroke="#fb7185" stroke-width="2.5" stroke-linecap="round" />
-                        </svg>
-
-                        <!-- Main branch nodes -->
-                        <div class="relative flex items-start justify-between px-4">
-                            <div v-for="(step, index) in mainSteps" :key="step.key"
-                                 class="relative z-10 flex flex-col items-center" style="min-width: 56px;">
-                                <div class="flex h-[56px] w-[56px] items-center justify-center">
-                                    <div class="flex h-9 w-9 items-center justify-center rounded-full border-[2.5px] text-[11px] font-bold shadow"
-                                         :class="step.nodeClass">
-                                        {{ step.count }}
-                                    </div>
-                                </div>
-                                <span class="mt-0.5 text-[10px] font-semibold" :class="step.labelClass">{{ step.label }}</span>
-                            </div>
-                        </div>
-
-                        <!-- Postpone nodes (one per branch) -->
-                        <div v-for="br in postponeBranches" :key="'pn-' + br.fromKey"
-                             class="absolute z-10 flex flex-col items-center"
-                             :style="{ left: `${br.endX}px`, top: '86px', transform: 'translateX(-50%)' }">
-                            <div class="flex h-9 w-9 items-center justify-center rounded-full border-[2.5px] border-rose-400 bg-rose-500 text-[11px] font-bold text-white shadow">
-                                {{ br.count }}
-                            </div>
-                            <span class="mt-0.5 whitespace-nowrap text-[10px] font-semibold text-rose-500 dark:text-rose-400">Postpone</span>
-                        </div>
-                    </div>
-                </article>
             </section>
 
-            <DigitalMasterInitiativeTable
+            <MasterInitiativeTable
                 :items="masterDigitalList"
                 :initiative-items="initiativeItemsList"
             />
         </div>
+
+        <CreateInitiativeModal
+            :show="showCreateModal"
+            :tipe-initiative="1"
+            :coe-options="coeOptions"
+            :organization-options="organizationOptions"
+            @close="showCreateModal = false"
+        />
     </UserLayout>
 </template>
 
 <script setup>
-import { computed, ref, onMounted, onUnmounted, nextTick } from 'vue';
-import { Link } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
 import UserLayout from '@/Layouts/UserLayout.vue';
-import DigitalMasterInitiativeTable from '@/Components/DigitalInitiative/MasterInitiativeTable.vue';
+import SummaryCard from '@/Components/DigitalInitiative/SummaryCard.vue';
+import TimelineFlow from '@/Components/DigitalInitiative/TimelineFlow.vue';
+import MasterInitiativeTable from '@/Components/DigitalInitiative/MasterInitiativeTable.vue';
+import CreateInitiativeModal from '@/Components/Initiative/CreateInitiativeModal.vue';
 
 const props = defineProps({
     totalDigitalInitiatives: { type: Number, default: 0 },
@@ -123,98 +49,11 @@ const props = defineProps({
     postponeFromCounts:      { type: Object, default: () => ({}) },
     masterDigitalInitiatives:{ type: Array,  default: () => [] },
     initiativeItems:         { type: Array,  default: () => [] },
+    coeOptions:              { type: Array,  default: () => [] },
+    organizationOptions:     { type: Array,  default: () => [] },
 });
 
+const showCreateModal     = ref(false);
 const masterDigitalList   = computed(() => Array.isArray(props.masterDigitalInitiatives) ? props.masterDigitalInitiatives : []);
 const initiativeItemsList = computed(() => Array.isArray(props.initiativeItems) ? props.initiativeItems : []);
-
-// ── Main branch config (straight line: Drafting → Approved) ──
-const mainBranch = [
-    { key: 'drafting', label: 'Drafting', nodeClass: 'border-slate-400 bg-slate-500 text-white',     labelClass: 'text-slate-600 dark:text-slate-300' },
-    { key: 'propose',  label: 'Propose',  nodeClass: 'border-blue-400 bg-blue-500 text-white',      labelClass: 'text-blue-600 dark:text-blue-300' },
-    { key: 'review',   label: 'Review',   nodeClass: 'border-amber-400 bg-amber-500 text-white',    labelClass: 'text-amber-600 dark:text-amber-300' },
-    { key: 'approved', label: 'Approved', nodeClass: 'border-emerald-400 bg-emerald-500 text-white', labelClass: 'text-emerald-600 dark:text-emerald-300' },
-];
-
-const mainSteps = computed(() => {
-    const c = props.statusCounts || {};
-    return mainBranch.map((s) => ({ ...s, count: Number(c[s.key] ?? 0) }));
-});
-
-// ── Postpone: one branch per "from" status ──
-const hasAnyPostpone = computed(() => {
-    const pfc = props.postponeFromCounts || {};
-    return Object.values(pfc).some((v) => Number(v) > 0);
-});
-
-// ── SVG coordinate helpers ──
-const branchContainer = ref(null);
-const containerWidth  = ref(400);
-const PAD = 16;
-
-const updateWidth = () => {
-    if (branchContainer.value) containerWidth.value = branchContainer.value.offsetWidth;
-};
-
-let ro = null;
-onMounted(() => {
-    nextTick(updateWidth);
-    if (typeof ResizeObserver !== 'undefined' && branchContainer.value) {
-        ro = new ResizeObserver(updateWidth);
-        ro.observe(branchContainer.value);
-    }
-});
-onUnmounted(() => ro?.disconnect());
-
-const nodeX = (i) => {
-    const gap = mainBranch.length - 1;
-    return PAD + ((containerWidth.value - PAD * 2) / gap) * i;
-};
-
-// Main line segments with solid colors (avoids SVG gradient url() issues in SPA)
-const segmentColors = ['#94a3b8', '#60a5fa', '#f59e0b'];  // slate → blue → amber
-const mainLineSegments = computed(() => {
-    const segs = [];
-    for (let i = 0; i < mainBranch.length - 1; i++) {
-        segs.push({
-            x1: nodeX(i),
-            x2: nodeX(i + 1),
-            color: segmentColors[i] ?? '#10b981',
-        });
-    }
-    return segs;
-});
-
-// Build one branch descriptor per "from" status that has postponed items
-const postponeBranches = computed(() => {
-    const pfc = props.postponeFromCounts || {};
-    const branches = [];
-    const MAIN_Y = 28;
-    const END_Y  = 102;
-
-    for (const step of mainBranch) {
-        const cnt = Number(pfc[step.key] ?? 0);
-        if (cnt <= 0) continue;
-
-        const fromIdx = mainBranch.findIndex((s) => s.key === step.key);
-        const startX  = nodeX(fromIdx);
-        // Endpoint: halfway between fromIdx and the next node (or offset to the right)
-        const nextIdx = Math.min(fromIdx + 1, mainBranch.length - 1);
-        const endX    = (nodeX(fromIdx) + nodeX(nextIdx)) / 2;
-
-        // Smooth cubic bezier (GitHub-style S-curve)
-        const cp1x = startX;
-        const cp1y = MAIN_Y + (END_Y - MAIN_Y) * 0.45;
-        const cp2x = endX;
-        const cp2y = END_Y - (END_Y - MAIN_Y) * 0.45;
-
-        branches.push({
-            fromKey:   step.key,
-            count:     cnt,
-            endX,
-            curvePath: `M ${startX} ${MAIN_Y} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${endX} ${END_Y}`,
-        });
-    }
-    return branches;
-});
 </script>

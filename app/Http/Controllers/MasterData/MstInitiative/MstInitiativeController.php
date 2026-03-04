@@ -25,6 +25,7 @@ class MstInitiativeController extends Controller
             'tipe_initiative'  => 'required|integer|in:1,2',
             'coe_id'           => 'nullable|integer|exists:mst_coe,id',
             'business_unit'    => 'nullable|integer|exists:trs_organization,id',
+            'status'           => 'nullable|string|max:255',
         ];
     }
 
@@ -87,9 +88,18 @@ class MstInitiativeController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $initiative = MstInitiative::create($request->validate($this->rules()));
+        $validated = $request->validate($this->rules());
+        $validated['status'] = $validated['status'] ?? 'drafting';
+        $initiative = MstInitiative::create($validated);
 
-        // Save statuses if provided (from Create page)
+        // Auto-create initial status history entry
+        $initiative->statusHistory()->create([
+            'status'  => $validated['status'],
+            'tanggal' => now(),
+            'notes'   => null,
+        ]);
+
+        // Save additional statuses if provided (from Create page)
         foreach ($request->input('statuses', []) as $s) {
             if (!empty($s['status'])) {
                 $initiative->statusHistory()->create([
@@ -101,7 +111,7 @@ class MstInitiativeController extends Controller
         }
 
         return redirect()
-            ->route('master-data.mst-initiatives.index')
+            ->back()
             ->with('success', 'Master Initiative berhasil ditambahkan.');
     }
 

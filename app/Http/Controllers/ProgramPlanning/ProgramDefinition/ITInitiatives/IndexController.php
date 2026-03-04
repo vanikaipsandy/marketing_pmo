@@ -4,8 +4,10 @@ namespace App\Http\Controllers\ProgramPlanning\ProgramDefinition\ITInitiatives;
 
 use App\Http\Controllers\Controller;
 use App\Models\InitiativeStatus;
+use App\Models\MstCoe;
 use App\Models\MstInitiative;
 use App\Models\Project;
+use App\Models\TrsOrganization;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Schema;
 use Inertia\Inertia;
@@ -63,6 +65,8 @@ class IndexController extends Controller
             'masterItInitiatives' => $masterItInitiatives,
             'statusOptions' => $statusOptions,
             'statusCounts' => $statusCounts,
+            'coeOptions' => MstCoe::orderBy('name')->get(['id', 'name'])->map(fn ($c) => ['id' => $c->id, 'name' => $c->name])->values(),
+            'organizationOptions' => TrsOrganization::with('groub:id,name')->orderBy('name')->get(['id', 'name', 'groub_id'])->map(fn ($o) => ['id' => $o->id, 'name' => $o->name, 'groub' => $o->groub?->name])->values(),
         ]);
     }
 }
