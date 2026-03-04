@@ -25,17 +25,7 @@ class CharterController extends Controller
             $owner = trim((string) ($validated['owner_name'] ?? ''));
         }
 
-        // Update project fields if provided
-        $projectFields = Arr::only($validated, ['status']);
-        if (!empty($projectFields)) {
-            // Filter out empty values to avoid overwriting with null
-            $projectFields = array_filter($projectFields, fn($v) => $v !== null && $v !== '');
-            if (!empty($projectFields)) {
-                $project->update($projectFields);
-            }
-        }
-
-        $charterPayload = Arr::except($validated, ['version_label', 'owner_name', 'status']);
+        $charterPayload = Arr::except($validated, ['version_label', 'owner_name']);
         if ($owner !== '') {
             $charterPayload['owner'] = $owner;
         } else {
@@ -67,14 +57,7 @@ class CharterController extends Controller
             $owner = trim((string) ($validated['owner_name'] ?? ''));
         }
 
-        // Update project fields if provided
-        $projectFields = Arr::only($validated, ['status']);
-        $projectFields = array_filter($projectFields, fn($v) => $v !== null && $v !== '');
-        if (!empty($projectFields)) {
-            $project->update($projectFields);
-        }
-
-        $charterPayload = Arr::except($validated, ['owner_name', 'status']);
+        $charterPayload = Arr::except($validated, ['owner_name']);
         if ($owner !== '') {
             $charterPayload['owner'] = $owner;
         } else {

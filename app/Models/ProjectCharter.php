@@ -12,6 +12,7 @@ class ProjectCharter extends Model
     protected $fillable = [
         'project_id',
         'version_label',
+        'status',
         'owner',
         'category',
         'duration',
@@ -32,6 +33,7 @@ class ProjectCharter extends Model
     {
         return [
             'metadata' => 'array',
+            'status' => 'integer',
         ];
     }
 

@@ -4,15 +4,19 @@
         <div class="overflow-x-auto rounded-lg border border-slate-100 dark:border-white/5">
             <table class="w-full table-fixed divide-y divide-slate-200 text-[11px] dark:divide-white/5">
                 <colgroup>
+                    <col class="w-[10%]">
                     <col class="w-[15%]">
-                    <col class="w-[25%]">
-                    <col class="w-[60%]">
+                    <col class="w-[20%]">
+                    <col class="w-[55%]">
                 </colgroup>
                 <thead class="bg-slate-50 dark:bg-white/[0.03]">
                     <tr>
                         <th
                             class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">
                             Code</th>
+                        <th
+                            class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">
+                            Bulan/Tahun</th>
                         <th
                             class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">
                             Review Status</th>
@@ -22,9 +26,12 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white dark:bg-[#1a1a1a]">
-                    <tr v-for="proj in projectList" :key="`t2-${proj.id}`">
+                    <tr v-for="proj in projectList" :key="`t1-status-${proj.id}`">
                         <td class="px-2 py-2 text-[11px] font-semibold text-slate-700 dark:text-slate-200">
                             {{ proj.code || '-' }}
+                        </td>
+                        <td class="px-2 py-2 text-[10px] font-medium text-slate-600 dark:text-slate-300">
+                            {{ getLatestImplementationMonthYear(proj) || '-' }}
                         </td>
                         <td class="px-2 py-2">
                             <span v-if="getLatestReviewStatus(proj)"
@@ -43,7 +50,7 @@
                         </td>
                     </tr>
                     <tr v-if="projectList.length === 0">
-                        <td colspan="3" class="px-4 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
+                        <td colspan="4" class="px-4 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
                             Data status implementasi belum tersedia.
                         </td>
                     </tr>
@@ -56,8 +63,7 @@
             <table class="w-full table-fixed divide-y divide-slate-200 text-[11px] dark:divide-white/5">
                 <colgroup>
                     <col class="w-[20%]">
-                    <col class="w-[20%]">
-                    <col class="w-[20%]">
+                    <col class="w-[25%]">
                     <col class="w-[20%]">
                     <col class="w-[20%]">
                 </colgroup>
@@ -75,9 +81,6 @@
                         <th
                             class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">
                             Status Timeline</th>
-                        <th
-                            class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">
-                            Bulan/Tahun</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white dark:bg-[#1a1a1a]">
@@ -97,16 +100,13 @@
                         <td class="px-2 py-2">
                             <span
                                 class="inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-medium capitalize"
-                                :class="statusBadgeClassById(row.project?.status)">
-                                {{ statusLabelFromOptions(row.project?.status, statusOptions) }}
+                                :class="statusBadgeClassById(getRowStatus(row))">
+                                {{ statusLabelFromOptions(getRowStatus(row), statusOptions) }}
                             </span>
-                        </td>
-                        <td class="px-2 py-2 text-[10px] font-medium text-slate-600 dark:text-slate-300">
-                            {{ getLatestImplementationMonthYear(row.project) || '-' }}
                         </td>
                     </tr>
                     <tr v-if="projectCharterRows.length === 0">
-                        <td colspan="5" class="px-4 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
+                        <td colspan="4" class="px-4 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
                             Data belum tersedia.
                         </td>
                     </tr>
@@ -118,7 +118,7 @@
 
 <script setup>
 import { computed } from 'vue';
-import { statusBadgeClassById, statusLabelFromOptions } from '@/Composables/initiativeStatus';
+import { statusLabelFromOptions } from '@/Composables/initiativeStatus';
 
 const props = defineProps({
     project: {
@@ -239,6 +239,30 @@ const getLatestImplementationMonthYear = (project) => {
     const date = new Date(rawDate);
     if (Number.isNaN(date.getTime())) return null;
     return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+};
+
+const getRowStatus = (row) => {
+    const charterStatus = row?.charter?.status;
+    if (charterStatus !== null && charterStatus !== undefined && charterStatus !== '') {
+        return Number(charterStatus);
+    }
+    const projectStatus = row?.project?.status;
+    if (projectStatus !== null && projectStatus !== undefined && projectStatus !== '') {
+        return Number(projectStatus);
+    }
+    return null;
+};
+
+const statusBadgeClassById = (statusId) => {
+    const val = Number(statusId);
+    switch (val) {
+        case 1: return 'bg-slate-100 text-slate-600 ring-1 ring-slate-300';
+        case 2: return 'bg-blue-100 text-blue-700 ring-1 ring-blue-300';
+        case 3: return 'bg-amber-100 text-amber-700 ring-1 ring-amber-300';
+        case 4: return 'bg-emerald-100 text-emerald-700 ring-1 ring-emerald-300';
+        case 5: return 'bg-purple-100 text-purple-700 ring-1 ring-purple-300';
+        default: return 'bg-slate-100 text-slate-500';
+    }
 };
 
 const reviewStatusBadgeClass = (reviewStatus) => {

@@ -284,9 +284,9 @@ class ITInitiativeController extends Controller
                     ->whereIn('initiative_id', $project->mappedInitiatives->pluck('id'));
             })
             ->with([
-                'charter' => static fn ($q) => $q->select('trs_project_charters.id', 'trs_project_charters.project_id', 'trs_project_charters.category'),
+                'charter' => static fn ($q) => $q->select('trs_project_charters.id', 'trs_project_charters.project_id', 'trs_project_charters.category', 'trs_project_charters.status'),
                 'charters' => static fn ($q) => $q
-                    ->select('trs_project_charters.id', 'trs_project_charters.project_id', 'trs_project_charters.version_label', 'trs_project_charters.category')
+                    ->select('trs_project_charters.id', 'trs_project_charters.project_id', 'trs_project_charters.version_label', 'trs_project_charters.category', 'trs_project_charters.status')
                     ->latest(),
                 'statusRef:id,name',
                 'pcStatusImplementations' => static fn ($q) => $q->orderBy('date', 'desc')->orderBy('time_start', 'desc')->limit(1),

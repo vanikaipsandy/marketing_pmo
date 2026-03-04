@@ -276,7 +276,7 @@ const mapCharterToForm = (charter = null, project = null) => {
     const payload = {
         version_label: charter?.version_label ?? '',
         owner: charter?.owner ?? '',
-        status: project?.status ?? '',
+        status: charter?.status ?? '',
         tgl_dokumen: charter?.tgl_dokumen ?? '',
     };
     for (const field of CHARTER_FIELDS) {

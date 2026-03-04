@@ -15,15 +15,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class TrsDigitalInitiative extends Model
+class ScInitiative extends Model
 {
     protected $table = 'trs_sc_initiative';
 
-    protected $fillable = [
-        'useCase_id',
-        'value',
-        'urgency',
-    ];
+    protected $guarded = ['id'];
 
     public function scStatusImplementations(): HasMany
     {
