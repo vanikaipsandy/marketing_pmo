@@ -66,17 +66,21 @@ const props = defineProps({
         type: String,
         default: 'Scope Charter',
     },
+    timelinePhase: {
+        type: String,
+        default: 'Planning',
+    },
 });
 
 const flowItems = computed(() => [
     {
         key: 'digital',
-        title: 'Digital Initiatives Planning Timeline Status',
+        title: `Digital Initiatives ${props.timelinePhase} Timelines Status (${props.charterLabel})`,
         steps: props.digitalSteps,
     },
     {
         key: 'it',
-        title: 'IT Initiatives Planning Timeline Status',
+        title: `IT Initiatives ${props.timelinePhase} Timelines Status (${props.charterLabel})`,
         steps: props.itSteps,
     },
 ]);

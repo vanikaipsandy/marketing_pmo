@@ -37,7 +37,7 @@
                 <article class="flex flex-col justify-center rounded-2xl border border-slate-200 bg-white px-5 py-3 shadow-[0_4px_16px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-[#171717] lg:col-span-2 space-y-4">
                     <div>
                         <div class="mb-2 flex items-center justify-between gap-2">
-                            <h2 class="text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Project Charter Digital Initiatives Timelines Status</h2>
+                            <h2 class="text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Digital Initiatives Implementation Timelines Status (Project Charter)</h2>
                         </div>
 
                         <div>

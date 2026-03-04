@@ -46,6 +46,7 @@
                 :digital-steps="digitalStatusFlow"
                 :it-steps="itStatusFlow"
                 charter-label="Project Charter"
+                timeline-phase="Implementation"
             />
             <!-- Project Charter Status Summary -->
             <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717]">
