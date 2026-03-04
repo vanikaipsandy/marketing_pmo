@@ -2,7 +2,7 @@
     <article class="h-full min-h-[220px] rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-[0_4px_16px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-[#171717]">
         <div class="mb-2 flex items-center justify-between gap-2">
             <h2 class="text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
-                IT Initiative Timeline
+                IT Initiatives Planning Timeline Status
             </h2>
         </div>
 
