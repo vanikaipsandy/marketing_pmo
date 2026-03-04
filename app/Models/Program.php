@@ -13,9 +13,4 @@ class Program extends Model
     protected $table = 'mst_programs';
 
     protected $fillable = ['code', 'name', 'description'];
-
-    public function projects(): BelongsToMany
-    {
-        return $this->belongsToMany(Project::class, 'trs_program_project');
-    }
 }
