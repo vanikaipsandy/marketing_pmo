@@ -94,20 +94,51 @@
                             {{ opt.label }}
                         </button>
                     </div>
-
-                    <div v-if="filteredProjects.length > 0" class="space-y-4">
-                        <div v-for="proj in filteredProjects" :key="proj.id"
+                    
+                    <div v-if="versionFilterOptions.length > 0"
+                        class="flex flex-wrap items-center gap-2 px-3 py-2 bg-white border-b border-slate-100 dark:bg-[#171717] dark:border-white/10">
+                        <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Filter
+                            Versi:</span>
+                        <button type="button"
+                            :class="[
+                                'inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold transition',
+                                versionFilter === ''
+                                    ? 'bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900'
+                                    : 'bg-slate-100 text-slate-500 hover:bg-slate-200 dark:bg-white/10 dark:text-slate-400 dark:hover:bg-white/20'
+                            ]"
+                            @click="versionFilter = ''">
+                            Semua
+                        </button>
+                        <button v-for="label in versionFilterOptions" :key="`ver-${label}`" type="button"
+                            @click="versionFilter = label" :class="[
+                                'inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold transition',
+                                versionFilter === label
+                                    ? 'bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900'
+                                    : 'bg-slate-100 text-slate-500 hover:bg-slate-200 dark:bg-white/10 dark:text-slate-400 dark:hover:bg-white/20'
+                            ]">
+                            {{ label }}
+                        </button>
+                    </div>
+                    <div v-if="filteredProjectCharterGroups.length > 0" class="space-y-4">
+                        <div v-for="group in filteredProjectCharterGroups" :key="group.project.id"
                             class="border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#171717]">
                             <div class="px-3 py-3">
-                                <StatusImplementationTable :projects="[proj]" />
+                                <StatusImplementationTable :projects="[group.project]" />
                             </div>
-                            <ItCharterDocument :it-initiative="proj" :form="charterFormFor(proj)"
-                                :status-timeline="getProjectReviewStatus(proj)" :editable="false" />
+                            <div class="space-y-3 pb-3">
+                                <template v-for="(charter, charterIndex) in group.charters"
+                                    :key="charter?.id ?? `charter-${group.project.id}-${charterIndex}`">
+                                    <ItCharterDocument :it-initiative="group.project"
+                                        :form="charterFormFor(group.project, charter)"
+                                        :status-timeline="getProjectReviewStatus(group.project)" :editable="false" />
+                                </template>
+                            </div>
                         </div>
                     </div>
                     <div v-else-if="mappedProjects.length > 0"
                         class="border border-slate-200 bg-white px-4 py-6 text-center text-xs text-slate-500 dark:border-white/10 dark:bg-[#171717] dark:text-slate-400">
-                        Tidak ada project charter dengan status <strong>{{ pcStatusFilter || 'dipilih' }}</strong>.
+                        Tidak ada project charter dengan status <strong>{{ pcStatusFilter || 'dipilih' }}</strong><span
+                            v-if="versionFilter"> dan versi <strong>{{ versionFilter }}</strong></span>.
                     </div>
                     <div v-else
                         class="border border-slate-200 bg-white px-4 py-6 text-center text-xs text-slate-500 dark:border-white/10 dark:bg-[#171717] dark:text-slate-400">
@@ -276,11 +307,14 @@ const formatReviewLabel = (option) => {
 };
 
 // ---- Per-project charter form helper ----
-const charterFormFor = (proj) => {
-    const charter = proj?.charter ?? {};
+const charterFormFor = (proj, charterOverride = null) => {
+    const charter = charterOverride ?? proj?.charter ?? {};
     return {
+        version_label: charter?.version_label ?? '',
         category: charter?.category ?? '',
         duration: charter?.duration ?? '',
+        owner: charter?.owner ?? '',
+        tgl_dokumen: charter?.tgl_dokumen ?? '',
         background: charter?.background ?? '',
         objectives: charter?.objectives ?? '',
         scope: charter?.scope ?? '',
@@ -296,8 +330,37 @@ const charterFormFor = (proj) => {
 // Keep backward-compatible charterForm for other tabs
 const charterForm = computed(() => charterFormFor(props.mappedProject));
 
+const projectChartersFor = (proj) => {
+    if (Array.isArray(proj?.charters) && proj.charters.length > 0) {
+        return proj.charters;
+    }
+    if (proj?.charter) {
+        return [proj.charter];
+    }
+    return [];
+};
+
+const getCharterVersionLabel = (charter, index, total) => {
+    const label = String(charter?.resolved_version_label ?? charter?.version_label ?? '').trim();
+    if (label) return label;
+    if (Number.isFinite(total) && total > 0) {
+        return `v${total - index}`;
+    }
+    return '-';
+};
+
+const normalizeVersionLabel = (value) => String(value ?? '').trim().toLowerCase();
+
+const getCharterVersionLabelForProject = (proj, charter) => {
+    const charters = projectChartersFor(proj);
+    const charterId = charter?.id ?? charter;
+    const index = charters.findIndex((item) => String(item?.id ?? item) === String(charterId));
+    return getCharterVersionLabel(charter, index >= 0 ? index : 0, charters.length);
+};
+
 // ---- Status Timeline Filter ----
 const pcStatusFilter = ref('');
+const versionFilter = ref('');
 
 const statusTimelineFilterOptions = [
     { value: '', label: 'Semua', activeClass: 'bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900' },
@@ -321,6 +384,38 @@ const filteredProjects = computed(() => {
     return props.mappedProjects.filter((proj) => {
         return Number(getProjectReviewStatus(proj)) === Number(pcStatusFilter.value);
     });
+});
+
+const versionFilterOptions = computed(() => {
+    const labels = new Map();
+    props.mappedProjects.forEach((proj) => {
+        const charters = projectChartersFor(proj);
+        charters.forEach((charter) => {
+            const label = getCharterVersionLabelForProject(proj, charter);
+            if (!label || label === '-') return;
+            const key = normalizeVersionLabel(label);
+            if (!labels.has(key)) {
+                labels.set(key, label);
+            }
+        });
+    });
+    return Array.from(labels.values());
+});
+
+const filteredProjectCharterGroups = computed(() => {
+    const selected = normalizeVersionLabel(versionFilter.value);
+    return filteredProjects.value
+        .map((proj) => {
+            const charters = projectChartersFor(proj);
+            const filteredCharters = selected
+                ? charters.filter((charter) => normalizeVersionLabel(getCharterVersionLabelForProject(proj, charter)) === selected)
+                : charters;
+            return {
+                project: proj,
+                charters: filteredCharters,
+            };
+        })
+        .filter((group) => group.charters.length > 0);
 });
 
 const initiativeLabel = (initiative) => {

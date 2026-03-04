@@ -285,6 +285,9 @@ class ITInitiativeController extends Controller
             })
             ->with([
                 'charter' => static fn ($q) => $q->select('trs_project_charters.id', 'trs_project_charters.project_id', 'trs_project_charters.category'),
+                'charters' => static fn ($q) => $q
+                    ->select('trs_project_charters.id', 'trs_project_charters.project_id', 'trs_project_charters.version_label', 'trs_project_charters.category')
+                    ->latest(),
                 'statusRef:id,name',
                 'pcStatusImplementations' => static fn ($q) => $q->orderBy('date', 'desc')->orderBy('time_start', 'desc')->limit(1),
             ])

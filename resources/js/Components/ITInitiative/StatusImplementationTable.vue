@@ -1,3 +1,121 @@
+<template>
+    <div class="space-y-3">
+        <!-- Tabel 1: Code & Status Implementasi -->
+        <div class="overflow-x-auto rounded-lg border border-slate-100 dark:border-white/5">
+            <table class="w-full table-fixed divide-y divide-slate-200 text-[11px] dark:divide-white/5">
+                <colgroup>
+                    <col class="w-[15%]">
+                    <col class="w-[25%]">
+                    <col class="w-[60%]">
+                </colgroup>
+                <thead class="bg-slate-50 dark:bg-white/[0.03]">
+                    <tr>
+                        <th
+                            class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">
+                            Code</th>
+                        <th
+                            class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">
+                            Review Status</th>
+                        <th
+                            class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">
+                            Keterangan</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white dark:bg-[#1a1a1a]">
+                    <tr v-for="proj in projectList" :key="`t2-${proj.id}`">
+                        <td class="px-2 py-2 text-[11px] font-semibold text-slate-700 dark:text-slate-200">
+                            {{ proj.code || '-' }}
+                        </td>
+                        <td class="px-2 py-2">
+                            <span v-if="getLatestReviewStatus(proj)"
+                                class="inline-flex rounded-md px-1.5 py-0.5 text-[9px] font-medium"
+                                :class="reviewStatusBadgeClass(getLatestReviewStatus(proj))">
+                                {{ getLatestReviewStatus(proj) }}
+                            </span>
+                            <span v-else class="text-[10px] italic text-slate-400">-</span>
+                        </td>
+                        <td class="px-2 py-2">
+                            <span v-if="getLatestImplementationStatus(proj)"
+                                class="inline-flex rounded-md bg-slate-100 px-1.5 py-0.5 text-[9px] font-medium text-slate-700 dark:bg-white/10 dark:text-slate-300">
+                                {{ getLatestImplementationStatus(proj) }}
+                            </span>
+                            <span v-else class="text-[10px] italic text-slate-400">-</span>
+                        </td>
+                    </tr>
+                    <tr v-if="projectList.length === 0">
+                        <td colspan="3" class="px-4 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
+                            Data status implementasi belum tersedia.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Tabel 2: Informasi Dasar & Timeline -->
+        <div class="overflow-x-auto rounded-lg border border-slate-100 dark:border-white/5">
+            <table class="w-full table-fixed divide-y divide-slate-200 text-[11px] dark:divide-white/5">
+                <colgroup>
+                    <col class="w-[20%]">
+                    <col class="w-[20%]">
+                    <col class="w-[20%]">
+                    <col class="w-[20%]">
+                    <col class="w-[20%]">
+                </colgroup>
+                <thead class="bg-slate-50 dark:bg-white/[0.03]">
+                    <tr>
+                        <th
+                            class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">
+                            Version</th>
+                        <th
+                            class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">
+                            Building Blok</th>
+                        <th
+                            class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">
+                            Inisiatif</th>
+                        <th
+                            class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">
+                            Status Timeline</th>
+                        <th
+                            class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">
+                            Bulan/Tahun</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white dark:bg-[#1a1a1a]">
+                    <tr v-for="row in projectCharterRows" :key="row.key">
+                        <td class="px-2 py-2 text-[11px] font-semibold text-slate-700 dark:text-slate-200">
+                            {{ row.versionLabel }}
+                        </td>
+                        <td class="px-2 py-2 text-[11px] text-slate-700 dark:text-slate-200">
+                            <span
+                                class="inline-flex rounded-full bg-blue-100 px-2 py-0.5 text-[9px] font-semibold text-blue-800 dark:bg-blue-500/20 dark:text-blue-300">
+                                {{ getArchitectureBlockLabel(row.charter) }}
+                            </span>
+                        </td>
+                        <td class="px-2 py-2 text-[11px] font-medium text-slate-700 break-words dark:text-slate-200">
+                            {{ row.project?.name || '-' }}
+                        </td>
+                        <td class="px-2 py-2">
+                            <span
+                                class="inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-medium capitalize"
+                                :class="statusBadgeClassById(row.project?.status)">
+                                {{ statusLabelFromOptions(row.project?.status, statusOptions) }}
+                            </span>
+                        </td>
+                        <td class="px-2 py-2 text-[10px] font-medium text-slate-600 dark:text-slate-300">
+                            {{ getLatestImplementationMonthYear(row.project) || '-' }}
+                        </td>
+                    </tr>
+                    <tr v-if="projectCharterRows.length === 0">
+                        <td colspan="5" class="px-4 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
+                            Data belum tersedia.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</template>
+
 <script setup>
 import { computed } from 'vue';
 import { statusBadgeClassById, statusLabelFromOptions } from '@/Composables/initiativeStatus';
@@ -51,9 +169,44 @@ const statusOptions = computed(() => {
     );
 });
 
+const projectCharterRows = computed(() => {
+    return projectList.value.flatMap((project, projectIndex) => {
+        const charters = Array.isArray(project?.charters) && project.charters.length > 0
+            ? project.charters
+            : project?.charter
+                ? [project.charter]
+                : [];
+
+        if (charters.length === 0) {
+            return [{
+                key: `proj-${project?.id ?? projectIndex}-charter-empty`,
+                project,
+                charter: null,
+                versionLabel: '-',
+            }];
+        }
+
+        return charters.map((charter, charterIndex) => ({
+            key: `proj-${project?.id ?? projectIndex}-charter-${charter?.id ?? charterIndex}`,
+            project,
+            charter,
+            versionLabel: getCharterVersionLabel(charter, charterIndex, charters.length),
+        }));
+    });
+});
+
 // Helper functions for each project row
-const getArchitectureBlockLabel = (project) => {
-    const text = String(project?.charter?.category ?? '').trim();
+const getCharterVersionLabel = (charter, index, total) => {
+    const label = String(charter?.resolved_version_label ?? charter?.version_label ?? '').trim();
+    if (label) return label;
+    if (Number.isFinite(total) && total > 0) {
+        return `v${total - index}`;
+    }
+    return '-';
+};
+
+const getArchitectureBlockLabel = (charter) => {
+    const text = String(charter?.category ?? '').trim();
     return text.length > 0 ? text : '-';
 };
 
@@ -97,60 +250,3 @@ const reviewStatusBadgeClass = (reviewStatus) => {
     return 'bg-slate-100 text-slate-700 dark:bg-white/10 dark:text-slate-300';
 };
 </script>
-
-<template>
-    <div class="overflow-x-auto rounded-lg border border-slate-100 dark:border-white/5">
-        <table class="w-full table-fixed divide-y divide-slate-200 text-[11px] dark:divide-white/5">
-            <colgroup>
-                <col class="w-[8%]">
-                <col class="w-[14%]">
-                <col class="w-[18%]">
-                <col class="w-[10%]">
-                <col class="w-[12%]">
-                <col class="w-[12%]">
-                <col class="w-[26%]">
-            </colgroup>
-            <thead class="bg-slate-50 dark:bg-white/[0.03]">
-                <tr>
-                    <th class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">Code</th>
-                    <th class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">Building Blok</th>
-                    <th class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">Inisiatif</th>
-                    <th class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">Status Timeline</th>
-                    <th class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">Bulan/Tahun</th>
-                    <th class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">Review Status</th>
-                    <th class="px-2 py-1.5 text-left text-[9px] font-semibold uppercase tracking-wider text-slate-400">Keterangan</th>
-                </tr>
-            </thead>
-            <tbody class="bg-white dark:bg-[#1a1a1a]">
-                <tr v-for="proj in projectList" :key="proj.id">
-                    <td class="px-2 py-2 text-[11px] font-semibold text-slate-700 dark:text-slate-200">{{ proj.code || '-' }}</td>
-                    <td class="px-2 py-2">
-                        <span class="inline-flex rounded-full bg-blue-100 px-2 py-0.5 text-[9px] font-semibold text-blue-800 dark:bg-blue-500/20 dark:text-blue-300">
-                            {{ getArchitectureBlockLabel(proj) }}
-                        </span>
-                    </td>
-                    <td class="px-2 py-2 text-[11px] font-medium text-slate-700 break-words dark:text-slate-200">{{ proj.name || '-' }}</td>
-                    <td class="px-2 py-2">
-                        <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-medium capitalize" :class="statusBadgeClassById(proj.status)">
-                            {{ statusLabelFromOptions(proj.status, statusOptions) }}
-                        </span>
-                    </td>
-                    <td class="px-2 py-2 text-[10px] font-medium text-slate-600 dark:text-slate-300">{{ getLatestImplementationMonthYear(proj) || '-' }}</td>
-                    <td class="px-2 py-2">
-                        <span v-if="getLatestReviewStatus(proj)" class="inline-flex rounded-md px-1.5 py-0.5 text-[9px] font-medium" :class="reviewStatusBadgeClass(getLatestReviewStatus(proj))">{{ getLatestReviewStatus(proj) }}</span>
-                        <span v-else class="text-[10px] italic text-slate-400">-</span>
-                    </td>
-                    <td class="px-2 py-2">
-                        <span v-if="getLatestImplementationStatus(proj)" class="inline-flex rounded-md bg-slate-100 px-1.5 py-0.5 text-[9px] font-medium text-slate-700 dark:bg-white/10 dark:text-slate-300">{{ getLatestImplementationStatus(proj) }}</span>
-                        <span v-else class="text-[10px] italic text-slate-400">-</span>
-                    </td>
-                </tr>
-                <tr v-if="projectList.length === 0">
-                    <td colspan="7" class="px-4 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
-                        Data status implementasi belum tersedia untuk initiative ini.
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</template>
