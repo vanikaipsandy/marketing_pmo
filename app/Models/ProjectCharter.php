@@ -26,6 +26,7 @@ class ProjectCharter extends Model
         'risks_identified',
         'risk_mitigation',
         'tgl_dokumen',
+        'status',
         'metadata',
     ];
 

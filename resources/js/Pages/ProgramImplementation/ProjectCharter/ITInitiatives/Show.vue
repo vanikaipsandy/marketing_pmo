@@ -51,14 +51,20 @@
                                 class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                                 Charter Version
                             </label>
-                            <select v-model="selectedCharterId" :disabled="charterVersions.length === 0 || isEditing"
-                                class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:bg-slate-100 dark:border-white/10 dark:bg-[#131313] dark:text-slate-100 dark:disabled:bg-white/5">
-                                <option v-if="charterVersions.length === 0" value="">No saved version yet</option>
-                                <option v-for="charter in charterVersions" :key="charter.id"
-                                    :value="String(charter.id)">
-                                    {{ charterOptionLabel(charter) }}
-                                </option>
-                            </select>
+                            <div class="flex items-center gap-2">
+                                <select v-model="selectedCharterId" :disabled="charterVersions.length === 0 || isEditing"
+                                    class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:bg-slate-100 dark:border-white/10 dark:bg-[#131313] dark:text-slate-100 dark:disabled:bg-white/5">
+                                    <option v-if="charterVersions.length === 0" value="">No saved version yet</option>
+                                    <option v-for="charter in charterVersions" :key="charter.id"
+                                        :value="String(charter.id)">
+                                        {{ charterOptionLabel(charter) }}
+                                    </option>
+                                </select>
+                                <button type="button"
+                                    class="shrink-0 rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-slate-700 transition hover:bg-slate-50 dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/5">
+                                    Go to Roadmap
+                                </button>
+                            </div>
                         </div>
 
                         <div class="flex flex-wrap items-center gap-2">
