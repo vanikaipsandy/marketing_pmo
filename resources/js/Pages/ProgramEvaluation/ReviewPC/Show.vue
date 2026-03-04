@@ -60,10 +60,14 @@
             </section>
             <div id="review"
                 class="mx-auto w-full max-w-[1200px] space-y-0 border border-slate-300 bg-[#e9e9e9] p-0 text-slate-900 shadow-sm dark:border-white/20 dark:bg-[#d7d7d7]">
-                <header class="space-y-2 px-4 pt-3 pb-3">
+                <header class="flex flex-wrap items-center gap-3 px-4 pt-3 pb-3">
                     <h1 class="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
                         {{ headerTitle }}
                     </h1>
+                    <span v-if="currentStatus"
+                        :class="['inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold capitalize transition', currentStatus.class]">
+                        {{ currentStatus.label }}
+                    </span>
                 </header>
 
                 <section v-if="activeNav === 'review'" id="review" class="space-y-0">
@@ -380,4 +384,15 @@ const buildInitiativeRelations = () => {
 
 const initiativeRelations = computed(() => buildInitiativeRelations());
 
+const currentStatus = computed(() => {
+    const val = Number(props.trsReviewPC?.initiative?.status);
+    switch (val) {
+        case 1: return { label: 'Draft', class: 'bg-slate-100 text-slate-600 ring-1 ring-slate-300' };
+        case 2: return { label: 'Propose', class: 'bg-blue-100 text-blue-700 ring-1 ring-blue-300' };
+        case 3: return { label: 'Review', class: 'bg-amber-100 text-amber-700 ring-1 ring-amber-300' };
+        case 4: return { label: 'Approved', class: 'bg-emerald-100 text-emerald-700 ring-1 ring-emerald-300' };
+        case 5: return { label: 'Baseline', class: 'bg-purple-100 text-purple-700 ring-1 ring-purple-300' };
+        default: return null;
+    }
+});
 </script>

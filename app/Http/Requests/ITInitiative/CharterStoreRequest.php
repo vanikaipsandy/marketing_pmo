@@ -15,8 +15,10 @@ class CharterStoreRequest extends FormRequest
     {
         return [
             'version_label'   => ['nullable', 'string', 'max:255'],
+            'owner'           => ['nullable', 'string', 'max:255'],
             'owner_name'      => ['nullable', 'string', 'max:255'],
             'status'          => ['nullable', 'integer'],
+            'tgl_dokumen'     => ['nullable', 'date'],
             'category'        => ['nullable', 'string', 'max:255'],
             'duration'        => ['nullable', 'string', 'max:255'],
             'background'      => ['nullable', 'string'],

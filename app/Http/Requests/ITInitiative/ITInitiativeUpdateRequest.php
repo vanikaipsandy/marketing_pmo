@@ -26,6 +26,7 @@ class ITInitiativeUpdateRequest extends FormRequest
                 Rule::unique('trs_projects', 'code')->ignore($project?->id),
             ],
             'status' => ['required', 'integer', Rule::exists('trs_status_initiative', 'id')],
+            'owner' => ['nullable', 'string', 'max:255'],
             'owner_name' => ['nullable', 'string', 'max:255'],
             'charter_category' => ['nullable', 'string', 'max:255'],
         ];

@@ -23,6 +23,7 @@ class ProjectCharterController extends Controller
         return [
             'code'       => 'nullable|string|max:100',
             'name'       => 'required|string|max:255',
+            'owner'      => 'nullable|string|max:255',
             'owner_name' => 'nullable|string|max:255',
             'status'     => ['required', 'integer', Rule::exists('trs_status_initiative', 'id')],
         ];
@@ -78,7 +79,19 @@ class ProjectCharterController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate($this->projectRules());
+        $owner = trim((string) ($validated['owner'] ?? ''));
+        if ($owner === '') {
+            $owner = trim((string) ($validated['owner_name'] ?? ''));
+        }
+        unset($validated['owner'], $validated['owner_name']);
+
         $project = Project::create($validated);
+        if ($owner !== '') {
+            $project->charters()->create([
+                'owner' => $owner,
+                'version_label' => 'v1',
+            ]);
+        }
 
         $statusData = $request->validate($this->statusRules());
 
@@ -100,9 +113,25 @@ class ProjectCharterController extends Controller
     public function update(Request $request, Project $projectCharter): RedirectResponse
     {
         $validated = $request->validate($this->projectRules());
+        $owner = trim((string) ($validated['owner'] ?? ''));
+        if ($owner === '') {
+            $owner = trim((string) ($validated['owner_name'] ?? ''));
+        }
+        unset($validated['owner'], $validated['owner_name']);
+
         $oldStatus = $projectCharter->status;
 
         $projectCharter->update($validated);
+        if ($owner !== '') {
+            $latestCharter = $projectCharter->charters()->latest('id')->first();
+            if ($latestCharter) {
+                $latestCharter->update(['owner' => $owner]);
+            } else {
+                $projectCharter->charters()->create([
+                    'owner' => $owner,
+                ]);
+            }
+        }
 
         $statusData = $request->validate($this->statusRules());
 

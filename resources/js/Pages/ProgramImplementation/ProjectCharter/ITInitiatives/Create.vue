@@ -52,8 +52,8 @@
                                         <p v-if="form.errors.name" class="mt-1 text-[10px] text-rose-600">{{ form.errors.name }}</p>
                                     </td>
                                     <td class="px-3 py-3 align-top">
-                                        <input v-model="form.owner_name" type="text" class="table-input" placeholder="e.g., PT Example Indonesia">
-                                        <p v-if="form.errors.owner_name" class="mt-1 text-[10px] text-rose-600">{{ form.errors.owner_name }}</p>
+                                        <input v-model="form.owner" type="text" class="table-input" placeholder="e.g., PT Example Indonesia">
+                                        <p v-if="form.errors.owner" class="mt-1 text-[10px] text-rose-600">{{ form.errors.owner }}</p>
                                     </td>
                                     <td class="px-3 py-3 align-top">
                                         <input v-model="form.charter_category" type="text" class="table-input" placeholder="e.g., Integration">
@@ -170,7 +170,7 @@ const planningDefinitions = Array.isArray(props.planningItDefinitions) ? props.p
 const form = useForm({
     code: '',
     name: '',
-    owner_name: '',
+    owner: '',
     charter_category: '',
     status: statusOptions.some((statusOption) => statusOption.id === props.defaultStatusId)
         ? props.defaultStatusId

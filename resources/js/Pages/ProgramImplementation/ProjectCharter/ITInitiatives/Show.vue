@@ -140,7 +140,8 @@
                 </section>
 
                 <main class="print:m-0 print:p-0">
-                    <CharterDocument :it-initiative="editableItInitiative" :form="form" :editable="isEditing" />
+                    <CharterDocument :it-initiative="editableItInitiative" :form="form" :status-timeline="form.status"
+                        :editable="isEditing" />
                 </main>
             </template>
 
@@ -175,13 +176,26 @@ const props = defineProps({
 });
 const page = usePage();
 
+// --- Status styling helper ---
+const currentStatus = computed(() => {
+    const val = Number(props.itInitiative?.status);
+    switch (val) {
+        case 1: return { label: 'Draft', class: 'bg-slate-100 text-slate-600 ring-1 ring-slate-300' };
+        case 2: return { label: 'Propose', class: 'bg-blue-100 text-blue-700 ring-1 ring-blue-300' };
+        case 3: return { label: 'Review', class: 'bg-amber-100 text-amber-700 ring-1 ring-amber-300' };
+        case 4: return { label: 'Approved', class: 'bg-emerald-100 text-emerald-700 ring-1 ring-emerald-300' };
+        case 5: return { label: 'Baseline', class: 'bg-purple-100 text-purple-700 ring-1 ring-purple-300' };
+        default: return null;
+    }
+});
+
 // --- Status options for the charter status dropdown ---
 const statusOptions = [
     { value: 1, label: 'Draft' },
     { value: 2, label: 'Propose' },
     { value: 3, label: 'Review' },
-    { value: 4, label: 'Baseline' },
-    { value: 5, label: 'Approve' },
+    { value: 4, label: 'Approved' },
+    { value: 5, label: 'Baseline' },
 ];
 
 // --- Tabs ---
@@ -261,8 +275,9 @@ const CHARTER_FIELDS = [
 const mapCharterToForm = (charter = null, project = null) => {
     const payload = {
         version_label: charter?.version_label ?? '',
-        owner_name: project?.owner_name ?? project?.owner?.name ?? '',
+        owner: charter?.owner ?? '',
         status: project?.status ?? '',
+        tgl_dokumen: charter?.tgl_dokumen ?? '',
     };
     for (const field of CHARTER_FIELDS) {
         payload[field] = charter?.[field] ?? '';
@@ -290,12 +305,12 @@ const selectedCharter = computed(() => {
     return charterVersions.value.find((c) => String(c.id) === String(selectedCharterId.value)) || null;
 });
 
-// A reactive proxy of itInitiative that reflects the in-form owner_name when editing
+// A reactive proxy of itInitiative that reflects the in-form owner when editing
 const editableItInitiative = computed(() => {
     if (!isEditing.value) return props.itInitiative;
     return {
         ...props.itInitiative,
-        owner_name: form.owner_name ?? props.itInitiative?.owner_name ?? '',
+        owner: form.owner ?? props.itInitiative?.charter?.owner ?? '',
     };
 });
 

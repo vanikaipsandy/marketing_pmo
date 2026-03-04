@@ -20,8 +20,13 @@ class CharterController extends Controller
             $versionLabel = sprintf('v%d', $project->charters()->count() + 1);
         }
 
-        // Update project owner_name and status if provided
-        $projectFields = Arr::only($validated, ['owner_name', 'status']);
+        $owner = trim((string) ($validated['owner'] ?? ''));
+        if ($owner === '') {
+            $owner = trim((string) ($validated['owner_name'] ?? ''));
+        }
+
+        // Update project fields if provided
+        $projectFields = Arr::only($validated, ['status']);
         if (!empty($projectFields)) {
             // Filter out empty values to avoid overwriting with null
             $projectFields = array_filter($projectFields, fn($v) => $v !== null && $v !== '');
@@ -30,8 +35,15 @@ class CharterController extends Controller
             }
         }
 
+        $charterPayload = Arr::except($validated, ['version_label', 'owner_name', 'status']);
+        if ($owner !== '') {
+            $charterPayload['owner'] = $owner;
+        } else {
+            unset($charterPayload['owner']);
+        }
+
         $project->charters()->create([
-            ...Arr::except($validated, ['version_label', 'owner_name', 'status']),
+            ...$charterPayload,
             'version_label' => $versionLabel,
         ]);
 
@@ -50,15 +62,27 @@ class CharterController extends Controller
             $versionLabel = $charter->version_label ?? sprintf('v%d', $project->charters()->count());
         }
 
-        // Update project owner_name and status if provided
-        $projectFields = Arr::only($validated, ['owner_name', 'status']);
+        $owner = trim((string) ($validated['owner'] ?? ''));
+        if ($owner === '') {
+            $owner = trim((string) ($validated['owner_name'] ?? ''));
+        }
+
+        // Update project fields if provided
+        $projectFields = Arr::only($validated, ['status']);
         $projectFields = array_filter($projectFields, fn($v) => $v !== null && $v !== '');
         if (!empty($projectFields)) {
             $project->update($projectFields);
         }
 
+        $charterPayload = Arr::except($validated, ['owner_name', 'status']);
+        if ($owner !== '') {
+            $charterPayload['owner'] = $owner;
+        } else {
+            unset($charterPayload['owner']);
+        }
+
         $charter->update([
-            ...Arr::except($validated, ['owner_name', 'status']),
+            ...$charterPayload,
             'version_label' => $versionLabel,
         ]);
 

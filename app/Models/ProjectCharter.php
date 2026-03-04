@@ -12,6 +12,7 @@ class ProjectCharter extends Model
     protected $fillable = [
         'project_id',
         'version_label',
+        'owner',
         'category',
         'duration',
         'background',
@@ -23,6 +24,7 @@ class ProjectCharter extends Model
         'budget',
         'risks_identified',
         'risk_mitigation',
+        'tgl_dokumen',
         'metadata',
     ];
 

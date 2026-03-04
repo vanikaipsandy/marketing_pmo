@@ -100,6 +100,7 @@ Route::middleware(['auth', 'approved'])->group(function () {
         Route::put('/{projectCharter}', [MasterDataProjectCharterController::class, 'update'])->name('update');
         Route::delete('/{projectCharter}', [MasterDataProjectCharterController::class, 'destroy'])->name('destroy');
     });
+    
     Route::get('/program-planning/program-definition/it-initiatives', ProgramDefinitionITInitiativesController::class)->name('program-planning.program-definition.it-initiatives');
     Route::get('/program-planning/initiative-relation', [InitiativeRelationController::class, 'index'])->name('program-implementation.initiative-relation');
     Route::redirect('/program-planning/initiative', '/program-planning/initiative-relation');

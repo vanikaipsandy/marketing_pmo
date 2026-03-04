@@ -104,8 +104,7 @@
                                 class="transition-colors hover:bg-slate-50 dark:hover:bg-white/5">
                                 <td class="px-3 py-2.5 text-slate-500">{{ idx + 1 }}</td>
                                 <td class="px-3 py-2.5">
-                                    <span class="inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium"
-                                          :class="idx === 0 ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300' : 'bg-slate-100 text-slate-600 dark:bg-white/10 dark:text-slate-300'">
+                                    <span :class="['inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-bold capitalize', getStatusClass(entry.status)]">
                                         {{ entry.status }}
                                     </span>
                                 </td>
@@ -212,6 +211,17 @@ const saveNewRow = () => {
 };
 
 // ── Helpers ──
+const getStatusClass = (status) => {
+    const s = String(status || '').toLowerCase();
+    if (s.includes('draft')) return 'bg-slate-100 text-slate-600 ring-1 ring-slate-300';
+    if (s.includes('propose')) return 'bg-blue-100 text-blue-700 ring-1 ring-blue-300';
+    if (s.includes('review')) return 'bg-amber-100 text-amber-700 ring-1 ring-amber-300';
+    if (s.includes('baseline')) return 'bg-purple-100 text-purple-700 ring-1 ring-purple-300';
+    if (s.includes('approve')) return 'bg-emerald-100 text-emerald-700 ring-1 ring-emerald-300';
+    if (s.includes('postpone')) return 'bg-rose-100 text-rose-700 ring-1 ring-rose-300';
+    return 'bg-slate-100 text-slate-500 ring-1 ring-slate-200';
+};
+
 const formatDate = (d) => {
     if (!d) return '-';
     try { return new Date(d).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }); }

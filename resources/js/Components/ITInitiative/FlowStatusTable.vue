@@ -3,15 +3,16 @@
         <div class="overflow-x-hidden">
             <table class="w-full table-fixed divide-y divide-slate-200 text-[11px] dark:divide-white/5">
                 <colgroup>
-                    <col class="w-[4%]">
-                    <col class="w-[7%]">
+                    <col class="w-[3%]">
+                    <col class="w-[6%]">
+                    <col class="w-[12%]">
                     <col class="w-[14%]">
-                    <col class="w-[17%]">
+                    <col class="w-[8%]">
                     <col class="w-[10%]">
+                    <col class="w-[9%]">
                     <col class="w-[10%]">
-                    <col class="w-[11%]">
-                    <col class="w-[16%]">
-                    <col class="w-[11%]">
+                    <col class="w-[18%]">
+                    <col class="w-[10%]">
                 </colgroup>
                 <thead class="bg-slate-50 dark:bg-white/5">
                     <tr>
@@ -20,6 +21,7 @@
                         <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">IT Arsitektur Building Blok</th>
                         <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Daftar Inisiatif</th>
                         <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Usulan</th>
+                        <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Tanggal Dokumen</th>
                         <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Bulan / Tahun</th>
                         <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Review</th>
                         <th class="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Implementasi</th>
@@ -53,6 +55,9 @@
                             >
                                 {{ statusLabelFromOptions(project.status, statusOptions) }}
                             </span>
+                        </td>
+                        <td class="px-3 py-3 text-[11px] font-medium text-slate-700 dark:text-slate-300">
+                            {{ formatDate(project.charter?.tgl_dokumen) }}
                         </td>
                         <td class="px-3 py-3 text-[11px] font-medium text-slate-700 dark:text-slate-300">
                             {{ latestImplementationMonthYear(project) || '-' }}
@@ -106,7 +111,7 @@
                     </tr>
 
                     <tr v-if="items.length === 0">
-                        <td colspan="9" class="px-6 py-8 text-center text-xs text-slate-500 dark:text-slate-400">
+                        <td colspan="10" class="px-6 py-8 text-center text-xs text-slate-500 dark:text-slate-400">
                             <span v-if="activeFlowFilter === null">
                                 Silakan klik salah satu status di atas untuk menampilkan data inisiatif.
                             </span>
@@ -225,6 +230,13 @@ const latestImplementationMonthYear = (item) => {
     if (Number.isNaN(date.getTime())) return null;
 
     return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+};
+
+const formatDate = (rawDate) => {
+    if (!rawDate) return '-';
+    const date = new Date(rawDate);
+    if (Number.isNaN(date.getTime())) return rawDate;
+    return date.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
 };
 
 const reviewStatusBadgeClass = (reviewStatus) => {

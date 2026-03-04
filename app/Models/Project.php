@@ -16,7 +16,7 @@ class Project extends Model
 
     protected $table = 'trs_projects';
 
-    protected $fillable = ['code', 'name', 'owner_id', 'owner_name', 'status', 'metadata'];
+    protected $fillable = ['code', 'name', 'owner_id', 'status', 'metadata'];
 
     protected function casts(): array
     {

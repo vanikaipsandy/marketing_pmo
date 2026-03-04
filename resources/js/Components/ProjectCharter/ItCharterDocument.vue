@@ -11,7 +11,7 @@ const lineItems = (value) => String(value || '')
     .map((line) => line.trim())
     .filter(Boolean);
 
-const showScope = () => props.editable || Boolean(String(props.form.scope || '').trim());
+const showScope = () => !props.editable && Boolean(String(props.form.scope || '').trim());
 
 const stripBulletPrefix = (value) => String(value || '')
     .replace(/^[\u2022\u2023\u25E6\u2043\u2219â€¢\-\*\u00B7\u2013\u2014]+\s*/u, '')
@@ -32,6 +32,23 @@ const statusTimelineBadgeClass = (status) => {
 const statusTimelineLabel = (status) => {
     const key = Number(status);
     return statusMap[key]?.label ?? String(status ?? '');
+};
+
+const formatDateLong = (value) => {
+    const raw = String(value || '').trim();
+    if (!raw) return '-';
+    const parsed = new Date(raw);
+    if (Number.isNaN(parsed.getTime())) return raw;
+    return new Intl.DateTimeFormat('id-ID', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+    }).format(parsed);
+};
+
+const displayOwner = (value) => {
+    const trimmed = String(value ?? '').trim();
+    return trimmed === '' ? '-' : trimmed;
 };
 </script>
 
@@ -57,7 +74,7 @@ const statusTimelineLabel = (status) => {
             </p>
         </div>
 
-        <!-- Info Bar: Kategori | Durasi | Project Owner -->
+        <!-- Info Bar: Kategori | Durasi | Tanggal Dokumen | Project Owner -->
         <div class="info-bar">
             <div class="info-cell">
                 <span class="info-label">Kategori</span>
@@ -68,7 +85,7 @@ const statusTimelineLabel = (status) => {
                     <template v-else>{{ form.category || '-' }}</template>
                 </span>
             </div>
-            <div class="info-cell">
+            <div class="info-cell info-cell-compact">
                 <span class="info-label">Durasi</span>
                 <span class="info-sep"></span>
                 <span class="info-value">
@@ -77,13 +94,21 @@ const statusTimelineLabel = (status) => {
                     <template v-else>{{ form.duration || '-' }}</template>
                 </span>
             </div>
+            <div class="info-cell info-cell-compact info-cell-date">
+                <span class="info-label">Tanggal Dokumen</span>
+                <span class="info-sep"></span>
+                <span class="info-value">
+                    <input v-if="editable" v-model="form.tgl_dokumen" type="date" class="info-input" />
+                    <template v-else>{{ formatDateLong(form.tgl_dokumen) }}</template>
+                </span>
+            </div>
             <div class="info-cell info-cell-last">
                 <span class="info-label info-label-dark">Project Owner</span>
                 <span class="info-sep"></span>
                 <span class="info-value font-semibold">
-                    <input v-if="editable" v-model="form.owner_name" type="text" class="info-input font-semibold"
+                    <input v-if="editable" v-model="form.owner" type="text" class="info-input font-semibold"
                         placeholder="Nama project owner" />
-                    <template v-else>{{ itInitiative.owner_name || itInitiative.owner?.name || '-' }}</template>
+                    <template v-else>{{ displayOwner(form.owner) }}</template>
                 </span>
             </div>
         </div>
@@ -246,6 +271,16 @@ const statusTimelineLabel = (status) => {
     align-items: stretch;
     border-right: 1px solid #ccc;
     flex: 1;
+}
+
+.info-cell-compact {
+    flex: 0 0 18%;
+    min-width: 170px;
+}
+
+.info-cell-date {
+    flex-basis: 22%;
+    min-width: 200px;
 }
 
 .info-cell-last {

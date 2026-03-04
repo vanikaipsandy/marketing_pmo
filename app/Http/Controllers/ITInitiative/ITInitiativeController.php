@@ -8,6 +8,7 @@ use App\Http\Requests\ITInitiative\ITInitiativeStoreRequest;
 use App\Http\Requests\ITInitiative\ITInitiativeUpdateRequest;
 use App\Models\InitiativeStatus;
 use App\Models\MstInitiative;
+use App\Models\PcStatusImplementation;
 use App\Models\Project;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -83,7 +84,7 @@ class ITInitiativeController extends Controller
             ->when($filters['search'] ?? null, fn ($q, $search) => $q->where(function ($inner) use ($search): void {
                 $inner->where('name', 'like', "%{$search}%")
                     ->orWhere('code', 'like', "%{$search}%")
-                    ->orWhere('owner_name', 'like', "%{$search}%");
+                    ->orWhereHas('charter', fn ($charter) => $charter->where('owner', 'like', "%{$search}%"));
             }))
             ->when($filters['month'] ?? null, fn ($q, $month) => $q->whereMonth('updated_at', $month))
             ->orderBy('id', 'asc')
@@ -164,6 +165,11 @@ class ITInitiativeController extends Controller
     public function store(ITInitiativeStoreRequest $request): RedirectResponse
     {
         $validated = $request->validated();
+        $owner = trim((string) ($validated['owner'] ?? ''));
+        if ($owner === '') {
+            $owner = trim((string) ($validated['owner_name'] ?? ''));
+        }
+
         $initiativeIds = collect($validated['initiative_ids'] ?? [])
             ->map(static fn ($id) => (int) $id)
             ->filter(static fn ($id) => $id > 0)
@@ -172,9 +178,17 @@ class ITInitiativeController extends Controller
             ->all();
 
         unset($validated['initiative_ids']);
+        unset($validated['owner'], $validated['owner_name']);
 
         $project = Project::create($validated);
         $this->syncProjectInitiativeMappings($project, $initiativeIds);
+
+        if ($owner !== '') {
+            $project->charters()->create([
+                'owner' => $owner,
+                'version_label' => 'v1',
+            ]);
+        }
 
         if ($project->status) {
             $statusModel = InitiativeStatus::find($project->status);
@@ -348,21 +362,34 @@ class ITInitiativeController extends Controller
     public function update(ITInitiativeUpdateRequest $request, Project $project): RedirectResponse
     {
         $validated = $request->validated();
+        $owner = trim((string) ($validated['owner'] ?? ''));
+        if ($owner === '') {
+            $owner = trim((string) ($validated['owner_name'] ?? ''));
+        }
+
         $oldStatus = $project->status;
         $charterCategory = trim((string) ($validated['charter_category'] ?? ''));
         unset($validated['charter_category']);
+        unset($validated['owner'], $validated['owner_name']);
 
         $project->update($validated);
 
-        if ($charterCategory !== '') {
+        if ($charterCategory !== '' || $owner !== '') {
             $latestCharter = $project->charters()->latest('id')->first();
+            $charterPayload = [];
+
+            if ($charterCategory !== '') {
+                $charterPayload['category'] = $charterCategory;
+            }
+
+            if ($owner !== '') {
+                $charterPayload['owner'] = $owner;
+            }
 
             if ($latestCharter) {
-                $latestCharter->update(['category' => $charterCategory]);
+                $latestCharter->update($charterPayload);
             } else {
-                $project->charters()->create([
-                    'category' => $charterCategory,
-                ]);
+                $project->charters()->create($charterPayload);
             }
         }
 
@@ -370,7 +397,7 @@ class ITInitiativeController extends Controller
             $statusModel = InitiativeStatus::find($project->status);
             $statusName = $statusModel ? $statusModel->name : (string)$project->status;
             
-            \App\Models\PcStatusImplementation::create([
+            PcStatusImplementation::create([
                 'project_id' => $project->id,
                 'review_status' => 'Not Started',
                 'status' => $statusName,
