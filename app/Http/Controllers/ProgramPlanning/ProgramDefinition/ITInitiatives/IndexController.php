@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\InitiativeStatus;
 use App\Models\MstCoe;
 use App\Models\MstInitiative;
-use App\Models\Project;
 use App\Models\TrsOrganization;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Schema;
@@ -29,11 +28,6 @@ class IndexController extends Controller
             ])
             ->values();
 
-        $statusCounts = Project::query()
-            ->selectRaw('status, COUNT(*) as total')
-            ->groupBy('status')
-            ->pluck('total', 'status');
-
         $masterSelectColumns = [
             'id',
             'coe_id',
@@ -54,11 +48,31 @@ class IndexController extends Controller
                 'coe:id,name',
                 'organization:id,name,groub_id',
                 'organization.groub:id,name',
+                'latestStatus',
             ])
             ->where('tipe_initiative', 2)
             ->orderBy('code')
             ->get()
             ->values();
+
+        // Build statusCounts from the loaded collection so every initiative
+        // is accounted for — even those without a trs_status_mstinitiative row.
+        $aliasMap = [
+            'draft'    => 'drafting',
+            'approve'  => 'approved',
+            'aproved'  => 'approved',
+        ];
+        $validStatuses = ['drafting', 'propose', 'review', 'approved', 'postpone'];
+        $statusCounts = collect();
+        foreach ($masterItInitiatives as $initiative) {
+            $raw = strtolower(trim($initiative->latestStatus?->status ?? $initiative->status ?? 'drafting'));
+            $canonical = $aliasMap[$raw] ?? $raw;
+            // If the effective status isn't one of the timeline nodes, default to drafting
+            if (! in_array($canonical, $validStatuses)) {
+                $canonical = 'drafting';
+            }
+            $statusCounts[$canonical] = ($statusCounts[$canonical] ?? 0) + 1;
+        }
 
         return Inertia::render('ProgramPlanning/ProgramDefinition/ITInitiatives/Index', [
             'totalItInitiatives' => $masterItInitiatives->count(),

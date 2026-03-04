@@ -1,7 +1,8 @@
 <template>
     <div class="flex h-full flex-col gap-3">
         <article
-            class="relative flex min-h-[220px] flex-1 flex-col justify-between rounded-2xl border border-[#1C75BC] bg-[#1C75BC] p-5 shadow-[0_4px_16px_rgba(28,117,188,0.3)]"
+            class="relative flex min-h-[220px] flex-1 cursor-pointer flex-col justify-between rounded-2xl border border-[#1C75BC] bg-[#1C75BC] p-5 shadow-[0_4px_16px_rgba(28,117,188,0.3)] transition hover:shadow-[0_6px_24px_rgba(28,117,188,0.4)]"
+            @click="emit('show-all')"
         >
             <div>
                 <p
@@ -23,16 +24,17 @@
                     type="button"
                     class="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/30 bg-white/15 text-lg font-bold text-white transition hover:bg-white/25"
                     title="New Initiative"
-                    @click="emit('create')"
+                    @click.stop="emit('create')"
                 >
                     +
                 </button>
-                <Link
-                    href="/digital-initiatives"
+                <button
+                    type="button"
                     class="inline-flex items-center rounded-full border border-white/30 bg-white/15 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-white/25"
+                    @click="emit('show-all')"
                 >
                     Digital Initiative
-                </Link>
+                </button>
                 <Link
                     href="/digital-initiatives"
                     class="inline-flex items-center rounded-full border border-white/30 bg-white/15 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-white/25"
@@ -60,5 +62,5 @@ defineProps({
     },
 });
 
-const emit = defineEmits(['create']);
+const emit = defineEmits(['create', 'show-all']);
 </script>

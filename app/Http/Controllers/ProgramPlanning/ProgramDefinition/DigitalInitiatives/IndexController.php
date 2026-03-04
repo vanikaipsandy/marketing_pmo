@@ -31,34 +31,60 @@ class IndexController extends Controller
             ])
             ->values();
 
-        // Count latest status per mst_initiative from trs_status_mstinitiative
-        $latestIds = StatusMstInitiative::query()
-            ->select(DB::raw('MAX(id) as id'))
-            ->whereHas('initiative', fn ($q) => $q->where('tipe_initiative', 1))
-            ->groupBy('initiative_id');
+        $masterSelectColumns = [
+            'id',
+            'coe_id',
+            'tipe_initiative',
+            'business_unit',
+            'code',
+            'name',
+            'description',
+            'status',
+        ];
+        if (Schema::hasColumn('mst_initiative', 'project_id')) {
+            $masterSelectColumns[] = 'project_id';
+        }
 
-        $statusCountsRaw = StatusMstInitiative::query()
-            ->joinSub($latestIds, 'latest', fn ($join) => $join->on('trs_status_mstinitiative.id', '=', 'latest.id'))
-            ->selectRaw('LOWER(status) as status_key, COUNT(*) as total')
-            ->groupBy('status_key')
-            ->pluck('total', 'status_key');
+        $masterDigitalInitiatives = MstInitiative::query()
+            ->select($masterSelectColumns)
+            ->with([
+                'coe:id,name',
+                'organization:id,name,groub_id',
+                'organization.groub:id,name',
+                'latestStatus',
+            ])
+            ->where('tipe_initiative', 1)
+            ->orderBy('code')
+            ->get()
+            ->values();
 
-        // Normalize variant spellings to canonical keys
+        // Build statusCounts from the loaded collection so every initiative
+        // is accounted for — even those without a trs_status_mstinitiative row.
         $aliasMap = [
             'draft'    => 'drafting',
             'approve'  => 'approved',
             'aproved'  => 'approved',
         ];
+        $validStatuses = ['drafting', 'propose', 'review', 'approved', 'postpone'];
         $statusCounts = collect();
-        foreach ($statusCountsRaw as $key => $total) {
-            $canonical = $aliasMap[$key] ?? $key;
-            $statusCounts[$canonical] = ($statusCounts[$canonical] ?? 0) + $total;
+        foreach ($masterDigitalInitiatives as $initiative) {
+            $raw = strtolower(trim($initiative->latestStatus?->status ?? $initiative->status ?? 'drafting'));
+            $canonical = $aliasMap[$raw] ?? $raw;
+            if (! in_array($canonical, $validStatuses)) {
+                $canonical = 'drafting';
+            }
+            $statusCounts[$canonical] = ($statusCounts[$canonical] ?? 0) + 1;
         }
 
         // For initiatives whose latest status is "postpone", find the status
         // just before postpone so the frontend knows which main node to branch from.
         // Result: { "drafting": 1, "propose": 2, ... }
         $postponeFromCounts = [];
+        $latestIds = StatusMstInitiative::query()
+            ->select(DB::raw('MAX(id) as id'))
+            ->whereHas('initiative', fn ($q) => $q->where('tipe_initiative', 1))
+            ->groupBy('initiative_id');
+
         $postponedInitiativeIds = StatusMstInitiative::query()
             ->joinSub($latestIds, 'latest', fn ($join) => $join->on('trs_status_mstinitiative.id', '=', 'latest.id'))
             ->whereRaw('LOWER(status) = ?', ['postpone'])
@@ -86,33 +112,6 @@ class IndexController extends Controller
             }
             $postponeFromCounts = $normalizedPfc;
         }
-
-        $masterSelectColumns = [
-            'id',
-            'coe_id',
-            'tipe_initiative',
-            'business_unit',
-            'code',
-            'name',
-            'description',
-            'status',
-        ];
-        if (Schema::hasColumn('mst_initiative', 'project_id')) {
-            $masterSelectColumns[] = 'project_id';
-        }
-
-        $masterDigitalInitiatives = MstInitiative::query()
-            ->select($masterSelectColumns)
-            ->with([
-                'coe:id,name',
-                'organization:id,name,groub_id',
-                'organization.groub:id,name',
-                'latestStatus',
-            ])
-            ->where('tipe_initiative', 1)
-            ->orderBy('code')
-            ->get()
-            ->values();
 
         $initiativeItems = DigitalInitiative::query()
             ->select(['id', 'no', 'useCase'])

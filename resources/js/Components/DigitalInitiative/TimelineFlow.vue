@@ -39,13 +39,14 @@
                 <div
                     v-for="step in mainSteps"
                     :key="step.key"
-                    class="relative z-10 flex flex-col items-center"
+                    class="relative z-10 flex cursor-pointer flex-col items-center"
                     style="min-width: 56px;"
+                    @click="emit('select', step.key)"
                 >
                     <div class="flex h-[56px] w-[56px] items-center justify-center">
                         <div
-                            class="flex h-9 w-9 items-center justify-center rounded-full border-[2.5px] text-[11px] font-bold shadow"
-                            :class="step.nodeClass"
+                            class="flex h-9 w-9 items-center justify-center rounded-full border-[2.5px] text-[11px] font-bold shadow transition-transform hover:scale-110"
+                            :class="[step.nodeClass, activeStatus === step.key ? 'ring-2 ring-offset-2 ring-blue-400 dark:ring-offset-[#171717]' : '']"
                         >
                             {{ step.count }}
                         </div>
@@ -82,7 +83,13 @@ const props = defineProps({
         type: Object,
         default: () => ({}),
     },
+    activeStatus: {
+        type: String,
+        default: null,
+    },
 });
+
+const emit = defineEmits(['select']);
 
 // ── Main branch config (straight line: Drafting → Approved) ──
 const mainBranch = [

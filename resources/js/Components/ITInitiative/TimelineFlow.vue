@@ -2,7 +2,7 @@
     <article class="h-full min-h-[220px] rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-[0_4px_16px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-[#171717]">
         <div class="mb-2 flex items-center justify-between gap-2">
             <h2 class="text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
-                Scope Charter IT Initiative Timeline
+                IT Initiative Timeline
             </h2>
         </div>
 
@@ -11,11 +11,12 @@
                 <div
                     v-for="(step, index) in steps"
                     :key="`scope-step-${step.key}`"
-                    class="relative flex justify-center"
+                    class="relative flex cursor-pointer justify-center"
+                    @click="emit('select', step.statusName)"
                 >
                     <span
-                        class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[10px] font-bold"
-                        :class="step.circleClass"
+                        class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[10px] font-bold transition-transform hover:scale-110"
+                        :class="[step.circleClass, activeStatus === step.statusName ? 'ring-2 ring-offset-2 ring-blue-400 dark:ring-offset-[#171717]' : '']"
                     >
                         {{ step.count }}
                     </span>
@@ -49,7 +50,13 @@ const props = defineProps({
         type: Object,
         default: () => ({}),
     },
+    activeStatus: {
+        type: String,
+        default: null,
+    },
 });
+
+const emit = defineEmits(['select']);
 
 const scopeStatusOrder = ['drafting', 'propose', 'review', 'approved'];
 const normalizeStatusName = (value) => String(value ?? '').trim().toLowerCase();
@@ -96,11 +103,12 @@ const steps = computed(() => {
 
     return scopeStatusOptions.value.map((status, index) => {
         const flowClass = statusFlowClassByIndex(index);
-        const key = String(status.id);
+        const key = status.name;
 
         return {
             key,
             label: status.label,
+            statusName: status.name,
             count: Number(counts?.[key] ?? 0),
             circleClass: flowClass.circleClass,
             lineClass: flowClass.lineClass,

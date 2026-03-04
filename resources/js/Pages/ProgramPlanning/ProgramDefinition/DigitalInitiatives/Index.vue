@@ -8,18 +8,34 @@
             </div>
 
             <section class="mb-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
-                <SummaryCard :total="totalDigitalInitiatives" @create="showCreateModal = true" />
+                <SummaryCard
+                    :total="totalDigitalInitiatives"
+                    @create="showCreateModal = true"
+                    @show-all="toggleShowAll"
+                />
 
                 <div class="lg:col-span-2">
                     <TimelineFlow
                         :status-counts="statusCounts"
                         :postpone-from-counts="postponeFromCounts"
+                        :active-status="activeStatusFilter"
+                        @select="toggleStatusFilter"
                     />
                 </div>
             </section>
 
+            <!-- Hint when table is hidden -->
+            <p
+                v-if="!showTable"
+                class="py-4 text-center text-xs text-slate-400 dark:text-slate-500"
+            >
+                Klik card atau status timeline untuk menampilkan data
+            </p>
+
+            <!-- Table shown on click -->
             <MasterInitiativeTable
-                :items="masterDigitalList"
+                v-else
+                :items="filteredList"
                 :initiative-items="initiativeItemsList"
             />
         </div>
@@ -54,6 +70,39 @@ const props = defineProps({
 });
 
 const showCreateModal     = ref(false);
+const showTable           = ref(false);
+const activeStatusFilter  = ref(null);
+
 const masterDigitalList   = computed(() => Array.isArray(props.masterDigitalInitiatives) ? props.masterDigitalInitiatives : []);
 const initiativeItemsList = computed(() => Array.isArray(props.initiativeItems) ? props.initiativeItems : []);
+
+const normalizeStatus = (val) => String(val ?? '').trim().toLowerCase();
+
+const filteredList = computed(() => {
+    if (!activeStatusFilter.value) return masterDigitalList.value;
+    const filterKey = normalizeStatus(activeStatusFilter.value);
+    return masterDigitalList.value.filter((item) => {
+        const latestStatus = normalizeStatus(item?.latest_status?.status ?? item?.status);
+        return latestStatus === filterKey;
+    });
+});
+
+const toggleStatusFilter = (statusKey) => {
+    if (activeStatusFilter.value === statusKey) {
+        activeStatusFilter.value = null;
+        showTable.value = false;
+    } else {
+        activeStatusFilter.value = statusKey;
+        showTable.value = true;
+    }
+};
+
+const toggleShowAll = () => {
+    if (showTable.value && activeStatusFilter.value === null) {
+        showTable.value = false;
+    } else {
+        activeStatusFilter.value = null;
+        showTable.value = true;
+    }
+};
 </script>
