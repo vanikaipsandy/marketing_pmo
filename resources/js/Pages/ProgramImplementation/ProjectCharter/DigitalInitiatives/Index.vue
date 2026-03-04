@@ -12,7 +12,7 @@
             <section class="mb-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
                 <div class="flex h-full flex-col gap-3">
                     <article
-                        class="relative flex min-h-[220px] flex-1 cursor-pointer flex-col justify-center rounded-2xl border bg-[#1C75BC] border-[#1C75BC] p-5 shadow-[0_4px_16px_rgba(28,117,188,0.3)]"
+                        class="relative flex min-h-[140px] flex-1 cursor-pointer flex-col justify-center rounded-2xl border bg-[#1C75BC] border-[#1C75BC] p-4 shadow-[0_4px_16px_rgba(28,117,188,0.3)]"
                         role="button"
                         tabindex="0"
                         @click="showMasterDigitalInitiatives"
@@ -37,51 +37,7 @@
                 <article class="flex flex-col justify-center rounded-2xl border border-slate-200 bg-white px-5 py-3 shadow-[0_4px_16px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-[#171717] lg:col-span-2 space-y-4">
                     <div>
                         <div class="mb-2 flex items-center justify-between gap-2">
-                            <h2 class="text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Scope Charter Digital Initiative Timeline</h2>
-                        </div>
-
-                        <div>
-                            <div
-                                class="grid"
-                                :style="gridStyle(scopeSteps)"
-                            >
-                                <div
-                                    v-for="(step, index) in scopeSteps"
-                                    :key="`scope-step-${step.key}`"
-                                    class="relative flex justify-center cursor-pointer group"
-                                    @click="handleFlowFilter(step.statusId)"
-                                >
-                                    <span
-                                        class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[10px] font-bold transition-all group-hover:ring-2 group-hover:ring-offset-1 group-hover:ring-slate-300"
-                                        :class="[
-                                            step.circleClass,
-                                            activeFlowFilter === step.statusId ? 'ring-2 ring-offset-2 ring-blue-500 shadow-md transform scale-110' : ''
-                                        ]"
-                                    >
-                                        {{ step.count }}
-                                    </span>
-                                    <span
-                                        v-if="index < scopeSteps.length - 1"
-                                        class="absolute left-1/2 top-1/2 ml-[0.75rem] h-0.5 w-[calc(100%_-_1.5rem)] -translate-y-1/2 rounded-full"
-                                        :class="step.lineClass"
-                                    ></span>
-                                </div>
-                            </div>
-
-                            <div
-                                class="mt-2 grid gap-1 text-center"
-                                :style="gridStyle(scopeSteps)"
-                            >
-                                <div v-for="step in scopeSteps" :key="`scope-label-${step.key}`">
-                                    <p class="text-[9px] font-semibold text-slate-700 dark:text-slate-200">{{ step.label }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="border-t border-slate-100 pt-4 dark:border-white/5">
-                        <div class="mb-2 flex items-center justify-between gap-2">
-                            <h2 class="text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Project Charter Digital Initiative Timeline</h2>
+                            <h2 class="text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">Project Charter Digital Initiatives Timelines Status</h2>
                         </div>
 
                         <div>
@@ -280,23 +236,6 @@ const scopeStatusOptions = computed(() => {
             id: Number(matchedStatus?.id ?? fallbackStatus.id),
             name: statusName,
             label: fallbackStatus.label,
-        };
-    });
-});
-
-const scopeSteps = computed(() => {
-    const counts = props.statusCounts || {};
-    return scopeStatusOptions.value.map((status, index) => {
-        const flowClass = statusFlowClassByIndex(index);
-        const key = status.name;
-
-        return {
-            key,
-            statusId: status.id,
-            label: status.label,
-            count: Number(counts?.[key] ?? 0),
-            circleClass: flowClass.circleClass,
-            lineClass: flowClass.lineClass,
         };
     });
 });
