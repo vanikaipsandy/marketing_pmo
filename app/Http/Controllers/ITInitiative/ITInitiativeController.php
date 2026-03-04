@@ -280,16 +280,17 @@ class ITInitiativeController extends Controller
 
     public function show(Project $project): Response
     {
-        $project->load([
-            'charter',
-            'charters' => static fn ($query) => $query->latest(),
-            'milestones',
-            'programs',
-            'owner',
-            'statusRef:id,name',
-            'pcStatusImplementations',
-            'mappedInitiatives:id,code,name',
-        ]);
+        $project = Project::query()
+            ->with([
+                'charter',
+                'charters' => static fn ($query) => $query->latest(),
+                'milestones',
+                'owner',
+                'statusRef:id,name',
+                'pcStatusImplementations',
+                'mappedInitiatives:id,code,name',
+            ])
+            ->findOrFail($project->id);
 
         // Get all related projects through mapped initiatives
         $relatedProjects = Project::query()
