@@ -23,39 +23,15 @@
                             class="text-xs font-semibold uppercase tracking-[0.08em] text-white"
                             style="text-shadow: 0 1px 3px rgba(0,0,0,0.3);"
                         >
-                            Total Digital Inisiatif 
+                            Total Digital Inisiatif Disetujui
                         </p>
                         <p
                             class="mt-2 flex items-center justify-between text-3xl font-bold text-white"
                             style="text-shadow: 0 2px 6px rgba(0,0,0,0.35);"
                         >
-                            <span>{{ totalDigitalInitiatives }}</span>
+                            <span>{{ totalDigitalApproved }}</span>
                         </p>
                     </article>
-
-                    <div class="flex flex-wrap gap-2">
-                        <button
-                            type="button"
-                            class="inline-flex items-center rounded-full border border-[#1C75BC]/45 bg-[#1C75BC]/10 px-3 py-1.5 text-xs font-semibold text-[#1C75BC] transition hover:bg-[#1C75BC]/20 dark:text-[#7FC0F2]"
-                            @click="showDigitalInitiativesList"
-                        >
-                            Digital Initiative
-                        </button>
-                        <button
-                            type="button"
-                            class="inline-flex items-center rounded-full border border-[#1C75BC]/45 bg-[#1C75BC]/10 px-3 py-1.5 text-xs font-semibold text-[#1C75BC] transition hover:bg-[#1C75BC]/20 dark:text-[#7FC0F2]"
-                            @click="showCompendiumList"
-                        >
-                            Compedium List
-                        </button>
-                        <button
-                            type="button"
-                            class="inline-flex items-center rounded-full border border-[#A7C942]/80 bg-[#A7C942]/15 px-3 py-1.5 text-xs font-semibold text-[#4F6B0F] transition hover:bg-[#A7C942]/25 dark:text-[#C7E67A]"
-                            @click="showAppendixList"
-                        >
-                            Appendix List
-                        </button>
-                    </div>
                 </div>
 
                 <article class="flex flex-col justify-center rounded-2xl border border-slate-200 bg-white px-5 py-3 shadow-[0_4px_16px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-[#171717] lg:col-span-2 space-y-4">
@@ -194,6 +170,10 @@ const props = defineProps({
         type: Number,
         default: 0,
     },
+    totalDigitalApproved: {
+        type: Number,
+        default: 0,
+    },
     statusCounts: {
         type: Object,
         default: () => ({}),
@@ -228,20 +208,6 @@ const hasTableSelection = ref(false);
 const showMasterDigitalInitiatives = () => {
     hasTableSelection.value = true;
     tableMode.value = TABLE_MODE.MASTER;
-    activeFlowFilter.value = null;
-};
-
-const showAppendixList = () => {
-    showMasterDigitalInitiatives();
-};
-
-const showCompendiumList = () => {
-    showMasterDigitalInitiatives();
-};
-
-const showDigitalInitiativesList = () => {
-    hasTableSelection.value = true;
-    tableMode.value = TABLE_MODE.FLOW;
     activeFlowFilter.value = null;
 };
 
@@ -322,7 +288,7 @@ const scopeSteps = computed(() => {
     const counts = props.statusCounts || {};
     return scopeStatusOptions.value.map((status, index) => {
         const flowClass = statusFlowClassByIndex(index);
-        const key = String(status.id);
+        const key = status.name;
 
         return {
             key,
@@ -336,10 +302,10 @@ const scopeSteps = computed(() => {
 });
 
 const digitalSteps = computed(() => {
-    // Currently defaulting to 0 as Project Charter does not have specific charter status counts
+    // Project Charter timeline — currently no separate charter status counts
     return scopeStatusOptions.value.map((status, index) => {
         const flowClass = statusFlowClassByIndex(index);
-        const key = String(status.id);
+        const key = status.name;
 
         return {
             key,

@@ -48,11 +48,6 @@ class DigitalInitiativeController extends Controller
             ->where('tipe_initiative', 1)
             ->count();
 
-        $statusCountsRaw = DigitalInitiative::query()
-            ->selectRaw('status, COUNT(*) as total')
-            ->groupBy('status')
-            ->pluck('total', 'status');
-
         $masterDigitalInitiatives = MstInitiative::query()
             ->select([
                 'id',
@@ -75,13 +70,32 @@ class DigitalInitiativeController extends Controller
             ->get()
             ->values();
 
+        // Build statusCounts from mst_initiative + latestStatus (name-based keys)
+        $aliasMap = [
+            'draft'   => 'drafting',
+            'approve' => 'approved',
+            'aproved' => 'approved',
+        ];
+        $validStatuses = ['drafting', 'propose', 'review', 'approved', 'postpone'];
+        $statusCounts = [];
+        foreach ($masterDigitalInitiatives as $initiative) {
+            $raw       = strtolower(trim($initiative->latestStatus?->status ?? $initiative->status ?? 'drafting'));
+            $canonical = $aliasMap[$raw] ?? $raw;
+            if (! in_array($canonical, $validStatuses)) {
+                $canonical = 'drafting';
+            }
+            $statusCounts[$canonical] = ($statusCounts[$canonical] ?? 0) + 1;
+        }
+        $totalDigitalApproved = (int) ($statusCounts['approved'] ?? 0);
+
         return Inertia::render('ProgramImplementation/ProjectCharter/DigitalInitiatives/Index', [
             'initiatives' => $initiatives,
             'mstDigitalInitiatives' => $masterDigitalInitiatives,
             'statusOptions' => $statusOptions,
             'completedStatusId' => $baselineStatusId,
             'totalDigitalInitiatives' => $totalDigitalInitiatives,
-            'statusCounts' => $statusCountsRaw,
+            'totalDigitalApproved' => $totalDigitalApproved,
+            'statusCounts' => $statusCounts,
             'filters' => [
                 'search' => $search,
                 'type' => $type,

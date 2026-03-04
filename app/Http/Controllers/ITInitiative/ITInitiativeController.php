@@ -110,6 +110,7 @@ class ITInitiativeController extends Controller
                 'coe:id,name',
                 'organization:id,name,groub_id',
                 'organization.groub:id,name',
+                'latestStatus',
             ])
             ->where('tipe_initiative', 2)
             ->orderBy('code')
@@ -118,18 +119,32 @@ class ITInitiativeController extends Controller
 
         $totalItInitiatives = $masterItInitiatives->count();
 
-        $statusCountsRaw = Project::query()
-            ->selectRaw('status, COUNT(*) as total')
-            ->groupBy('status')
-            ->pluck('total', 'status');
+        // Build statusCounts from mst_initiative + latestStatus (name-based keys)
+        $aliasMap = [
+            'draft'   => 'drafting',
+            'approve' => 'approved',
+            'aproved' => 'approved',
+        ];
+        $validStatuses = ['drafting', 'propose', 'review', 'approved', 'postpone'];
+        $statusCounts = [];
+        foreach ($masterItInitiatives as $initiative) {
+            $raw       = strtolower(trim($initiative->latestStatus?->status ?? $initiative->status ?? 'drafting'));
+            $canonical = $aliasMap[$raw] ?? $raw;
+            if (! in_array($canonical, $validStatuses)) {
+                $canonical = 'drafting';
+            }
+            $statusCounts[$canonical] = ($statusCounts[$canonical] ?? 0) + 1;
+        }
+        $totalItApproved = (int) ($statusCounts['approved'] ?? 0);
 
         return Inertia::render('ProgramImplementation/ProjectCharter/ITInitiatives/Index', [
             'itInitiatives' => $projects,
             'statusOptions' => $statusOptions,
             'completedStatusId' => $baselineStatusId,
             'totalItInitiatives' => $totalItInitiatives,
+            'totalItApproved' => $totalItApproved,
             'masterItInitiatives' => $masterItInitiatives,
-            'statusCounts' => $statusCountsRaw,
+            'statusCounts' => $statusCounts,
             'filters'  => [
                 'search' => $filters['search'] ?? null,
                 'status' => $filterStatus,

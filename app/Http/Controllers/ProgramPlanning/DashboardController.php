@@ -5,10 +5,8 @@ namespace App\Http\Controllers\ProgramPlanning;
 use App\Http\Controllers\Concerns\ResolvesInitiativeStatus;
 use App\Http\Controllers\Controller;
 use App\Models\MstInitiative;
-use App\Models\StatusMstInitiative;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -36,9 +34,9 @@ class DashboardController extends Controller
         $statusOptions = $this->statusOptions();
         $baselineStatusId = $this->baselineStatusId($statusOptions);
 
-        // Status counts from trs_status_mstinitiative grouped by tipe_initiative
-        $digitalStatusCounts = $this->mstStatusCounts(1); // tipe 1 = Digital
-        $itStatusCounts      = $this->mstStatusCounts(2); // tipe 2 = IT
+        // Status counts from mst_initiative + latestStatus relation
+        $digitalStatusCounts = $this->mstStatusCountsFromCollection(1);
+        $itStatusCounts      = $this->mstStatusCountsFromCollection(2);
 
         $totalDigital = MstInitiative::where('tipe_initiative', 1)->count();
         $totalIt      = MstInitiative::where('tipe_initiative', 2)->count();
@@ -70,8 +68,6 @@ class DashboardController extends Controller
 
     private function dashboardOptions(): array
     {
-        // Dashboard Program Planning sekarang memakai data master `mst_digitalInitiative`
-        // (model `DigitalInitiative`), jadi opsi filter berbasis tabel transaksi tidak dipakai.
         return [
             'sources'        => collect(),
             'groubs'         => collect(),
@@ -82,34 +78,36 @@ class DashboardController extends Controller
         ];
     }
 
-    private function mstStatusCounts(int $tipeInitiative): array
+    /**
+     * Count statuses from mst_initiative collection, using latestStatus
+     * relation when available, falling back to 'drafting'.
+     */
+    private function mstStatusCountsFromCollection(int $tipeInitiative): array
     {
-        // Get latest status per initiative from trs_status_mstinitiative
-        $latestIds = StatusMstInitiative::query()
-            ->select(DB::raw('MAX(id) as id'))
-            ->whereHas('initiative', fn ($q) => $q->where('tipe_initiative', $tipeInitiative))
-            ->groupBy('initiative_id');
+        $initiatives = MstInitiative::query()
+            ->select(['id', 'tipe_initiative', 'status'])
+            ->with('latestStatus')
+            ->where('tipe_initiative', $tipeInitiative)
+            ->get();
 
-        $rawCounts = StatusMstInitiative::query()
-            ->joinSub($latestIds, 'latest', fn ($join) => $join->on('trs_status_mstinitiative.id', '=', 'latest.id'))
-            ->selectRaw('LOWER(status) as status_key, COUNT(*) as total')
-            ->groupBy('status_key')
-            ->pluck('total', 'status_key');
-
-        // Normalize aliases (approve → approved, draft → drafting, etc.)
         $aliasMap = [
-            'draft'    => 'drafting',
-            'approve'  => 'approved',
-            'aproved'  => 'approved',
+            'draft'   => 'drafting',
+            'approve' => 'approved',
+            'aproved' => 'approved',
         ];
+        $validStatuses = ['drafting', 'propose', 'review', 'approved', 'postpone'];
 
-        $normalized = [];
-        foreach ($rawCounts as $key => $total) {
-            $canonical = $aliasMap[$key] ?? $key;
-            $normalized[$canonical] = ($normalized[$canonical] ?? 0) + $total;
+        $counts = [];
+        foreach ($initiatives as $initiative) {
+            $raw       = strtolower(trim($initiative->latestStatus?->status ?? $initiative->status ?? 'drafting'));
+            $canonical = $aliasMap[$raw] ?? $raw;
+            if (! in_array($canonical, $validStatuses)) {
+                $canonical = 'drafting';
+            }
+            $counts[$canonical] = ($counts[$canonical] ?? 0) + 1;
         }
 
-        return $normalized;
+        return $counts;
     }
 
     private function categoryOptions(): array

@@ -52,13 +52,13 @@
                         class="text-xs font-semibold uppercase tracking-[0.08em] text-white"
                         style="text-shadow: 0 1px 3px rgba(0,0,0,0.3);"
                     >
-                        Total IT Inisiatif
+                        Total IT Inisiatif Disetujui
                     </p>
                     <p
                         class="mt-2 flex items-center justify-between text-3xl font-bold text-white"
                         style="text-shadow: 0 2px 6px rgba(0,0,0,0.35);"
                     >
-                        <span>{{ totalItInitiatives }}</span>
+                        <span>{{ totalItApproved }}</span>
                     </p>
                 </article>
 
@@ -251,6 +251,10 @@ const props = defineProps({
         type: Number,
         default: 0,
     },
+    totalItApproved: {
+        type: Number,
+        default: 0,
+    },
     statusCounts: {
         type: Object,
         default: () => ({}),
@@ -408,15 +412,16 @@ const scopeStatusOptions = computed(() => {
 });
 
 const scopeSteps = computed(() => {
+    const counts = props.statusCounts || {};
     return scopeStatusOptions.value.map((status, index) => {
         const flowClass = statusFlowClassByIndex(index);
-        const key = String(status.id);
+        const key = status.name;
 
         return {
             key,
             statusId: status.id,
             label: status.label,
-            count: 0,
+            count: Number(counts?.[key] ?? 0),
             circleClass: flowClass.circleClass,
             lineClass: flowClass.lineClass,
         };
@@ -427,7 +432,7 @@ const digitalSteps = computed(() => {
     const counts = props.statusCounts || {};
     return scopeStatusOptions.value.map((status, index) => {
         const flowClass = statusFlowClassByIndex(index);
-        const key = String(status.id);
+        const key = status.name;
 
         return {
             key,

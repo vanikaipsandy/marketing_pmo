@@ -166,9 +166,12 @@ const props = defineProps({
         default: () => ({
             total_projects: 0,
             total_digital_initiatives: 0,
+            total_it_initiatives: 0,
             status_options: [],
-            status_counts: {},
+            it_status_counts: {},
             digital_status_counts: {},
+            total_digital_approved: 0,
+            total_it_approved: 0,
         }),
     },
     completedStatusId: {
@@ -240,7 +243,7 @@ const completedStatusLabel = computed(() => {
 
 const statusSummaryColumns = computed(() => {
     return scopeStatusOptions.value.map((status) => ({
-        key: String(status.id),
+        key: status.name,
         label: status.label,
     }));
 });
@@ -268,7 +271,7 @@ const statusSummaryRows = computed(() => {
 
     return [
         buildRow('digital', 'Digital initiative', props.overview?.digital_status_counts || {}),
-        buildRow('it', 'IT Initiative', props.overview?.status_counts || {}),
+        buildRow('it', 'IT Initiative', props.overview?.it_status_counts || {}),
     ];
 });
 
@@ -315,14 +318,12 @@ const filteredItInitiatives = computed(() => {
     });
 });
 
-const completedStatusKey = computed(() => String(completedStatusId.value));
-
 const totalDigitalDisetujui = computed(() => {
-    return Number(props.overview?.digital_status_counts?.[completedStatusKey.value] ?? 0);
+    return Number(props.overview?.total_digital_approved ?? 0);
 });
 
 const totalItDisetujui = computed(() => {
-    return Number(props.overview?.status_counts?.[completedStatusKey.value] ?? 0);
+    return Number(props.overview?.total_it_approved ?? 0);
 });
 
 const showApprovedDigitalInitiatives = () => {
@@ -373,7 +374,7 @@ const metricCards = computed(() => [
 const mapFlowData = (counts = {}) => {
     return scopeStatusOptions.value.map((status, index) => {
         const flowClass = statusFlowClassByIndex(index);
-        const key = String(status.id);
+        const key = status.name;
 
         return {
             key,
@@ -385,6 +386,6 @@ const mapFlowData = (counts = {}) => {
     });
 };
 
-const itStatusFlow = computed(() => mapFlowData(props.overview?.status_counts || {}));
+const itStatusFlow = computed(() => mapFlowData(props.overview?.it_status_counts || {}));
 const digitalStatusFlow = computed(() => mapFlowData(props.overview?.digital_status_counts || {}));
 </script>
