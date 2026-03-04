@@ -130,7 +130,7 @@
                                     :key="charter?.id ?? `charter-${group.project.id}-${charterIndex}`">
                                     <ItCharterDocument :it-initiative="group.project"
                                         :form="charterFormFor(group.project, charter)"
-                                        :status-timeline="getProjectReviewStatus(group.project)" :editable="false" />
+                                        :status-timeline="getProjectReviewStatus(group.project, charter)" :editable="false" />
                                 </template>
                             </div>
                         </div>
@@ -371,10 +371,9 @@ const statusTimelineFilterOptions = [
     { value: 4, label: 'Approved', activeClass: 'bg-emerald-100 text-emerald-700 ring-1 ring-emerald-300' },
 ];
 
-const getProjectReviewStatus = (proj) => {
-    // Baca kolom `status` integer dari tabel trs_project
-    // 1=Drafting, 2=Propose, 3=Review, 4=Approved, 5=Baseline
-    const raw = proj?.status;
+const getProjectReviewStatus = (proj, charter = null) => {
+    // Prioritas status per versi charter, fallback ke status project bila perlu.
+    const raw = charter?.status ?? proj?.status;
     if (raw === null || raw === undefined || raw === '') return null;
     return Number(raw);
 };

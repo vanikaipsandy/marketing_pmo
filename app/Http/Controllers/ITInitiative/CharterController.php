@@ -20,20 +20,16 @@ class CharterController extends Controller
             $versionLabel = sprintf('v%d', $project->charters()->count() + 1);
         }
 
-        $owner = trim((string) ($validated['owner'] ?? ''));
-        if ($owner === '') {
-            $owner = trim((string) ($validated['owner_name'] ?? ''));
+        // 1. Update status dan owner_name di tabel trs_projects (Project utama)
+        $projectFields = Arr::only($validated, ['owner_name', 'status']);
+        $projectFields = array_filter($projectFields, fn($v) => $v !== null && $v !== '');
+        if (!empty($projectFields)) {
+            $project->update($projectFields);
         }
 
-        $charterPayload = Arr::except($validated, ['version_label', 'owner_name']);
-        if ($owner !== '') {
-            $charterPayload['owner'] = $owner;
-        } else {
-            unset($charterPayload['owner']);
-        }
-
+        // 2. Simpan semua data (termasuk status per versi) ke tabel trs_project_charters
         $project->charters()->create([
-            ...$charterPayload,
+            ...Arr::except($validated, ['version_label', 'owner_name']),
             'version_label' => $versionLabel,
         ]);
 
@@ -52,20 +48,16 @@ class CharterController extends Controller
             $versionLabel = $charter->version_label ?? sprintf('v%d', $project->charters()->count());
         }
 
-        $owner = trim((string) ($validated['owner'] ?? ''));
-        if ($owner === '') {
-            $owner = trim((string) ($validated['owner_name'] ?? ''));
+        // 1. Update status dan owner_name di tabel trs_projects (Project utama)
+        $projectFields = Arr::only($validated, ['owner_name', 'status']);
+        $projectFields = array_filter($projectFields, fn($v) => $v !== null && $v !== '');
+        if (!empty($projectFields)) {
+            $project->update($projectFields);
         }
 
-        $charterPayload = Arr::except($validated, ['owner_name']);
-        if ($owner !== '') {
-            $charterPayload['owner'] = $owner;
-        } else {
-            unset($charterPayload['owner']);
-        }
-
+        // 2. Update record charter (termasuk status per versi)
         $charter->update([
-            ...$charterPayload,
+            ...Arr::except($validated, ['owner_name']),
             'version_label' => $versionLabel,
         ]);
 
