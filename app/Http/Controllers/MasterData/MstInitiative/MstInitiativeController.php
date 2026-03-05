@@ -121,7 +121,7 @@ class MstInitiativeController extends Controller
             'coe:id,name',
             'organization:id,name,groub_id',
             'organization.groub:id,name',
-            'statusHistory' => fn ($q) => $q->orderByDesc('tanggal')->orderByDesc('id'),
+            'statusHistory' => fn ($q) => $q->orderByDesc('id'),
         ]);
 
         return Inertia::render('MasterData/MstInitiative/Edit', [
